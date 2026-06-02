@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>○○ ♥ ○○ 결혼합니다</title>
+
+  <!-- OG 태그 (카카오톡 미리보기) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="○○ ♥ ○○ 결혼합니다">
+  <meta property="og:description" content="저희 두 사람의 결혼을 축하해 주세요.">
+  <meta property="og:image" content="assets/photos/cat1.jpg">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 1. 인트로 (Hero) -->
+<section id="hero">
+  <div id="hero-bg"></div>
+  <div class="hero-content fade-up">
+    <div class="hero-flower">🌸</div>
+    <div class="hero-names">
+      <span id="hero-groom">신랑</span>
+      <span class="hero-amp">♥</span>
+      <span id="hero-bride">신부</span>
+    </div>
+    <div class="hero-date" id="hero-date">0000년 00월 00일</div>
+    <div class="hero-venue-short" id="hero-venue-short"></div>
+  </div>
+  <div class="hero-scroll-hint"><span>SCROLL</span></div>
+</section>
+
+<!-- 2. 혼주 소개 -->
+<section id="parents">
+  <p class="section-title">INVITATION</p>
+  <div class="section-divider"></div>
+
+  <div class="main-couple fade-up">
+    <div class="main-couple-names">
+      <span id="groom-name">신랑</span>
+      <span class="couple-divider">🌸</span>
+      <span id="bride-name">신부</span>
+    </div>
+  </div>
+
+  <div class="parents-grid fade-up">
+    <div class="parents-side">
+      <div class="parents-label">신랑 측</div>
+      <div class="parents-name" id="groom-parents">아버지<br>어머니</div>
+    </div>
+    <div class="parents-side">
+      <div class="parents-label">신부 측</div>
+      <div class="parents-name" id="bride-parents">아버지<br>어머니</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 일시 / 장소 -->
+<section id="datetime">
+  <p class="section-title">DATE &amp; PLACE</p>
+  <div class="section-divider"></div>
+
+  <div class="datetime-main fade-up">
+    <strong id="dt-date">0000년 00월 00일 토요일</strong><br>
+    <span id="dt-time">오후 0시 00분</span>
+  </div>
+
+  <div class="countdown fade-up">
+    <div class="countdown-box">
+      <span class="countdown-num" id="cd-days">--</span>
+      <span class="countdown-label">DAYS</span>
+    </div>
+    <div class="countdown-box">
+      <span class="countdown-num" id="cd-hours">--</span>
+      <span class="countdown-label">HOURS</span>
+    </div>
+    <div class="countdown-box">
+      <span class="countdown-num" id="cd-mins">--</span>
+      <span class="countdown-label">MINS</span>
+    </div>
+    <div class="countdown-box">
+      <span class="countdown-num" id="cd-secs">--</span>
+      <span class="countdown-label">SECS</span>
+    </div>
+  </div>
+
+  <div class="fade-up">
+    <div class="venue-name" id="venue-name">예식장</div>
+    <div class="venue-address" id="venue-address">주소</div>
+  </div>
+</section>
+
+<!-- 4. 오시는 길 -->
+<section id="map">
+  <p class="section-title">LOCATION</p>
+  <div class="section-divider"></div>
+
+  <div class="map-placeholder fade-up">
+    📍 지도 영역
+  </div>
+
+  <a id="kakao-map-btn" class="map-btn fade-up" href="#" target="_blank" rel="noopener">
+    🗺️ 카카오맵으로 보기
+  </a>
+
+  <div class="transport-info fade-up" id="transport-info">
+    <h4>🚇 지하철</h4>
+    <p>예) ○호선 ○○역 ○번 출구</p>
+    <h4>🚌 버스</h4>
+    <p>예) ○○번, ○○번</p>
+    <h4>🚗 자가용</h4>
+    <p>예) 주차 가능</p>
+  </div>
+</section>
+
+<!-- 5. 포토 갤러리 -->
+<section id="gallery">
+  <p class="section-title">GALLERY</p>
+  <div class="section-divider"></div>
+
+  <div class="gallery-grid fade-up" id="gallery-grid">
+    <!-- main.js에서 동적 생성 -->
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <button id="lightbox-close" aria-label="닫기">×</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- 6. 방명록 -->
+<section id="guestbook">
+  <p class="section-title">GUESTBOOK</p>
+  <div class="section-divider"></div>
+
+  <div class="guestbook-form fade-up">
+    <input type="text" id="gb-name" placeholder="이름" maxlength="20">
+    <textarea id="gb-message" placeholder="축하 메시지를 남겨주세요 🌸" maxlength="200"></textarea>
+    <button class="guestbook-submit" id="gb-submit">메시지 남기기</button>
+  </div>
+
+  <div class="guestbook-messages" id="guestbook-list">
+    <!-- Firestore onSnapshot으로 동적 생성 -->
+  </div>
+</section>
+
+<!-- 7. 계좌번호 -->
+<section id="accounts">
+  <p class="section-title">ACCOUNT</p>
+  <div class="section-divider"></div>
+
+  <div class="account-cards fade-up" id="account-cards">
+    <!-- main.js에서 Firestore 데이터로 생성 -->
+  </div>
+</section>
+
+<footer>
+  <p>🌸 두 사람의 새로운 시작을 축하해주세요 🌸</p>
+</footer>
+
+<!-- 토스트 메시지 -->
+<div id="toast"></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

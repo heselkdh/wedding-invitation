@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>청첩장 관리자</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- 로그인 화면 -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>🌸 청첩장 관리자</h1>
+    <p>관리자 계정으로 로그인하세요</p>
+    <input type="email" id="login-email" placeholder="이메일">
+    <input type="password" id="login-pw" placeholder="비밀번호">
+    <button class="btn btn-primary btn-full" id="login-btn">로그인</button>
+    <p id="login-error" style="color:#c0392b;font-size:0.8rem;margin-top:12px;display:none;"></p>
+  </div>
+</div>
+
+<!-- 관리자 화면 -->
+<div id="admin-screen">
+  <header>
+    <h1>🌸 청첩장 관리자</h1>
+    <button class="btn btn-ghost" id="logout-btn">로그아웃</button>
+  </header>
+
+  <div class="admin-container">
+
+    <!-- 패널 1: 기본 정보 -->
+    <div class="panel" id="panel-info">
+      <div class="panel-header" onclick="togglePanel('panel-info')">
+        <h2>✏️ 기본 정보</h2>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="panel-body">
+        <div class="form-row">
+          <div>
+            <label>신랑 이름</label>
+            <input type="text" id="groomName" placeholder="홍길동">
+          </div>
+          <div>
+            <label>신부 이름</label>
+            <input type="text" id="brideName" placeholder="김영희">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>신랑 측 혼주 (쉼표로 구분)</label>
+            <input type="text" id="groomParents" placeholder="아버지 홍○○,어머니 이○○">
+          </div>
+          <div>
+            <label>신부 측 혼주 (쉼표로 구분)</label>
+            <input type="text" id="brideParents" placeholder="아버지 김○○,어머니 박○○">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>결혼식 날짜</label>
+            <input type="date" id="weddingDate">
+          </div>
+          <div>
+            <label>결혼식 시간 (예: 오후 2시 30분)</label>
+            <input type="text" id="weddingTime" placeholder="오후 2시 30분">
+          </div>
+        </div>
+        <label>예식장 이름</label>
+        <input type="text" id="venueName" placeholder="○○웨딩홀 ○층 ○○홀">
+        <label>예식장 주소</label>
+        <input type="text" id="venueAddress" placeholder="서울시 ○○구 ○○로 00">
+        <label>카카오맵 URL</label>
+        <input type="text" id="kakaoMapUrl" placeholder="https://kko.kakao.com/...">
+        <label>교통편 안내 (HTML 가능)</label>
+        <textarea id="transport" placeholder="<h4>🚇 지하철</h4><p>○호선 ○○역</p>"></textarea>
+        <button class="btn btn-primary" id="save-info-btn">저장</button>
+      </div>
+    </div>
+
+    <!-- 패널 2: 사진 관리 -->
+    <div class="panel collapsed" id="panel-photos">
+      <div class="panel-header" onclick="togglePanel('panel-photos')">
+        <h2>📸 사진 관리</h2>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="panel-body">
+        <div class="photo-grid" id="photo-grid"></div>
+        <label class="upload-area" id="upload-area">
+          <span style="font-size:2rem;">+</span>
+          <p>클릭하여 사진 추가 (여러 장 가능)</p>
+          <input type="file" id="photo-input" accept="image/*" multiple>
+        </label>
+        <p id="upload-progress" style="font-size:0.8rem;color:#8a6a76;"></p>
+      </div>
+    </div>
+
+    <!-- 패널 3: 계좌번호 -->
+    <div class="panel collapsed" id="panel-accounts">
+      <div class="panel-header" onclick="togglePanel('panel-accounts')">
+        <h2>💳 계좌번호</h2>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="panel-body">
+        <p style="font-size:0.8rem;color:#8a6a76;margin-bottom:16px;">신랑 측</p>
+        <div class="form-row">
+          <div>
+            <label>은행명</label>
+            <input type="text" id="groomBank" placeholder="국민은행">
+          </div>
+          <div>
+            <label>예금주</label>
+            <input type="text" id="groomHolder" placeholder="홍길동">
+          </div>
+        </div>
+        <label>계좌번호</label>
+        <input type="text" id="groomAccount" placeholder="000-0000-0000-00">
+
+        <p style="font-size:0.8rem;color:#8a6a76;margin:8px 0 16px;">신부 측</p>
+        <div class="form-row">
+          <div>
+            <label>은행명</label>
+            <input type="text" id="brideBank" placeholder="신한은행">
+          </div>
+          <div>
+            <label>예금주</label>
+            <input type="text" id="brideHolder" placeholder="김영희">
+          </div>
+        </div>
+        <label>계좌번호</label>
+        <input type="text" id="brideAccount" placeholder="000-0000-0000-00">
+
+        <button class="btn btn-primary" id="save-accounts-btn">저장</button>
+      </div>
+    </div>
+
+    <!-- 패널 4: 방명록 관리 -->
+    <div class="panel collapsed" id="panel-guestbook">
+      <div class="panel-header" onclick="togglePanel('panel-guestbook')">
+        <h2>🗑️ 방명록 관리</h2>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="panel-body">
+        <div id="guestbook-admin-list">
+          <p style="color:#8a6a76;font-size:0.85rem;">방명록을 불러오는 중...</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /admin-container -->
+</div>
+
+<div id="toast"></div>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
