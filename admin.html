@@ -74,6 +74,17 @@
         <input type="text" id="kakaoMapUrl" placeholder="https://kko.kakao.com/...">
         <label>교통편 안내 (HTML 가능)</label>
         <textarea id="transport" placeholder="<h4>🚇 지하철</h4><p>○호선 ○○역</p>"></textarea>
+        <label>약도 이미지</label>
+        <div id="map-image-preview" style="margin-bottom:10px;display:none;">
+          <img id="map-preview-img" src="" alt="약도" style="max-width:100%;border-radius:8px;border:1px solid #e8dde2;">
+          <button class="btn btn-danger" id="map-image-delete-btn" style="margin-top:8px;">🗑️ 약도 삭제</button>
+        </div>
+        <label class="upload-area" id="map-upload-area">
+          <span style="font-size:1.5rem;">🗺️</span>
+          <p>클릭하여 약도 이미지 업로드</p>
+          <input type="file" id="map-image-input" accept="image/*">
+        </label>
+        <p id="map-upload-progress" style="font-size:0.8rem;color:#8a6a76;"></p>
         <button class="btn btn-primary" id="save-info-btn">저장</button>
       </div>
     </div>

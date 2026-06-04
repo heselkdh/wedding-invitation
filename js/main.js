@@ -49,6 +49,11 @@ async function loadConfig() {
   const mapBtn = document.getElementById('kakao-map-btn');
   if (d.kakaoMapUrl && d.kakaoMapUrl !== '#') mapBtn.href = d.kakaoMapUrl;
 
+  if (d.mapImageUrl) {
+    document.getElementById('map-image').src = d.mapImageUrl;
+    document.getElementById('map-image-wrap').style.display = 'block';
+  }
+
   document.getElementById('transport-info').innerHTML = d.transport || '';
 
   startCountdown(d.weddingDate, d.weddingTime);

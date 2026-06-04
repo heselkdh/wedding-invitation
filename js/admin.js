@@ -69,7 +69,42 @@ async function loadInfoForm() {
     const el = document.getElementById(f);
     if (el && d[f] != null) el.value = d[f];
   });
+  if (d.mapImageUrl) showMapPreview(d.mapImageUrl);
 }
+
+// 약도 이미지 미리보기
+function showMapPreview(url) {
+  document.getElementById('map-preview-img').src = url;
+  document.getElementById('map-image-preview').style.display = 'block';
+  document.getElementById('map-upload-area').style.display = 'none';
+}
+
+// 약도 업로드
+document.getElementById('map-image-input').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const progress = document.getElementById('map-upload-progress');
+  progress.textContent = '업로드 중...';
+  try {
+    const url = await uploadToCloudinary(file);
+    await setDoc(doc(db, 'config', 'main'), { mapImageUrl: url }, { merge: true });
+    showMapPreview(url);
+    progress.textContent = '약도 업로드 완료! ✅';
+    setTimeout(() => { progress.textContent = ''; }, 3000);
+  } catch (err) {
+    progress.textContent = `오류: ${err.message}`;
+  }
+  e.target.value = '';
+});
+
+// 약도 삭제
+document.getElementById('map-image-delete-btn').addEventListener('click', async () => {
+  if (!confirm('약도 이미지를 삭제할까요?')) return;
+  await setDoc(doc(db, 'config', 'main'), { mapImageUrl: '' }, { merge: true });
+  document.getElementById('map-image-preview').style.display = 'none';
+  document.getElementById('map-upload-area').style.display = 'block';
+  showToast('약도가 삭제되었습니다');
+});
 
 document.getElementById('save-info-btn').addEventListener('click', async () => {
   const btn = document.getElementById('save-info-btn');
