@@ -2,7 +2,7 @@ import { db, isConfigured } from './firebase.js';
 import {
   doc, collection, getDoc, getDocs, addDoc, onSnapshot,
   serverTimestamp, query, orderBy
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 // ── 기본 샘플 데이터 (Firebase 미연동 시 표시) ──────────────────────
 const SAMPLE = {

@@ -1,14 +1,14 @@
 import { db, auth, storage } from './firebase.js';
 import {
   signInWithEmailAndPassword, signOut, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import {
   doc, collection, getDoc, getDocs, setDoc, addDoc, deleteDoc,
   onSnapshot, query, orderBy, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 import {
   ref, uploadBytesResumable, getDownloadURL, deleteObject
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-storage.js";
 
 // ── 로그인/로그아웃 ────────────────────────────────────────────────
 document.getElementById('login-btn').addEventListener('click', async () => {
