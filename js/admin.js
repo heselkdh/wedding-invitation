@@ -147,7 +147,10 @@ async function loadAccountsForm() {
   const snap = await getDoc(doc(db, 'accounts', 'main'));
   if (!snap.exists()) return;
   const d = snap.data();
-  const fields = ['groomBank','groomHolder','groomAccount','brideBank','brideHolder','brideAccount'];
+  const fields = ['groomBank','groomHolder','groomAccount',
+                  'groomParentBank','groomParentHolder','groomParentAccount',
+                  'brideBank','brideHolder','brideAccount',
+                  'brideParentBank','brideParentHolder','brideParentAccount'];
   fields.forEach(f => {
     const el = document.getElementById(f);
     if (el && d[f] != null) el.value = d[f];
@@ -159,7 +162,10 @@ document.getElementById('save-accounts-btn').addEventListener('click', async () 
   btn.classList.add('saving');
   btn.textContent = '저장 중...';
 
-  const fields = ['groomBank','groomHolder','groomAccount','brideBank','brideHolder','brideAccount'];
+  const fields = ['groomBank','groomHolder','groomAccount',
+                  'groomParentBank','groomParentHolder','groomParentAccount',
+                  'brideBank','brideHolder','brideAccount',
+                  'brideParentBank','brideParentHolder','brideParentAccount'];
   const data = {};
   fields.forEach(f => { data[f] = document.getElementById(f).value.trim(); });
 

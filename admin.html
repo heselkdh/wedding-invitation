@@ -102,33 +102,37 @@
         <span class="toggle-icon">▾</span>
       </div>
       <div class="panel-body">
-        <p style="font-size:0.8rem;color:#8a6a76;margin-bottom:16px;">신랑 측</p>
+        <p style="font-size:0.8rem;color:#8a6a76;margin-bottom:16px;">💍 신랑</p>
         <div class="form-row">
-          <div>
-            <label>은행명</label>
-            <input type="text" id="groomBank" placeholder="국민은행">
-          </div>
-          <div>
-            <label>예금주</label>
-            <input type="text" id="groomHolder" placeholder="홍길동">
-          </div>
+          <div><label>은행명</label><input type="text" id="groomBank" placeholder="국민은행"></div>
+          <div><label>예금주</label><input type="text" id="groomHolder" placeholder="홍길동"></div>
         </div>
         <label>계좌번호</label>
         <input type="text" id="groomAccount" placeholder="000-0000-0000-00">
 
-        <p style="font-size:0.8rem;color:#8a6a76;margin:8px 0 16px;">신부 측</p>
+        <p style="font-size:0.8rem;color:#8a6a76;margin:16px 0 16px;">👨‍👩‍👦 신랑 측 혼주</p>
         <div class="form-row">
-          <div>
-            <label>은행명</label>
-            <input type="text" id="brideBank" placeholder="신한은행">
-          </div>
-          <div>
-            <label>예금주</label>
-            <input type="text" id="brideHolder" placeholder="김영희">
-          </div>
+          <div><label>은행명</label><input type="text" id="groomParentBank" placeholder="국민은행"></div>
+          <div><label>예금주</label><input type="text" id="groomParentHolder" placeholder="홍○○"></div>
+        </div>
+        <label>계좌번호</label>
+        <input type="text" id="groomParentAccount" placeholder="000-0000-0000-00">
+
+        <p style="font-size:0.8rem;color:#8a6a76;margin:16px 0 16px;">💍 신부</p>
+        <div class="form-row">
+          <div><label>은행명</label><input type="text" id="brideBank" placeholder="신한은행"></div>
+          <div><label>예금주</label><input type="text" id="brideHolder" placeholder="김영희"></div>
         </div>
         <label>계좌번호</label>
         <input type="text" id="brideAccount" placeholder="000-0000-0000-00">
+
+        <p style="font-size:0.8rem;color:#8a6a76;margin:16px 0 16px;">👨‍👩‍👦 신부 측 혼주</p>
+        <div class="form-row">
+          <div><label>은행명</label><input type="text" id="brideParentBank" placeholder="신한은행"></div>
+          <div><label>예금주</label><input type="text" id="brideParentHolder" placeholder="김○○"></div>
+        </div>
+        <label>계좌번호</label>
+        <input type="text" id="brideParentAccount" placeholder="000-0000-0000-00">
 
         <button class="btn btn-primary" id="save-accounts-btn">저장</button>
       </div>

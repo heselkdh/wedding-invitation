@@ -190,8 +190,12 @@ document.getElementById('gb-submit').addEventListener('click', async () => {
 
 // ── 계좌번호 ────────────────────────────────────────────────────────
 async function loadAccounts() {
-  let data = { groomHolder:'신랑', groomBank:'은행명', groomAccount:'계좌번호',
-               brideHolder:'신부', brideBank:'은행명', brideAccount:'계좌번호' };
+  let data = {
+    groomHolder:'신랑', groomBank:'', groomAccount:'',
+    groomParentHolder:'', groomParentBank:'', groomParentAccount:'',
+    brideHolder:'신부', brideBank:'', brideAccount:'',
+    brideParentHolder:'', brideParentBank:'', brideParentAccount:''
+  };
 
   if (isConfigured) {
     const snap = await getDoc(doc(db, 'accounts', 'main'));
@@ -200,9 +204,11 @@ async function loadAccounts() {
 
   const container = document.getElementById('account-cards');
   [
-    { side:'신랑 측', holder:data.groomHolder, bank:data.groomBank, number:data.groomAccount },
-    { side:'신부 측', holder:data.brideHolder, bank:data.brideBank, number:data.brideAccount },
-  ].forEach(({ side, holder, bank, number }) => {
+    { side:'신랑', holder:data.groomHolder, bank:data.groomBank, number:data.groomAccount },
+    { side:'신랑 측 혼주', holder:data.groomParentHolder, bank:data.groomParentBank, number:data.groomParentAccount },
+    { side:'신부', holder:data.brideHolder, bank:data.brideBank, number:data.brideAccount },
+    { side:'신부 측 혼주', holder:data.brideParentHolder, bank:data.brideParentBank, number:data.brideParentAccount },
+  ].filter(({ number }) => number && number !== '계좌번호').forEach(({ side, holder, bank, number }) => {
     const el = document.createElement('div');
     el.className = 'account-card';
     el.innerHTML = `
