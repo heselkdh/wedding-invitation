@@ -1,4 +1,4 @@
-import { db, auth, storage } from './firebase.js';
+import { db, auth } from './firebase.js';
 import {
   signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
@@ -6,9 +6,21 @@ import {
   doc, collection, getDoc, getDocs, setDoc, addDoc, deleteDoc,
   onSnapshot, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-import {
-  ref, uploadBytesResumable, getDownloadURL, deleteObject
-} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-storage.js";
+
+const CLOUDINARY_CLOUD = 'drgkuhjnc';
+const CLOUDINARY_PRESET = 'wedding';
+
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+    method: 'POST', body: formData
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message ?? '업로드 실패');
+  return data.secure_url;
+}
 
 // ── 로그인/로그아웃 ────────────────────────────────────────────────
 document.getElementById('login-btn').addEventListener('click', async () => {
@@ -104,28 +116,23 @@ document.getElementById('photo-input').addEventListener('change', async e => {
   const progressEl = document.getElementById('upload-progress');
   progressEl.textContent = `0 / ${files.length} 업로드 중...`;
 
-  // 현재 최대 order 구하기
   const snap = await getDocs(query(collection(db, 'photos'), orderBy('order', 'desc')));
   let maxOrder = snap.empty ? 0 : (snap.docs[0].data().order ?? 0);
 
   let done = 0;
   for (const file of files) {
-    const storagePath = `photos/${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, storagePath);
-    await new Promise((resolve, reject) => {
-      const task = uploadBytesResumable(storageRef, file);
-      task.on('state_changed', null, reject, async () => {
-        const url = await getDownloadURL(task.snapshot.ref);
-        await addDoc(collection(db, 'photos'), {
-          url, storagePath, order: ++maxOrder, createdAt: serverTimestamp()
-        });
-        done++;
-        progressEl.textContent = `${done} / ${files.length} 업로드 완료`;
-        resolve();
+    try {
+      const url = await uploadToCloudinary(file);
+      await addDoc(collection(db, 'photos'), {
+        url, order: ++maxOrder, createdAt: serverTimestamp()
       });
-    });
+      done++;
+      progressEl.textContent = `${done} / ${files.length} 업로드 완료`;
+    } catch (err) {
+      progressEl.textContent = `오류: ${err.message}`;
+    }
   }
-  progressEl.textContent = '업로드 완료!';
+  progressEl.textContent = '업로드 완료! ✅';
   setTimeout(() => { progressEl.textContent = ''; }, 3000);
   e.target.value = '';
 });
@@ -133,11 +140,7 @@ document.getElementById('photo-input').addEventListener('change', async e => {
 async function deletePhoto(e) {
   const btn = e.currentTarget;
   const id = btn.dataset.id;
-  const storagePath = btn.dataset.path;
   if (!confirm('이 사진을 삭제할까요?')) return;
-  try {
-    await deleteObject(ref(storage, storagePath));
-  } catch { /* 파일이 없어도 Firestore는 삭제 */ }
   await deleteDoc(doc(db, 'photos', id));
   showToast('사진이 삭제되었습니다');
 }
