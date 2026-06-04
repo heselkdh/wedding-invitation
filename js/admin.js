@@ -151,9 +151,11 @@ async function loadAccountsForm() {
   if (!snap.exists()) return;
   const d = snap.data();
   const fields = ['groomBank','groomHolder','groomAccount',
-                  'groomParentBank','groomParentHolder','groomParentAccount',
+                  'groomFatherBank','groomFatherHolder','groomFatherAccount',
+                  'groomMotherBank','groomMotherHolder','groomMotherAccount',
                   'brideBank','brideHolder','brideAccount',
-                  'brideParentBank','brideParentHolder','brideParentAccount'];
+                  'brideFatherBank','brideFatherHolder','brideFatherAccount',
+                  'brideMotherBank','brideMotherHolder','brideMotherAccount'];
   fields.forEach(f => {
     const el = document.getElementById(f);
     if (el && d[f] != null) el.value = d[f];
@@ -166,9 +168,11 @@ document.getElementById('save-accounts-btn').addEventListener('click', async () 
   btn.textContent = '저장 중...';
 
   const fields = ['groomBank','groomHolder','groomAccount',
-                  'groomParentBank','groomParentHolder','groomParentAccount',
+                  'groomFatherBank','groomFatherHolder','groomFatherAccount',
+                  'groomMotherBank','groomMotherHolder','groomMotherAccount',
                   'brideBank','brideHolder','brideAccount',
-                  'brideParentBank','brideParentHolder','brideParentAccount'];
+                  'brideFatherBank','brideFatherHolder','brideFatherAccount',
+                  'brideMotherBank','brideMotherHolder','brideMotherAccount'];
   const data = {};
   fields.forEach(f => { data[f] = document.getElementById(f).value.trim(); });
 

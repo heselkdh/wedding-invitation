@@ -191,10 +191,12 @@ document.getElementById('gb-submit').addEventListener('click', async () => {
 // ── 계좌번호 ────────────────────────────────────────────────────────
 async function loadAccounts() {
   let data = {
-    groomHolder:'신랑', groomBank:'', groomAccount:'',
-    groomParentHolder:'', groomParentBank:'', groomParentAccount:'',
-    brideHolder:'신부', brideBank:'', brideAccount:'',
-    brideParentHolder:'', brideParentBank:'', brideParentAccount:''
+    groomHolder:'', groomBank:'', groomAccount:'',
+    groomFatherHolder:'', groomFatherBank:'', groomFatherAccount:'',
+    groomMotherHolder:'', groomMotherBank:'', groomMotherAccount:'',
+    brideHolder:'', brideBank:'', brideAccount:'',
+    brideFatherHolder:'', brideFatherBank:'', brideFatherAccount:'',
+    brideMotherHolder:'', brideMotherBank:'', brideMotherAccount:''
   };
 
   if (isConfigured) {
@@ -204,11 +206,13 @@ async function loadAccounts() {
 
   const container = document.getElementById('account-cards');
   [
-    { side:'신랑', holder:data.groomHolder, bank:data.groomBank, number:data.groomAccount },
-    { side:'신랑 측 혼주', holder:data.groomParentHolder, bank:data.groomParentBank, number:data.groomParentAccount },
-    { side:'신부', holder:data.brideHolder, bank:data.brideBank, number:data.brideAccount },
-    { side:'신부 측 혼주', holder:data.brideParentHolder, bank:data.brideParentBank, number:data.brideParentAccount },
-  ].filter(({ number }) => number && number !== '계좌번호').forEach(({ side, holder, bank, number }) => {
+    { side:'신랑',           holder:data.groomHolder,       bank:data.groomBank,       number:data.groomAccount },
+    { side:'신랑 측 (아버지)', holder:data.groomFatherHolder, bank:data.groomFatherBank, number:data.groomFatherAccount },
+    { side:'신랑 측 (어머니)', holder:data.groomMotherHolder, bank:data.groomMotherBank, number:data.groomMotherAccount },
+    { side:'신부',           holder:data.brideHolder,       bank:data.brideBank,       number:data.brideAccount },
+    { side:'신부 측 (아버지)', holder:data.brideFatherHolder, bank:data.brideFatherBank, number:data.brideFatherAccount },
+    { side:'신부 측 (어머니)', holder:data.brideMotherHolder, bank:data.brideMotherBank, number:data.brideMotherAccount },
+  ].filter(({ number }) => number && number.trim()).forEach(({ side, holder, bank, number }) => {
     const el = document.createElement('div');
     el.className = 'account-card';
     el.innerHTML = `
