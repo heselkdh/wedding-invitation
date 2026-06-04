@@ -117,11 +117,16 @@ document.getElementById('save-info-btn').addEventListener('click', async () => {
   const data = {};
   fields.forEach(f => { data[f] = document.getElementById(f).value.trim(); });
 
-  await setDoc(doc(db, 'config', 'main'), data, { merge: true });
+  try {
+    await setDoc(doc(db, 'config', 'main'), data, { merge: true });
+    showToast('기본 정보가 저장되었습니다 ✅');
+  } catch (err) {
+    console.error('저장 실패:', err);
+    showToast(`저장 실패: ${err.message}`);
+  }
 
   btn.classList.remove('saving');
   btn.textContent = '저장';
-  showToast('기본 정보가 저장되었습니다');
 });
 
 // ── 2. 사진 관리 ────────────────────────────────────────────────────
@@ -211,11 +216,16 @@ document.getElementById('save-accounts-btn').addEventListener('click', async () 
   const data = {};
   fields.forEach(f => { data[f] = document.getElementById(f).value.trim(); });
 
-  await setDoc(doc(db, 'accounts', 'main'), data, { merge: true });
+  try {
+    await setDoc(doc(db, 'accounts', 'main'), data, { merge: true });
+    showToast('계좌번호가 저장되었습니다 ✅');
+  } catch (err) {
+    console.error('저장 실패:', err);
+    showToast(`저장 실패: ${err.message}`);
+  }
 
   btn.classList.remove('saving');
   btn.textContent = '저장';
-  showToast('계좌번호가 저장되었습니다');
 });
 
 // ── 4. 방명록 관리 ─────────────────────────────────────────────────
