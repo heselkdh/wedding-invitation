@@ -151,8 +151,13 @@
   <p class="section-title">ACCOUNT</p>
   <div class="section-divider"></div>
 
-  <div class="account-cards fade-up" id="account-cards">
-    <!-- main.js에서 Firestore 데이터로 생성 -->
+  <div class="fade-up">
+    <div class="account-tabs">
+      <button class="account-tab active" onclick="switchTab('groom')">신랑 측</button>
+      <button class="account-tab"        onclick="switchTab('bride')">신부 측</button>
+    </div>
+    <div class="account-panel active" id="account-panel-groom"></div>
+    <div class="account-panel"        id="account-panel-bride"></div>
   </div>
 </section>
 

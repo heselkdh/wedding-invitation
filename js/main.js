@@ -209,31 +209,49 @@ async function loadAccounts() {
     if (snap.exists()) data = { ...data, ...snap.data() };
   }
 
-  const container = document.getElementById('account-cards');
-  [
-    { side:'신랑',           holder:data.groomHolder,       bank:data.groomBank,       number:data.groomAccount },
-    { side:'신랑 측 (아버지)', holder:data.groomFatherHolder, bank:data.groomFatherBank, number:data.groomFatherAccount },
-    { side:'신랑 측 (어머니)', holder:data.groomMotherHolder, bank:data.groomMotherBank, number:data.groomMotherAccount },
-    { side:'신부',           holder:data.brideHolder,       bank:data.brideBank,       number:data.brideAccount },
-    { side:'신부 측 (아버지)', holder:data.brideFatherHolder, bank:data.brideFatherBank, number:data.brideFatherAccount },
-    { side:'신부 측 (어머니)', holder:data.brideMotherHolder, bank:data.brideMotherBank, number:data.brideMotherAccount },
-  ].filter(({ number }) => number && number.trim()).forEach(({ side, holder, bank, number }) => {
-    const el = document.createElement('div');
-    el.className = 'account-card';
-    el.innerHTML = `
-      <div class="account-info">
-        <div class="account-side">${side}</div>
-        <div class="account-holder">${holder}</div>
-        <div class="account-number">${bank} ${number}</div>
-      </div>
-      <button class="copy-btn" data-number="${number}">복사</button>
-    `;
-    el.querySelector('.copy-btn').addEventListener('click', () => {
-      navigator.clipboard.writeText(number).then(() => showToast('계좌번호가 복사되었습니다'));
-    });
-    container.appendChild(el);
-  });
+  const groomPanel = document.getElementById('account-panel-groom');
+  const bridePanel = document.getElementById('account-panel-bride');
+
+  const groomList = [
+    { side:'신랑',      holder:data.groomHolder,       bank:data.groomBank,       number:data.groomAccount },
+    { side:'아버지',    holder:data.groomFatherHolder, bank:data.groomFatherBank, number:data.groomFatherAccount },
+    { side:'어머니',    holder:data.groomMotherHolder, bank:data.groomMotherBank, number:data.groomMotherAccount },
+  ];
+  const brideList = [
+    { side:'신부',      holder:data.brideHolder,       bank:data.brideBank,       number:data.brideAccount },
+    { side:'아버지',    holder:data.brideFatherHolder, bank:data.brideFatherBank, number:data.brideFatherAccount },
+    { side:'어머니',    holder:data.brideMotherHolder, bank:data.brideMotherBank, number:data.brideMotherAccount },
+  ];
+
+  groomList.filter(a => a.number?.trim()).forEach(a => groomPanel.appendChild(makeAccountCard(a)));
+  brideList.filter(a => a.number?.trim()).forEach(a => bridePanel.appendChild(makeAccountCard(a)));
 }
+
+function makeAccountCard({ side, holder, bank, number }) {
+  const el = document.createElement('div');
+  el.className = 'account-card';
+  el.innerHTML = `
+    <div class="account-info">
+      <div class="account-side">${side}</div>
+      <div class="account-holder">${holder}</div>
+      <div class="account-number">${bank} ${number}</div>
+    </div>
+    <button class="copy-btn">복사</button>
+  `;
+  el.querySelector('.copy-btn').addEventListener('click', () => {
+    navigator.clipboard.writeText(number).then(() => showToast('복사되었습니다'));
+  });
+  return el;
+}
+
+// ── 계좌 탭 전환 ────────────────────────────────────────────────────
+window.switchTab = function(side) {
+  document.querySelectorAll('.account-tab').forEach((t, i) => {
+    t.classList.toggle('active', (side === 'groom' && i === 0) || (side === 'bride' && i === 1));
+  });
+  document.getElementById('account-panel-groom').classList.toggle('active', side === 'groom');
+  document.getElementById('account-panel-bride').classList.toggle('active', side === 'bride');
+};
 
 // ── 패럴랙스 ────────────────────────────────────────────────────────
 function initParallax() {
