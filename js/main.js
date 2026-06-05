@@ -244,15 +244,6 @@ function makeAccountCard({ side, holder, bank, number }) {
   return el;
 }
 
-// ── 계좌 탭 전환 ────────────────────────────────────────────────────
-window.switchTab = function(side) {
-  document.querySelectorAll('.account-tab').forEach((t, i) => {
-    t.classList.toggle('active', (side === 'groom' && i === 0) || (side === 'bride' && i === 1));
-  });
-  document.getElementById('account-panel-groom').classList.toggle('active', side === 'groom');
-  document.getElementById('account-panel-bride').classList.toggle('active', side === 'bride');
-};
-
 // ── 패럴랙스 ────────────────────────────────────────────────────────
 function initParallax() {
   const heroBg = document.getElementById('hero-bg');
