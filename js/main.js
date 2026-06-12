@@ -57,6 +57,56 @@ async function loadConfig() {
   document.getElementById('transport-info').innerHTML = d.transport || '';
 
   startCountdown(d.weddingDate, d.weddingTime);
+
+  if (d.musicUrl) initMusic(d.musicUrl);
+}
+
+// ── 음악 (YouTube IFrame API) ────────────────────────────────────────
+function extractVideoId(url) {
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function initMusic(url) {
+  const videoId = extractVideoId(url);
+  if (!videoId) return;
+
+  const btn = document.getElementById('music-btn');
+  btn.style.display = 'flex';
+
+  let player = null;
+  let apiReady = false;
+
+  function createPlayer() {
+    player = new window.YT.Player('yt-player', {
+      videoId,
+      playerVars: { autoplay: 0, controls: 0, loop: 1, playlist: videoId },
+      events: {
+        onStateChange: e => {
+          btn.classList.toggle('playing', e.data === window.YT.PlayerState.PLAYING);
+        }
+      }
+    });
+  }
+
+  if (window.YT && window.YT.Player) {
+    createPlayer();
+  } else {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      if (prev) prev();
+      createPlayer();
+    };
+  }
+
+  btn.addEventListener('click', () => {
+    if (!player) return;
+    if (player.getPlayerState() === window.YT.PlayerState.PLAYING) {
+      player.pauseVideo();
+    } else {
+      player.playVideo();
+    }
+  });
 }
 
 function formatDate(dateStr) {

@@ -571,6 +571,48 @@ section {
 
 .copy-btn:hover { background: var(--pink-mid); color: var(--white); }
 
+/* ── 음악 플로팅 버튼 ── */
+#music-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 800;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--pink-deep);
+  color: var(--white);
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(181,84,106,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+}
+
+#music-btn:hover { background: var(--pink-mid); }
+
+#music-btn.playing {
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+#yt-player {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  bottom: 0;
+  right: 0;
+}
+
 /* ── 토스트 ── */
 #toast {
   position: fixed;
