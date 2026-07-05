@@ -1,16 +1,21 @@
+/* ── 구글 폰트 ── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nanum+Myeongjo:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+
 /* ── 디자인 토큰 ── */
 :root {
-  --pink-deep:   #b5546a;
-  --pink-mid:    #d4849a;
-  --pink-light:  #f7dde4;
-  --pink-bg:     #fff5f7;
-  --gold:        #c9956a;
-  --text-dark:   #3a2030;
-  --text-mid:    #7a5060;
-  --text-light:  #b08898;
+  --rose:        #96445c;
+  --rose-mid:    #b8728a;
+  --rose-light:  #e8c8d4;
+  --ivory:       #fdf9f5;
+  --ivory-dark:  #f7f0ea;
+  --gold:        #b0896a;
+  --text-dark:   #2a1820;
+  --text-mid:    #664858;
+  --text-light:  #a07888;
   --white:       #ffffff;
-  --radius:      12px;
-  --font-serif:  'Noto Serif KR', 'Georgia', serif;
+  --radius:      14px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-serif:  'Nanum Myeongjo', Georgia, serif;
   --font-sans:   'Noto Sans KR', sans-serif;
   --transition:  0.4s ease;
 }
@@ -22,44 +27,62 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-sans);
-  background: var(--pink-bg);
+  font-weight: 300;
+  background: var(--ivory);
   color: var(--text-dark);
   overflow-x: hidden;
   max-width: 480px;
   margin: 0 auto;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
 }
-
-/* ── 구글 폰트 ── */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400&display=swap');
 
 /* ── 공통 섹션 ── */
 section {
-  padding: 60px 28px;
+  padding: 72px 32px;
   position: relative;
 }
 
 .section-title {
-  font-family: var(--font-serif);
-  font-size: 1.1rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
   font-weight: 400;
-  color: var(--pink-deep);
-  letter-spacing: 0.2em;
+  letter-spacing: 0.45em;
+  color: var(--rose-mid);
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
 }
 
 .section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 auto 44px;
+  color: var(--rose-light);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  display: block;
   width: 40px;
   height: 1px;
-  background: var(--pink-mid);
-  margin: 0 auto 32px;
+  background: linear-gradient(to right, transparent, var(--rose-light));
+}
+
+.section-divider::after {
+  background: linear-gradient(to left, transparent, var(--rose-light));
 }
 
 /* ── 페이드인 애니메이션 ── */
 .fade-up {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s var(--transition), transform 0.7s var(--transition);
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
 }
 .fade-up.visible {
   opacity: 1;
@@ -79,7 +102,7 @@ section {
   padding: 0;
   overflow: hidden;
   position: relative;
-  background: var(--pink-light);
+  background: var(--rose-light);
 }
 
 #hero-bg {
@@ -96,54 +119,63 @@ section {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(255, 240, 244, 0.55);
+  background: rgba(253, 249, 245, 0.62);
 }
 
 .hero-content {
   position: relative;
   z-index: 1;
   text-align: center;
-  padding: 0 28px;
+  padding: 0 32px;
 }
 
 .hero-flower {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  opacity: 0.8;
+  font-size: 1.2rem;
+  margin-bottom: 28px;
+  opacity: 0.55;
+  letter-spacing: 0.5em;
 }
 
 .hero-names {
   font-family: var(--font-serif);
-  font-size: 2rem;
-  font-weight: 300;
-  color: var(--pink-deep);
-  letter-spacing: 0.15em;
-  margin-bottom: 16px;
+  font-size: 2.6rem;
+  font-weight: 400;
+  color: var(--text-dark);
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+  line-height: 1.15;
 }
 
 .hero-amp {
-  color: var(--pink-mid);
-  font-size: 1.4rem;
-  margin: 0 10px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--rose);
+  font-size: 1.8rem;
+  margin: 0 14px;
+  vertical-align: middle;
 }
 
 .hero-date {
-  font-family: var(--font-serif);
-  font-size: 0.9rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 400;
   color: var(--text-mid);
-  letter-spacing: 0.25em;
+  letter-spacing: 0.35em;
   margin-bottom: 10px;
+  text-transform: uppercase;
 }
 
 .hero-venue-short {
-  font-size: 0.8rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
   color: var(--text-light);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.2em;
 }
 
 .hero-scroll-hint {
   position: absolute;
-  bottom: 28px;
+  bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
@@ -151,24 +183,25 @@ section {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  animation: bounce 2s infinite;
+  animation: bounce 2.4s ease-in-out infinite;
 }
 
 .hero-scroll-hint span {
-  font-size: 0.7rem;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
   color: var(--text-light);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.25em;
 }
 
 .hero-scroll-hint::after {
   content: '↓';
-  color: var(--pink-mid);
-  font-size: 1.1rem;
+  color: var(--rose-mid);
+  font-size: 0.9rem;
 }
 
 @keyframes bounce {
   0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%       { transform: translateX(-50%) translateY(6px); }
+  50%       { transform: translateX(-50%) translateY(7px); }
 }
 
 /* ────────────────────────────
@@ -182,114 +215,127 @@ section {
 .parents-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
   margin-top: 8px;
 }
 
 .parents-side {
-  background: var(--pink-bg);
+  background: var(--ivory);
   border-radius: var(--radius);
-  padding: 20px 12px;
+  padding: 24px 14px;
+  border: 1px solid var(--rose-light);
 }
 
 .parents-label {
-  font-size: 0.7rem;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 400;
   color: var(--text-light);
-  letter-spacing: 0.15em;
-  margin-bottom: 10px;
+  letter-spacing: 0.25em;
+  margin-bottom: 12px;
   text-transform: uppercase;
 }
 
 .parents-name {
   font-family: var(--font-serif);
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--text-dark);
-  line-height: 1.9;
+  line-height: 2.1;
 }
 
 .main-couple {
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
 
 .main-couple-names {
   font-family: var(--font-serif);
-  font-size: 1.4rem;
-  font-weight: 300;
-  color: var(--pink-deep);
+  font-size: 1.55rem;
+  font-weight: 400;
+  color: var(--text-dark);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
+  letter-spacing: 0.06em;
 }
 
 .couple-divider {
-  font-size: 1rem;
-  color: var(--pink-light);
+  font-size: 0.85rem;
+  color: var(--rose-mid);
+  opacity: 0.7;
 }
 
 /* ────────────────────────────
    3. 일시 / 장소
 ──────────────────────────── */
 #datetime {
-  background: var(--pink-bg);
+  background: var(--ivory-dark);
   text-align: center;
 }
 
 .datetime-main {
   font-family: var(--font-serif);
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   color: var(--text-dark);
-  line-height: 2;
-  margin-bottom: 24px;
+  line-height: 2.2;
+  margin-bottom: 28px;
 }
 
 .datetime-main strong {
-  color: var(--pink-deep);
-  font-weight: 600;
+  color: var(--rose);
+  font-weight: 700;
+  display: block;
 }
 
 .countdown {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin: 28px 0;
+  gap: 12px;
+  margin: 32px 0;
 }
 
 .countdown-box {
   background: var(--white);
   border-radius: var(--radius);
-  padding: 14px 18px;
-  min-width: 64px;
-  box-shadow: 0 2px 12px rgba(180, 80, 100, 0.08);
+  padding: 16px 18px;
+  min-width: 68px;
+  box-shadow: 0 2px 16px rgba(150, 68, 92, 0.07);
+  border: 1px solid var(--rose-light);
 }
 
 .countdown-num {
-  font-family: var(--font-serif);
-  font-size: 1.6rem;
-  color: var(--pink-deep);
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 300;
+  color: var(--rose);
   display: block;
   line-height: 1;
 }
 
 .countdown-label {
-  font-size: 0.65rem;
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  font-weight: 400;
   color: var(--text-light);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.18em;
   display: block;
-  margin-top: 4px;
+  margin-top: 6px;
+  text-transform: uppercase;
 }
 
 .venue-name {
   font-family: var(--font-serif);
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: var(--text-dark);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
 }
 
 .venue-address {
-  font-size: 0.8rem;
+  font-size: 0.83rem;
   color: var(--text-light);
-  line-height: 1.6;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
 }
 
 /* ────────────────────────────
@@ -300,88 +346,93 @@ section {
   text-align: center;
 }
 
-.map-placeholder {
-  background: var(--pink-light);
-  border-radius: var(--radius);
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-  color: var(--text-light);
-  font-size: 0.85rem;
-}
-
 .map-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--pink-deep);
+  background: var(--rose);
   color: var(--white);
   border: none;
   border-radius: 50px;
-  padding: 14px 28px;
-  font-size: 0.9rem;
+  padding: 14px 32px;
+  font-size: 0.85rem;
   font-family: var(--font-sans);
+  font-weight: 400;
   cursor: pointer;
   text-decoration: none;
-  margin-bottom: 24px;
-  transition: background var(--transition);
+  margin-bottom: 28px;
+  letter-spacing: 0.06em;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(150, 68, 92, 0.2);
 }
 
-.map-btn:hover { background: var(--pink-mid); }
+.map-btn:hover {
+  background: var(--rose-mid);
+  box-shadow: 0 6px 20px rgba(150, 68, 92, 0.3);
+  transform: translateY(-1px);
+}
 
 .transport-info {
   text-align: left;
-  background: var(--pink-bg);
+  background: var(--ivory);
   border-radius: var(--radius);
-  padding: 20px;
-  font-size: 0.85rem;
+  padding: 24px;
+  font-size: 0.88rem;
   color: var(--text-mid);
   line-height: 2;
+  border: 1px solid var(--rose-light);
 }
 
 .transport-info h4 {
-  font-family: var(--font-serif);
-  font-size: 0.8rem;
-  color: var(--pink-deep);
-  letter-spacing: 0.1em;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--rose);
+  letter-spacing: 0.22em;
   margin-bottom: 6px;
-  margin-top: 12px;
+  margin-top: 18px;
+  text-transform: uppercase;
 }
+
 .transport-info h4:first-child { margin-top: 0; }
+
+.transport-info p {
+  font-size: 0.88rem;
+  line-height: 1.9;
+}
 
 /* ────────────────────────────
    5. 포토 갤러리
 ──────────────────────────── */
 #gallery {
-  background: var(--pink-bg);
+  background: var(--ivory-dark);
 }
 
 .gallery-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .gallery-item {
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   aspect-ratio: 1;
   cursor: pointer;
   position: relative;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 }
 
 .gallery-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.5s ease;
 }
 
 .gallery-item:hover img,
 .gallery-item:active img {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 /* Lightbox */
@@ -389,7 +440,7 @@ section {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(30, 10, 20, 0.92);
+  background: rgba(20, 8, 14, 0.94);
   z-index: 1000;
   align-items: center;
   justify-content: center;
@@ -415,7 +466,10 @@ section {
   font-size: 2rem;
   cursor: pointer;
   line-height: 1;
+  opacity: 0.75;
+  transition: opacity 0.2s;
 }
+#lightbox-close:hover { opacity: 1; }
 
 /* ────────────────────────────
    6. 방명록
@@ -425,30 +479,39 @@ section {
 }
 
 .guestbook-form {
-  background: var(--pink-bg);
+  background: var(--ivory);
   border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 24px;
+  padding: 24px;
+  margin-bottom: 28px;
+  border: 1px solid var(--rose-light);
 }
 
 .guestbook-form input,
 .guestbook-form textarea {
   width: 100%;
-  border: 1px solid var(--pink-light);
+  border: 1px solid var(--rose-light);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 13px 16px;
   font-family: var(--font-sans);
+  font-weight: 300;
   font-size: 0.9rem;
   color: var(--text-dark);
   background: var(--white);
   margin-bottom: 10px;
   outline: none;
   transition: border-color var(--transition);
+  line-height: 1.7;
+}
+
+.guestbook-form input::placeholder,
+.guestbook-form textarea::placeholder {
+  color: var(--text-light);
+  font-weight: 300;
 }
 
 .guestbook-form input:focus,
 .guestbook-form textarea:focus {
-  border-color: var(--pink-mid);
+  border-color: var(--rose-mid);
 }
 
 .guestbook-form textarea {
@@ -458,63 +521,72 @@ section {
 
 .guestbook-submit {
   width: 100%;
-  background: var(--pink-deep);
+  background: var(--rose);
   color: var(--white);
   border: none;
   border-radius: 8px;
-  padding: 13px;
-  font-size: 0.9rem;
+  padding: 14px;
+  font-size: 0.88rem;
   font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: 0.06em;
   cursor: pointer;
   transition: background var(--transition);
 }
 
-.guestbook-submit:hover { background: var(--pink-mid); }
+.guestbook-submit:hover { background: var(--rose-mid); }
 
 .guestbook-messages {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .guestbook-msg {
-  background: var(--pink-bg);
+  background: var(--ivory);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--rose-light);
 }
 
 .guestbook-msg-name {
   font-family: var(--font-serif);
-  font-size: 0.85rem;
-  color: var(--pink-deep);
-  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: var(--rose);
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
 }
 
 .guestbook-msg-text {
   font-size: 0.9rem;
   color: var(--text-mid);
-  line-height: 1.6;
+  line-height: 1.8;
 }
 
 .guestbook-msg-date {
-  font-size: 0.7rem;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
   color: var(--text-light);
-  margin-top: 8px;
+  margin-top: 10px;
+  letter-spacing: 0.1em;
 }
 
 /* ────────────────────────────
    7. 계좌번호
 ──────────────────────────── */
 #accounts {
-  background: var(--pink-bg);
+  background: var(--ivory-dark);
 }
 
 .account-group-label {
-  font-size: 0.72rem;
-  color: var(--pink-deep);
-  letter-spacing: 0.12em;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--rose-mid);
+  letter-spacing: 0.25em;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
 
 .account-cards {
@@ -523,53 +595,62 @@ section {
   gap: 8px;
 }
 
-/* 카드 */
 .account-card {
   background: var(--white);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 6px rgba(180,80,100,0.06);
+  box-shadow: 0 2px 10px rgba(150, 68, 92, 0.05);
+  border: 1px solid var(--rose-light);
 }
 
 .account-info .account-side {
-  font-size: 0.65rem;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
   color: var(--text-light);
-  letter-spacing: 0.08em;
-  margin-bottom: 2px;
+  letter-spacing: 0.12em;
+  margin-bottom: 3px;
+  text-transform: uppercase;
 }
 
 .account-info .account-holder {
   font-family: var(--font-serif);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--text-dark);
-  margin-bottom: 2px;
-}
-
-.account-info .account-number {
-  font-size: 0.78rem;
-  color: var(--text-mid);
+  margin-bottom: 3px;
   letter-spacing: 0.03em;
 }
 
-.copy-btn {
-  background: var(--pink-light);
-  color: var(--pink-deep);
-  border: none;
-  border-radius: 6px;
-  padding: 7px 12px;
-  font-size: 0.75rem;
-  font-family: var(--font-sans);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background var(--transition);
-  flex-shrink: 0;
-  margin-left: 10px;
+.account-info .account-number {
+  font-size: 0.8rem;
+  color: var(--text-mid);
+  letter-spacing: 0.04em;
 }
 
-.copy-btn:hover { background: var(--pink-mid); color: var(--white); }
+.copy-btn {
+  background: var(--ivory);
+  color: var(--rose);
+  border: 1px solid var(--rose-light);
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 0.75rem;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 12px;
+  letter-spacing: 0.04em;
+}
+
+.copy-btn:hover {
+  background: var(--rose);
+  color: var(--white);
+  border-color: var(--rose);
+}
 
 /* ── 음악 컨트롤 바 ── */
 #music-bar {
@@ -580,19 +661,19 @@ section {
   display: none;
   align-items: center;
   gap: 2px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-radius: 50px;
   padding: 6px 10px 6px 14px;
-  box-shadow: 0 2px 14px rgba(181, 84, 106, 0.2);
-  border: 1px solid var(--pink-light);
+  box-shadow: 0 2px 16px rgba(150, 68, 92, 0.15);
+  border: 1px solid var(--rose-light);
 }
 
 #music-bar.visible { display: flex; }
 
 .music-bar-note {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin-right: 2px;
 }
 
@@ -606,16 +687,18 @@ section {
 }
 
 .music-bar-label {
-  font-size: 0.75rem;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 400;
   color: var(--text-light);
   margin-right: 4px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .music-bar-divider {
   width: 1px;
-  height: 16px;
-  background: var(--pink-light);
+  height: 14px;
+  background: var(--rose-light);
   margin: 0 2px;
 }
 
@@ -625,7 +708,7 @@ section {
   border: none;
   cursor: pointer;
   font-size: 0.8rem;
-  color: var(--pink-deep);
+  color: var(--rose);
   padding: 4px 6px;
   border-radius: 20px;
   transition: background 0.2s ease;
@@ -656,13 +739,15 @@ section {
   background: var(--text-dark);
   color: var(--white);
   border-radius: 50px;
-  padding: 10px 22px;
-  font-size: 0.85rem;
+  padding: 11px 24px;
+  font-size: 0.83rem;
+  font-weight: 400;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease, transform 0.3s ease;
   white-space: nowrap;
   z-index: 900;
+  letter-spacing: 0.04em;
 }
 
 #toast.show {
@@ -673,8 +758,11 @@ section {
 /* ── 푸터 ── */
 footer {
   text-align: center;
-  padding: 28px;
-  font-size: 0.75rem;
+  padding: 32px;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
   color: var(--text-light);
   background: var(--white);
 }
