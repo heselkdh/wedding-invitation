@@ -168,22 +168,52 @@ document.getElementById('save-info-btn').addEventListener('click', async () => {
 });
 
 // ── 2. 사진 관리 ────────────────────────────────────────────────────
+let _unsubPhotos = null;
+
 function loadPhotos() {
+  if (_unsubPhotos) { _unsubPhotos(); _unsubPhotos = null; }
+
   const q = query(collection(db, 'photos'), orderBy('order'));
-  onSnapshot(q, snap => {
+  _unsubPhotos = onSnapshot(q, snap => {
     const grid = document.getElementById('photo-grid');
     grid.innerHTML = '';
+
+    if (snap.empty) {
+      const msg = document.createElement('p');
+      msg.style.cssText = 'color:#8a6a76;font-size:0.85rem;grid-column:1/-1;';
+      msg.textContent = '등록된 사진이 없습니다';
+      grid.appendChild(msg);
+      return;
+    }
+
     snap.forEach(d => {
       const data = d.data();
       const thumb = document.createElement('div');
       thumb.className = 'photo-thumb';
-      thumb.innerHTML = `
-        <img src="${data.url}" alt="">
-        <button class="del-photo" data-id="${d.id}" data-path="${data.storagePath}" title="삭제">×</button>
-      `;
-      thumb.querySelector('.del-photo').addEventListener('click', e => deletePhoto(e));
+
+      const img = document.createElement('img');
+      img.src = data.url;
+      img.alt = '';
+
+      const btn = document.createElement('button');
+      btn.className = 'del-photo';
+      btn.dataset.id = d.id;
+      btn.title = '삭제';
+      btn.textContent = '×';
+      btn.addEventListener('click', deletePhoto);
+
+      thumb.appendChild(img);
+      thumb.appendChild(btn);
       grid.appendChild(thumb);
     });
+  }, err => {
+    console.error('사진 목록 오류:', err);
+    const grid = document.getElementById('photo-grid');
+    grid.innerHTML = ``;
+    const errMsg = document.createElement('p');
+    errMsg.style.cssText = 'color:#c0392b;font-size:0.85rem;grid-column:1/-1;';
+    errMsg.textContent = `사진 불러오기 실패: ${err.message}`;
+    grid.appendChild(errMsg);
   });
 }
 
