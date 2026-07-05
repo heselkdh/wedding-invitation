@@ -71,19 +71,34 @@ function initMusic(url) {
   const videoId = extractVideoId(url);
   if (!videoId) return;
 
-  const btn = document.getElementById('music-btn');
-  btn.style.display = 'flex';
+  const bar      = document.getElementById('music-bar');
+  const playBtn  = document.getElementById('music-play-btn');
+  const muteBtn  = document.getElementById('music-mute-btn');
 
-  let player = null;
-  let apiReady = false;
+  bar.classList.add('visible');
+
+  let player  = null;
+  let muted   = true;
+  let playing = false;
+
+  function updateUI() {
+    playBtn.textContent = playing ? '⏸' : '▶';
+    muteBtn.textContent = muted   ? '🔇' : '🔊';
+    bar.classList.toggle('playing', playing);
+  }
 
   function createPlayer() {
     player = new window.YT.Player('yt-player', {
       videoId,
-      playerVars: { autoplay: 0, controls: 0, loop: 1, playlist: videoId },
+      playerVars: { autoplay: 1, controls: 0, loop: 1, playlist: videoId, playsinline: 1 },
       events: {
+        onReady: e => {
+          e.target.mute();       // 음소거 상태로 시작 (autoplay 정책 우회)
+          e.target.playVideo();
+        },
         onStateChange: e => {
-          btn.classList.toggle('playing', e.data === window.YT.PlayerState.PLAYING);
+          playing = e.data === window.YT.PlayerState.PLAYING;
+          updateUI();
         }
       }
     });
@@ -99,13 +114,25 @@ function initMusic(url) {
     };
   }
 
-  btn.addEventListener('click', () => {
+  playBtn.addEventListener('click', () => {
     if (!player) return;
-    if (player.getPlayerState() === window.YT.PlayerState.PLAYING) {
+    if (playing) {
       player.pauseVideo();
     } else {
       player.playVideo();
     }
+  });
+
+  muteBtn.addEventListener('click', () => {
+    if (!player) return;
+    muted = !muted;
+    if (muted) {
+      player.mute();
+    } else {
+      player.unMute();
+      if (!playing) player.playVideo();
+    }
+    updateUI();
   });
 }
 

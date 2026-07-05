@@ -166,8 +166,14 @@
 <!-- 토스트 메시지 -->
 <div id="toast"></div>
 
-<!-- 음악 플로팅 버튼 -->
-<button id="music-btn" aria-label="음악 재생/정지" style="display:none">🎵</button>
+<!-- 음악 컨트롤 바 -->
+<div id="music-bar">
+  <span class="music-bar-note">🎵</span>
+  <span class="music-bar-label">배경음악</span>
+  <button id="music-play-btn" aria-label="재생/정지">▶</button>
+  <div class="music-bar-divider"></div>
+  <button id="music-mute-btn" aria-label="음소거">🔇</button>
+</div>
 <div id="yt-player"></div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
