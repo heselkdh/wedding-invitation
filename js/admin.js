@@ -10,12 +10,42 @@ import {
 const CLOUDINARY_CLOUD = 'drgkuhjnc';
 const CLOUDINARY_PRESET = 'wedding';
 
+// 9MB 초과 시 캔버스로 리사이즈 압축 (Cloudinary 10MB 제한 대응)
+async function compressImage(file) {
+  const LIMIT = 9 * 1024 * 1024;
+  if (file.size <= LIMIT) return file;
+  try {
+    return await new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const ratio = Math.sqrt(LIMIT / file.size) * 0.9;
+        const canvas = document.createElement('canvas');
+        canvas.width  = Math.round(img.width  * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => {
+          if (!blob) { reject(new Error('압축 실패')); return; }
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+        }, 'image/jpeg', 0.85);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('이미지 읽기 실패')); };
+      img.src = url;
+    });
+  } catch {
+    return file; // 압축 불가 형식(HEIC 등)이면 원본 그대로 시도
+  }
+}
+
 async function uploadToCloudinary(file) {
   if (!file.type.startsWith('image/')) throw new Error('이미지 파일만 업로드할 수 있습니다');
-  if (file.size > 10 * 1024 * 1024) throw new Error('파일 크기는 10MB 이하여야 합니다');
+  if (file.size > 50 * 1024 * 1024) throw new Error('파일 크기는 50MB 이하여야 합니다');
+
+  const uploadFile = await compressImage(file);
 
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('file', uploadFile);
   formData.append('upload_preset', CLOUDINARY_PRESET);
   const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
     method: 'POST', body: formData
@@ -236,12 +266,13 @@ document.getElementById('photo-input').addEventListener('change', async e => {
   let done = 0, failed = 0;
   for (const file of files) {
     try {
+      progressEl.textContent = `${done + 1} / ${files.length} ${file.size > 9*1024*1024 ? '압축 및 ' : ''}업로드 중...`;
       const url = await uploadToCloudinary(file);
       await addDoc(collection(db, 'photos'), {
         url, order: ++maxOrder, createdAt: serverTimestamp()
       });
       done++;
-      progressEl.textContent = `${done} / ${files.length} 업로드 중...`;
+      progressEl.textContent = `${done} / ${files.length} 완료...`;
     } catch (err) {
       failed++;
       console.error('사진 업로드 실패:', err.message, err);
