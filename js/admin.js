@@ -4,7 +4,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import {
   doc, collection, getDoc, getDocs, setDoc, addDoc, deleteDoc,
-  onSnapshot, query, orderBy, serverTimestamp
+  onSnapshot, query, orderBy, serverTimestamp, writeBatch
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 const CLOUDINARY_CLOUD = 'drgkuhjnc';
@@ -199,53 +199,120 @@ document.getElementById('save-info-btn').addEventListener('click', async () => {
 
 // ── 2. 사진 관리 ────────────────────────────────────────────────────
 let _unsubPhotos = null;
+let _photoList   = [];   // 현재 순서 (로컬)
+let _orderChanged = false;
+let _dragSrcIdx  = null;
 
 function loadPhotos() {
   if (_unsubPhotos) { _unsubPhotos(); _unsubPhotos = null; }
 
   const q = query(collection(db, 'photos'), orderBy('order'));
   _unsubPhotos = onSnapshot(q, snap => {
-    const grid = document.getElementById('photo-grid');
-    grid.innerHTML = '';
-
-    if (snap.empty) {
-      const msg = document.createElement('p');
-      msg.style.cssText = 'color:#8a6a76;font-size:0.85rem;grid-column:1/-1;';
-      msg.textContent = '등록된 사진이 없습니다';
-      grid.appendChild(msg);
-      return;
-    }
-
-    snap.forEach(d => {
-      const data = d.data();
-      const thumb = document.createElement('div');
-      thumb.className = 'photo-thumb';
-
-      const img = document.createElement('img');
-      img.src = data.url;
-      img.alt = '';
-
-      const btn = document.createElement('button');
-      btn.className = 'del-photo';
-      btn.dataset.id = d.id;
-      btn.title = '삭제';
-      btn.textContent = '×';
-      btn.addEventListener('click', deletePhoto);
-
-      thumb.appendChild(img);
-      thumb.appendChild(btn);
-      grid.appendChild(thumb);
-    });
+    if (_orderChanged) return; // 미저장 순서 변경 중엔 덮어쓰지 않음
+    _photoList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderPhotoGrid();
   }, err => {
     console.error('사진 목록 오류:', err);
     const grid = document.getElementById('photo-grid');
-    grid.innerHTML = ``;
+    grid.innerHTML = '';
     const errMsg = document.createElement('p');
     errMsg.style.cssText = 'color:#c0392b;font-size:0.85rem;grid-column:1/-1;';
     errMsg.textContent = `사진 불러오기 실패: ${err.message}`;
     grid.appendChild(errMsg);
   });
 }
+
+function renderPhotoGrid() {
+  const grid    = document.getElementById('photo-grid');
+  const saveBtn = document.getElementById('save-photo-order-btn');
+  grid.innerHTML = '';
+  saveBtn.style.display = (_orderChanged && _photoList.length > 1) ? 'flex' : 'none';
+
+  if (_photoList.length === 0) {
+    const msg = document.createElement('p');
+    msg.style.cssText = 'color:#8a6a76;font-size:0.85rem;grid-column:1/-1;';
+    msg.textContent = '등록된 사진이 없습니다';
+    grid.appendChild(msg);
+    return;
+  }
+
+  _photoList.forEach((photo, idx) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb';
+    thumb.draggable = true;
+
+    const handle = document.createElement('div');
+    handle.className = 'drag-handle';
+    handle.textContent = '⠿';
+    handle.title = '드래그하여 순서 변경';
+
+    const img = document.createElement('img');
+    img.src = photo.url;
+    img.alt = '';
+    img.draggable = false;
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'del-photo';
+    delBtn.dataset.id = photo.id;
+    delBtn.title = '삭제';
+    delBtn.textContent = '×';
+    delBtn.addEventListener('click', deletePhoto);
+
+    thumb.addEventListener('dragstart', e => {
+      _dragSrcIdx = idx;
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => thumb.classList.add('dragging'), 0);
+    });
+    thumb.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (_dragSrcIdx !== null && _dragSrcIdx !== idx)
+        thumb.classList.add('drag-over');
+    });
+    thumb.addEventListener('dragleave', () => thumb.classList.remove('drag-over'));
+    thumb.addEventListener('drop', e => {
+      e.preventDefault();
+      thumb.classList.remove('drag-over');
+      if (_dragSrcIdx === null || _dragSrcIdx === idx) return;
+      const [moved] = _photoList.splice(_dragSrcIdx, 1);
+      _photoList.splice(idx, 0, moved);
+      _orderChanged = true;
+      _dragSrcIdx = null;
+      renderPhotoGrid();
+    });
+    thumb.addEventListener('dragend', () => {
+      _dragSrcIdx = null;
+      document.querySelectorAll('.photo-thumb').forEach(t =>
+        t.classList.remove('dragging', 'drag-over'));
+    });
+
+    thumb.appendChild(handle);
+    thumb.appendChild(img);
+    thumb.appendChild(delBtn);
+    grid.appendChild(thumb);
+  });
+}
+
+document.getElementById('save-photo-order-btn').addEventListener('click', async () => {
+  if (!_orderChanged || !_photoList.length) return;
+  const btn = document.getElementById('save-photo-order-btn');
+  btn.textContent = '저장 중...';
+  btn.disabled = true;
+  try {
+    const batch = writeBatch(db);
+    _photoList.forEach((photo, i) => {
+      batch.update(doc(db, 'photos', photo.id), { order: i + 1 });
+    });
+    await batch.commit();
+    _orderChanged = false;
+    btn.style.display = 'none';
+    showToast('사진 순서가 저장되었습니다 ✅');
+  } catch (err) {
+    console.error('순서 저장 실패:', err);
+    showToast(`순서 저장 실패: ${err.message}`);
+  }
+  btn.textContent = '💾 순서 저장';
+  btn.disabled = false;
+});
 
 document.getElementById('photo-input').addEventListener('change', async e => {
   const files = Array.from(e.target.files);
@@ -294,9 +361,9 @@ document.getElementById('photo-input').addEventListener('change', async e => {
 });
 
 async function deletePhoto(e) {
-  const btn = e.currentTarget;
-  const id = btn.dataset.id;
+  const id = e.currentTarget.dataset.id;
   if (!confirm('이 사진을 삭제할까요?')) return;
+  _orderChanged = false; // 미저장 순서 초기화 후 Firestore에서 새로 로드
   await deleteDoc(doc(db, 'photos', id));
   showToast('사진이 삭제되었습니다');
 }

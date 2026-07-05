@@ -192,12 +192,15 @@ header h1 { font-size: 1rem; color: var(--pink); }
   border-radius: 8px;
   overflow: hidden;
   background: var(--pink-lt);
+  transition: transform 0.15s ease, opacity 0.15s ease, outline 0.15s ease;
+  cursor: grab;
 }
 
 .photo-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
 }
 
 .photo-thumb .del-photo {
@@ -216,6 +219,41 @@ header h1 { font-size: 1rem; color: var(--pink); }
   align-items: center;
   justify-content: center;
   line-height: 1;
+}
+
+/* 드래그 핸들 */
+.drag-handle {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 2;
+  user-select: none;
+}
+
+.photo-thumb:hover .drag-handle { opacity: 1; }
+
+/* 드래그 중인 아이템 */
+.photo-thumb.dragging {
+  opacity: 0.35;
+  outline: 2px dashed var(--pink);
+}
+
+/* 드롭 대상 */
+.photo-thumb.drag-over {
+  outline: 2px solid var(--pink);
+  transform: scale(1.04);
 }
 
 .upload-area {
