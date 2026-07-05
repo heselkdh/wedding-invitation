@@ -72,8 +72,43 @@ async function loadInfoForm() {
     const el = document.getElementById(f);
     if (el && d[f] != null) el.value = d[f];
   });
+  if (d.heroBgUrl) showHeroBgPreview(d.heroBgUrl);
   if (d.mapImageUrl) showMapPreview(d.mapImageUrl);
 }
+
+// 첫 화면 배경 미리보기
+function showHeroBgPreview(url) {
+  document.getElementById('hero-bg-preview-img').src = url;
+  document.getElementById('hero-bg-preview').style.display = 'block';
+  document.getElementById('hero-bg-upload-area').style.display = 'none';
+}
+
+// 배경 이미지 업로드
+document.getElementById('hero-bg-input').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const progress = document.getElementById('hero-bg-progress');
+  progress.textContent = '업로드 중...';
+  try {
+    const url = await uploadToCloudinary(file);
+    await setDoc(doc(db, 'config', 'main'), { heroBgUrl: url }, { merge: true });
+    showHeroBgPreview(url);
+    progress.textContent = '배경 이미지 업로드 완료! ✅';
+    setTimeout(() => { progress.textContent = ''; }, 3000);
+  } catch (err) {
+    progress.textContent = `오류: ${err.message}`;
+  }
+  e.target.value = '';
+});
+
+// 배경 이미지 삭제
+document.getElementById('hero-bg-delete-btn').addEventListener('click', async () => {
+  if (!confirm('첫 화면 배경 이미지를 삭제할까요?')) return;
+  await setDoc(doc(db, 'config', 'main'), { heroBgUrl: '' }, { merge: true });
+  document.getElementById('hero-bg-preview').style.display = 'none';
+  document.getElementById('hero-bg-upload-area').style.display = 'block';
+  showToast('배경 이미지가 삭제되었습니다');
+});
 
 // 약도 이미지 미리보기
 function showMapPreview(url) {

@@ -1,6 +1,6 @@
 import { db, isConfigured } from './firebase.js';
 import {
-  doc, collection, getDoc, getDocs, addDoc, onSnapshot,
+  doc, collection, getDoc, addDoc, onSnapshot,
   serverTimestamp, query, orderBy
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
@@ -48,6 +48,10 @@ async function loadConfig() {
 
   const mapBtn = document.getElementById('kakao-map-btn');
   if (d.kakaoMapUrl && d.kakaoMapUrl !== '#') mapBtn.href = d.kakaoMapUrl;
+
+  if (d.heroBgUrl) {
+    document.getElementById('hero-bg').style.backgroundImage = `url('${d.heroBgUrl}')`;
+  }
 
   if (d.mapImageUrl) {
     document.getElementById('map-image').src = d.mapImageUrl;
@@ -185,7 +189,7 @@ const CAT_PHOTOS = [
   'assets/photos/cat4.jpg','assets/photos/cat5.jpg','assets/photos/cat6.jpg',
 ];
 
-async function loadGallery() {
+function loadGallery() {
   const grid = document.getElementById('gallery-grid');
 
   if (!isConfigured) {
@@ -193,12 +197,14 @@ async function loadGallery() {
     return;
   }
 
-  const snap = await getDocs(query(collection(db, 'photos'), orderBy('order')));
-  if (snap.empty) {
-    CAT_PHOTOS.forEach(src => appendPhoto(grid, src));
-    return;
-  }
-  snap.forEach(d => appendPhoto(grid, d.data().url));
+  onSnapshot(query(collection(db, 'photos'), orderBy('order')), snap => {
+    grid.innerHTML = '';
+    if (snap.empty) {
+      CAT_PHOTOS.forEach(src => appendPhoto(grid, src));
+    } else {
+      snap.forEach(d => appendPhoto(grid, d.data().url));
+    }
+  });
 }
 
 function appendPhoto(grid, src) {

@@ -76,6 +76,18 @@
         <input type="text" id="musicUrl" placeholder="https://www.youtube.com/watch?v=...">
         <label>교통편 안내 (HTML 가능)</label>
         <textarea id="transport" placeholder="<h4>🚇 지하철</h4><p>○호선 ○○역</p>"></textarea>
+        <label>첫 화면 배경 이미지</label>
+        <div id="hero-bg-preview" style="margin-bottom:10px;display:none;">
+          <img id="hero-bg-preview-img" src="" alt="배경" style="max-width:100%;border-radius:8px;border:1px solid #e8dde2;">
+          <button class="btn btn-danger" id="hero-bg-delete-btn" style="margin-top:8px;">🗑️ 배경 삭제</button>
+        </div>
+        <label class="upload-area" id="hero-bg-upload-area">
+          <span style="font-size:1.5rem;">🖼️</span>
+          <p>클릭하여 첫 화면 배경 이미지 업로드</p>
+          <input type="file" id="hero-bg-input" accept="image/*">
+        </label>
+        <p id="hero-bg-progress" style="font-size:0.8rem;color:#8a6a76;margin-bottom:16px;"></p>
+
         <label>약도 이미지</label>
         <div id="map-image-preview" style="margin-bottom:10px;display:none;">
           <img id="map-preview-img" src="" alt="약도" style="max-width:100%;border-radius:8px;border:1px solid #e8dde2;">
