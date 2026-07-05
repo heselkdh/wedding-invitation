@@ -192,12 +192,18 @@ document.getElementById('photo-input').addEventListener('change', async e => {
   if (!files.length) return;
 
   const progressEl = document.getElementById('upload-progress');
+  progressEl.style.color = '#8a6a76';
   progressEl.textContent = `0 / ${files.length} 업로드 중...`;
 
-  const snap = await getDocs(query(collection(db, 'photos'), orderBy('order', 'desc')));
-  let maxOrder = snap.empty ? 0 : (snap.docs[0].data().order ?? 0);
+  let maxOrder = 0;
+  try {
+    const snap = await getDocs(query(collection(db, 'photos'), orderBy('order', 'desc')));
+    maxOrder = snap.empty ? 0 : (snap.docs[0].data().order ?? 0);
+  } catch (err) {
+    console.error('사진 목록 조회 실패:', err);
+  }
 
-  let done = 0;
+  let done = 0, failed = 0;
   for (const file of files) {
     try {
       const url = await uploadToCloudinary(file);
@@ -205,13 +211,24 @@ document.getElementById('photo-input').addEventListener('change', async e => {
         url, order: ++maxOrder, createdAt: serverTimestamp()
       });
       done++;
-      progressEl.textContent = `${done} / ${files.length} 업로드 완료`;
+      progressEl.textContent = `${done} / ${files.length} 업로드 중...`;
     } catch (err) {
+      failed++;
+      console.error('사진 업로드 실패:', err.message, err);
+      progressEl.style.color = '#c0392b';
       progressEl.textContent = `오류: ${err.message}`;
+      await new Promise(r => setTimeout(r, 3000)); // 오류 메시지 3초 표시
     }
   }
-  progressEl.textContent = '업로드 완료! ✅';
-  setTimeout(() => { progressEl.textContent = ''; }, 3000);
+
+  if (failed === 0) {
+    progressEl.style.color = '#8a6a76';
+    progressEl.textContent = `${done}장 업로드 완료! ✅`;
+  } else {
+    progressEl.style.color = '#c0392b';
+    progressEl.textContent = `${done}장 성공 / ${failed}장 실패 — 브라우저 콘솔(F12)에서 오류 확인`;
+  }
+  setTimeout(() => { progressEl.textContent = ''; progressEl.style.color = '#8a6a76'; }, 5000);
   e.target.value = '';
 });
 
