@@ -232,15 +232,26 @@ function loadGuestbook() {
   });
 }
 
+let gbSubmitting = false;
 document.getElementById('gb-submit').addEventListener('click', async () => {
-  if (!isConfigured) return;
+  if (!isConfigured || gbSubmitting) return;
   const name    = document.getElementById('gb-name').value.trim();
   const message = document.getElementById('gb-message').value.trim();
   if (!name || !message) { showToast('이름과 메시지를 입력해주세요'); return; }
-  await addDoc(collection(db, 'guestbook'), { name, message, createdAt: serverTimestamp() });
-  document.getElementById('gb-name').value    = '';
-  document.getElementById('gb-message').value = '';
-  showToast('메시지가 등록되었습니다 🌸');
+  gbSubmitting = true;
+  const btn = document.getElementById('gb-submit');
+  btn.disabled = true;
+  try {
+    await addDoc(collection(db, 'guestbook'), { name, message, createdAt: serverTimestamp() });
+    document.getElementById('gb-name').value    = '';
+    document.getElementById('gb-message').value = '';
+    showToast('메시지가 등록되었습니다 🌸');
+  } catch {
+    showToast('등록에 실패했습니다. 다시 시도해주세요');
+  } finally {
+    gbSubmitting = false;
+    btn.disabled = false;
+  }
 });
 
 // ── 계좌번호 ────────────────────────────────────────────────────────
@@ -282,9 +293,9 @@ function makeAccountCard({ side, holder, bank, number }) {
   el.className = 'account-card';
   el.innerHTML = `
     <div class="account-info">
-      <div class="account-side">${side}</div>
-      <div class="account-holder">${holder}</div>
-      <div class="account-number">${bank} ${number}</div>
+      <div class="account-side">${escapeHtml(side)}</div>
+      <div class="account-holder">${escapeHtml(holder)}</div>
+      <div class="account-number">${escapeHtml(bank)} ${escapeHtml(number)}</div>
     </div>
     <button class="copy-btn">복사</button>
   `;

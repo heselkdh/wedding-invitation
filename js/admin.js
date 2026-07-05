@@ -11,6 +11,9 @@ const CLOUDINARY_CLOUD = 'drgkuhjnc';
 const CLOUDINARY_PRESET = 'wedding';
 
 async function uploadToCloudinary(file) {
+  if (!file.type.startsWith('image/')) throw new Error('이미지 파일만 업로드할 수 있습니다');
+  if (file.size > 10 * 1024 * 1024) throw new Error('파일 크기는 10MB 이하여야 합니다');
+
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', CLOUDINARY_PRESET);
