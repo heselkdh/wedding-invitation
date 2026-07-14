@@ -375,41 +375,47 @@ function escapeHtml(str) {
     ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
-// ── 카카오 공유 ─────────────────────────────────────────────────────
+// ── 공유 ────────────────────────────────────────────────────────────
 function initKakaoShare(cfg) {
   const btn = document.getElementById('kakao-share-btn');
   if (!btn) return;
 
-  if (KAKAO_JS_KEY === 'YOUR_KAKAO_JS_KEY') {
-    btn.style.display = 'none'; // 키 미설정 시 버튼 숨김
-    return;
+  const siteUrl = 'https://heselkdh.github.io/wedding-invitation/';
+  const title   = `${cfg.groomName} ♥ ${cfg.brideName} 결혼합니다`;
+  const text    = `${formatDate(cfg.weddingDate)} ${cfg.weddingTime} · ${cfg.venueName}`;
+
+  // Kakao SDK 초기화 (실패해도 무관)
+  if (window.Kakao && !Kakao.isInitialized() && KAKAO_JS_KEY !== 'YOUR_KAKAO_JS_KEY') {
+    try { Kakao.init(KAKAO_JS_KEY); } catch (_) {}
   }
 
-  if (!window.Kakao) return;
-  if (!Kakao.isInitialized()) Kakao.init(KAKAO_JS_KEY);
-
-  const siteUrl = location.href.split('?')[0].split('#')[0];
-
   btn.addEventListener('click', () => {
-    const content = {
-      title:       `${cfg.groomName} ♥ ${cfg.brideName} 결혼합니다`,
-      description: `${formatDate(cfg.weddingDate)} ${cfg.weddingTime}\n${cfg.venueName}`,
-      link: { mobileWebUrl: siteUrl, webUrl: siteUrl },
-      ...(cfg.heroBgUrl && { imageUrl: cfg.heroBgUrl }),
-    };
+    // 모바일: 기기 기본 공유 시트 (카카오톡 포함)
+    if (navigator.share) {
+      navigator.share({ title, text, url: siteUrl }).catch(() => {});
+      return;
+    }
 
-    Kakao.Share.sendDefault({
-      objectType: 'feed',
-      content,
-      buttons: [
-        { title: '청첩장 보기', link: { mobileWebUrl: siteUrl, webUrl: siteUrl } },
-        { title: '위치 보기',   link: {
-            mobileWebUrl: cfg.kakaoMapUrl || siteUrl,
-            webUrl:       cfg.kakaoMapUrl || siteUrl,
-          },
+    // 데스크탑: 카카오 SDK 시도
+    if (window.Kakao && Kakao.isInitialized()) {
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title,
+          description: text,
+          link: { mobileWebUrl: siteUrl, webUrl: siteUrl },
+          ...(cfg.heroBgUrl && { imageUrl: cfg.heroBgUrl }),
         },
-      ],
-    });
+        buttons: [
+          { title: '청첩장 보기', link: { mobileWebUrl: siteUrl, webUrl: siteUrl } },
+          { title: '위치 보기',   link: { mobileWebUrl: cfg.kakaoMapUrl || siteUrl, webUrl: cfg.kakaoMapUrl || siteUrl } },
+        ],
+      });
+      return;
+    }
+
+    // 최후 폴백: URL 복사
+    navigator.clipboard.writeText(siteUrl).then(() => showToast('링크가 복사되었습니다'));
   });
 }
 
