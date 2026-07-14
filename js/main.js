@@ -411,27 +411,28 @@ function initKakaoShare(cfg) {
   }
 
   btn.addEventListener('click', () => {
-    // 모바일: 기기 기본 공유 시트 (카카오톡 포함)
-    if (navigator.share) {
-      navigator.share({ title, text, url: siteUrl }).catch(() => {});
-      return;
-    }
-
-    // 데스크탑: 카카오 SDK 시도
+    // Kakao SDK 우선 시도 (모바일/데스크탑 공통)
     if (window.Kakao && Kakao.isInitialized()) {
+      const imageUrl = cfg.ogImageUrl || cfg.heroBgUrl;
       Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
           title,
           description: text,
           link: { mobileWebUrl: siteUrl, webUrl: siteUrl },
-          ...(cfg.heroBgUrl && { imageUrl: cfg.heroBgUrl }),
+          ...(imageUrl && { imageUrl }),
         },
         buttons: [
           { title: '청첩장 보기', link: { mobileWebUrl: siteUrl, webUrl: siteUrl } },
           { title: '위치 보기',   link: { mobileWebUrl: cfg.kakaoMapUrl || siteUrl, webUrl: cfg.kakaoMapUrl || siteUrl } },
         ],
       });
+      return;
+    }
+
+    // 폴백: 기기 기본 공유 시트
+    if (navigator.share) {
+      navigator.share({ title, text, url: siteUrl }).catch(() => {});
       return;
     }
 
