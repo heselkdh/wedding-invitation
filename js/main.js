@@ -1,7 +1,7 @@
 import { db, isConfigured } from './firebase.js';
 
 // ▼ Kakao Developers(https://developers.kakao.com)에서 발급한 JavaScript 키로 교체
-const KAKAO_JS_KEY = 'YOUR_KAKAO_JS_KEY';
+const KAKAO_JS_KEY = '5469ca423793e964c6bdce93d58c29b2';
 import {
   doc, collection, getDoc, addDoc, onSnapshot,
   serverTimestamp, query, orderBy
