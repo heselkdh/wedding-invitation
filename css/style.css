@@ -1,5 +1,5 @@
 /* ── 구글 폰트 ── */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+KR:wght@300;400&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+KR:wght@300;400&family=Noto+Sans+KR:wght@200;300;400;500&display=swap');
 
 /* ── 디자인 토큰 ── */
 :root {
@@ -114,13 +114,14 @@ section { padding: 76px 28px; position: relative; }
 }
 
 .hero-names {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 2.8rem;
-  font-weight: 400;
+  font-weight: 200;
   color: var(--black);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.18em;
   margin-bottom: 22px;
   line-height: 1.1;
+  text-shadow: 0 1px 8px rgba(255,255,255,0.8);
 }
 
 .hero-amp {
@@ -202,6 +203,34 @@ section { padding: 76px 28px; position: relative; }
 @keyframes bounce {
   0%, 100% { transform: translateX(-50%) translateY(0); }
   50%       { transform: translateX(-50%) translateY(7px); }
+}
+
+/* ════════════════════════════
+   1.5. 인트로
+════════════════════════════ */
+#intro {
+  background: var(--white);
+  text-align: center;
+}
+
+.intro-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--black);
+  margin-bottom: 28px;
+  letter-spacing: 0.03em;
+  line-height: 1.7;
+}
+
+.intro-text {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: var(--gray-1);
+  line-height: 2.4;
+  white-space: pre-line;
+  letter-spacing: 0.03em;
 }
 
 /* ════════════════════════════

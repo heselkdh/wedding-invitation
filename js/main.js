@@ -64,6 +64,14 @@ async function loadConfig() {
 
   document.getElementById('transport-info').innerHTML = d.transport || '';
 
+  // 인트로 섹션
+  const introSec = document.getElementById('intro');
+  if (d.introTitle || d.introText) {
+    document.getElementById('intro-title').textContent = d.introTitle || '';
+    document.getElementById('intro-text').textContent  = d.introText  || '';
+    introSec.style.display = 'block';
+  }
+
   startCountdown(d.weddingDate, d.weddingTime);
 
   if (d.musicUrl) initMusic(d.musicUrl);
