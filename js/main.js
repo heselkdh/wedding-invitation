@@ -96,8 +96,9 @@ function initMusic(url) {
   bar.classList.add('visible');
 
   let player  = null;
-  let muted   = true;
+  let muted   = false;
   let playing = false;
+  let interacted = false;
 
   function updateUI() {
     playBtn.textContent = playing ? '⏸' : '▶';
@@ -105,13 +106,24 @@ function initMusic(url) {
     bar.classList.toggle('playing', playing);
   }
 
+  // 첫 인터랙션 시 자동 음소거 해제 (브라우저 자동재생 정책 우회)
+  function onFirstInteraction() {
+    if (interacted || !player || muted) return;
+    interacted = true;
+    player.unMute();
+    updateUI();
+  }
+  ['click','touchstart','scroll'].forEach(evt =>
+    document.addEventListener(evt, onFirstInteraction, { once: true, passive: true })
+  );
+
   function createPlayer() {
     player = new window.YT.Player('yt-player', {
       videoId,
       playerVars: { autoplay: 1, controls: 0, loop: 1, playlist: videoId, playsinline: 1 },
       events: {
         onReady: e => {
-          e.target.mute();       // 음소거 상태로 시작 (autoplay 정책 우회)
+          e.target.mute();   // autoplay 허용을 위해 일시 음소거, 인터랙션 시 해제됨
           e.target.playVideo();
         },
         onStateChange: e => {
