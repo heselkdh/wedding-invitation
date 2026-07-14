@@ -111,28 +111,27 @@ async function loadInfoForm() {
 function showOgThumbPreview(url) {
   document.getElementById('og-thumb-preview-img').src = url;
   document.getElementById('og-thumb-preview').style.display = 'block';
+  const urlInput = document.getElementById('og-thumb-url-display');
+  urlInput.value = url;
+  document.getElementById('og-thumb-url-wrap').style.display = 'block';
 }
 
-// OG 썸네일 업로드 (고정 public_id: og_thumb → URL 항상 동일)
+document.getElementById('og-thumb-copy-btn').addEventListener('click', () => {
+  const url = document.getElementById('og-thumb-url-display').value;
+  navigator.clipboard.writeText(url).then(() => showToast('URL이 복사되었습니다'));
+});
+
+// OG 썸네일 업로드
 document.getElementById('og-thumb-input').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
   const progress = document.getElementById('og-thumb-progress');
   progress.textContent = '업로드 중...';
   try {
-    const uploadFile = await compressImage(file);
-    const formData = new FormData();
-    formData.append('file', uploadFile);
-    formData.append('upload_preset', CLOUDINARY_PRESET);
-    formData.append('public_id', 'og_thumb');
-    formData.append('overwrite', 'true');
-    const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:'POST', body:formData });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message ?? '업로드 실패');
-    const url = data.secure_url;
+    const url = await uploadToCloudinary(file);
     await setDoc(doc(db, 'config', 'main'), { ogImageUrl: url }, { merge: true });
     showOgThumbPreview(url);
-    progress.textContent = '썸네일 업로드 완료! ✅ 카카오 OG 캐시를 초기화하면 즉시 반영됩니다.';
+    progress.textContent = '완료! ✅ 아래 버튼으로 카카오 캐시를 초기화하세요.';
     setTimeout(() => { progress.textContent = ''; }, 5000);
   } catch (err) {
     progress.textContent = `오류: ${err.message}`;

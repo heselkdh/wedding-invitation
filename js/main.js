@@ -48,7 +48,8 @@ async function loadConfig() {
   document.title = `${d.groomName} ♥ ${d.brideName} 결혼합니다`;
   setMeta('og:title',       `${d.groomName} ♥ ${d.brideName} 결혼합니다`);
   setMeta('og:description', `${dateStr} ${d.weddingTime} · ${d.venueName}`);
-  if (d.heroBgUrl) setMeta('og:image', d.heroBgUrl);
+  const ogImg = d.ogImageUrl || d.heroBgUrl;
+  if (ogImg) setMeta('og:image', ogImg);
 
   const mapBtn = document.getElementById('kakao-map-btn');
   if (d.kakaoMapUrl && d.kakaoMapUrl !== '#') mapBtn.href = d.kakaoMapUrl;
