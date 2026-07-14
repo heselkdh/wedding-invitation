@@ -76,6 +76,17 @@
         <input type="text" id="musicUrl" placeholder="https://www.youtube.com/watch?v=...">
         <label>교통편 안내 (HTML 가능)</label>
         <textarea id="transport" placeholder="<h4>🚇 지하철</h4><p>○호선 ○○역</p>"></textarea>
+        <label>링크 미리보기 썸네일 (카카오톡 공유 시 표시)</label>
+        <div id="og-thumb-preview" style="margin-bottom:10px;display:none;">
+          <img id="og-thumb-preview-img" src="" alt="썸네일" style="max-width:100%;border-radius:8px;border:1px solid #e0e0e0;">
+        </div>
+        <label class="upload-area" id="og-thumb-upload-area">
+          <span style="font-size:1.5rem;">🖼️</span>
+          <p>클릭하여 썸네일 이미지 업로드 (1200×630 권장)</p>
+          <input type="file" id="og-thumb-input" accept="image/*">
+        </label>
+        <p id="og-thumb-progress" style="font-size:0.8rem;color:#8a6a76;margin-bottom:16px;"></p>
+
         <label>인트로 제목 (예: 소중한 분들을 초대합니다)</label>
         <input type="text" id="introTitle" placeholder="소중한 분들을 초대합니다">
         <label>인트로 본문 (Enter로 줄바꿈)</label>
