@@ -85,7 +85,6 @@ section { padding: 76px 28px; position: relative; }
 #hero-bg {
   position: absolute;
   inset: -30% 0 -30% 0;
-  background-image: url('../assets/photos/hero-bg.jpg');
   background-size: cover;
   background-position: center;
   will-change: transform;
