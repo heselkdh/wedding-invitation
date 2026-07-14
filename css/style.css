@@ -150,6 +150,26 @@ section { padding: 76px 28px; position: relative; }
   letter-spacing: 0.18em;
 }
 
+#kakao-share-btn {
+  margin-top: 28px;
+  background: #FEE500;
+  color: #3C1E1E;
+  border: none;
+  border-radius: 6px;
+  padding: 11px 24px;
+  font-family: var(--font-sans);
+  font-size: 0.83rem;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: filter 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#kakao-share-btn:hover { filter: brightness(0.94); }
+
 .hero-scroll-hint {
   position: absolute;
   bottom: 32px;

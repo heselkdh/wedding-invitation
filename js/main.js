@@ -1,4 +1,7 @@
 import { db, isConfigured } from './firebase.js';
+
+// ▼ Kakao Developers(https://developers.kakao.com)에서 발급한 JavaScript 키로 교체
+const KAKAO_JS_KEY = 'YOUR_KAKAO_JS_KEY';
 import {
   doc, collection, getDoc, addDoc, onSnapshot,
   serverTimestamp, query, orderBy
@@ -44,7 +47,8 @@ async function loadConfig() {
 
   document.title = `${d.groomName} ♥ ${d.brideName} 결혼합니다`;
   setMeta('og:title',       `${d.groomName} ♥ ${d.brideName} 결혼합니다`);
-  setMeta('og:description', `${dateStr} ${d.venueName}`);
+  setMeta('og:description', `${dateStr} ${d.weddingTime} · ${d.venueName}`);
+  if (d.heroBgUrl) setMeta('og:image', d.heroBgUrl);
 
   const mapBtn = document.getElementById('kakao-map-btn');
   if (d.kakaoMapUrl && d.kakaoMapUrl !== '#') mapBtn.href = d.kakaoMapUrl;
@@ -63,6 +67,7 @@ async function loadConfig() {
   startCountdown(d.weddingDate, d.weddingTime);
 
   if (d.musicUrl) initMusic(d.musicUrl);
+  initKakaoShare(d);
 }
 
 // ── 음악 (YouTube IFrame API) ────────────────────────────────────────
@@ -368,6 +373,44 @@ function showToast(msg) {
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, c =>
     ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// ── 카카오 공유 ─────────────────────────────────────────────────────
+function initKakaoShare(cfg) {
+  const btn = document.getElementById('kakao-share-btn');
+  if (!btn) return;
+
+  if (KAKAO_JS_KEY === 'YOUR_KAKAO_JS_KEY') {
+    btn.style.display = 'none'; // 키 미설정 시 버튼 숨김
+    return;
+  }
+
+  if (!window.Kakao) return;
+  if (!Kakao.isInitialized()) Kakao.init(KAKAO_JS_KEY);
+
+  const siteUrl = location.href.split('?')[0].split('#')[0];
+
+  btn.addEventListener('click', () => {
+    const content = {
+      title:       `${cfg.groomName} ♥ ${cfg.brideName} 결혼합니다`,
+      description: `${formatDate(cfg.weddingDate)} ${cfg.weddingTime}\n${cfg.venueName}`,
+      link: { mobileWebUrl: siteUrl, webUrl: siteUrl },
+      ...(cfg.heroBgUrl && { imageUrl: cfg.heroBgUrl }),
+    };
+
+    Kakao.Share.sendDefault({
+      objectType: 'feed',
+      content,
+      buttons: [
+        { title: '청첩장 보기', link: { mobileWebUrl: siteUrl, webUrl: siteUrl } },
+        { title: '위치 보기',   link: {
+            mobileWebUrl: cfg.kakaoMapUrl || siteUrl,
+            webUrl:       cfg.kakaoMapUrl || siteUrl,
+          },
+        },
+      ],
+    });
+  });
 }
 
 // ── 초기화 ──────────────────────────────────────────────────────────
