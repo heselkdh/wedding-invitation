@@ -25,13 +25,13 @@ export const SITE_URL = 'https://heselkdh.github.io/wedding-invitation/';
 
 ## Generation method
 
-Client-side generation via the `qrcode` library (soldair/node-qrcode), loaded from the unpkg CDN as a plain `<script>` tag — the same pattern already used for the Kakao SDK and YouTube iframe API in `index.html`. No server dependency, no per-request network call once the script is loaded, and it produces print-quality output on demand.
+Client-side generation via the `qrcode` library (soldair/node-qrcode). `qrcode` doesn't ship a prebuilt UMD/global `<script>` bundle on unpkg (checked — 404; its `package.json` only maps a `browser` field to `./lib/browser.js`, an ES module, no bundled global). `admin.js` is already loaded as an ES module (`<script type="module">`, same as its Firebase imports), so the natural fit is importing the library directly by URL rather than adding a classic `<script>` tag:
 
-```html
-<script src="https://unpkg.com/qrcode@1.5.4/build/qrcode.min.js"></script>
+```js
+import QRCode from 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm';
 ```
 
-This exposes a global `QRCode` object with `QRCode.toCanvas(canvasEl, text, options, callback)`.
+jsdelivr's `+esm` endpoint bundles the package's browser entry (and its one dependency, `dijkstrajs`) into a single importable ES module on the fly — confirmed working (`QRCode.toCanvas` present) before writing this into the plan. `QRCode.toCanvas(canvasEl, text, options, callback)` is used the same way it would be off a global.
 
 ## Admin UI
 
