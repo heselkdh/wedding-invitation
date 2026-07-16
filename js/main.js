@@ -3,7 +3,7 @@ import { sanitizeHtml } from './sanitize.js';
 import { SITE_URL } from './site-config.js';
 
 // ▼ Kakao Developers(https://developers.kakao.com)에서 발급한 JavaScript 키로 교체
-const KAKAO_JS_KEY = '5469ca423793e964c6bdce93d58c29b2';
+const KAKAO_JS_KEY = '9cc67862123c23921bcde33c45851b3a';
 import {
   doc, collection, getDoc, addDoc, onSnapshot,
   serverTimestamp, query, orderBy
