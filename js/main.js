@@ -469,7 +469,7 @@ function initKakaoShare(cfg) {
         },
         buttons: [
           { title: '청첩장 보기', link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL } },
-          { title: '위치 보기',   link: { mobileWebUrl: cfg.kakaoMapUrl || SITE_URL, webUrl: cfg.kakaoMapUrl || SITE_URL } },
+          { title: '위치 보기',   link: { mobileWebUrl: `${SITE_URL}#map`, webUrl: `${SITE_URL}#map` } },
         ],
       });
       return;
