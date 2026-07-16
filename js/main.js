@@ -273,6 +273,8 @@ function closeLightbox() {
 }
 
 // ── 방명록 ─────────────────────────────────────────────────────────
+let _unsubGuestbook = null;
+
 function loadGuestbook() {
   if (!isConfigured) {
     document.getElementById('guestbook-list').innerHTML =
@@ -282,7 +284,7 @@ function loadGuestbook() {
   }
 
   const q = query(collection(db, 'guestbook'), orderBy('createdAt', 'desc'));
-  onSnapshot(q, snap => {
+  _unsubGuestbook = onSnapshot(q, snap => {
     const list = document.getElementById('guestbook-list');
     list.innerHTML = '';
     snap.forEach(d => {
@@ -302,6 +304,10 @@ function loadGuestbook() {
     });
   });
 }
+
+window.addEventListener('pagehide', () => {
+  if (_unsubGuestbook) { _unsubGuestbook(); _unsubGuestbook = null; }
+});
 
 let gbSubmitting = false;
 document.getElementById('gb-submit').addEventListener('click', async () => {
