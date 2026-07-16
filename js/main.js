@@ -1,4 +1,5 @@
 import { db, isConfigured } from './firebase.js';
+import { sanitizeHtml } from './sanitize.js';
 
 // ▼ Kakao Developers(https://developers.kakao.com)에서 발급한 JavaScript 키로 교체
 const KAKAO_JS_KEY = '5469ca423793e964c6bdce93d58c29b2';
@@ -63,7 +64,7 @@ async function loadConfig() {
     document.getElementById('map-image-wrap').style.display = 'block';
   }
 
-  document.getElementById('transport-info').innerHTML = d.transport || '';
+  document.getElementById('transport-info').innerHTML = sanitizeHtml(d.transport || '');
 
   // 인트로 섹션
   const introSec = document.getElementById('intro');
