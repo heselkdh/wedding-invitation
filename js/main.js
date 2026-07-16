@@ -309,17 +309,38 @@ window.addEventListener('pagehide', () => {
   if (_unsubGuestbook) { _unsubGuestbook(); _unsubGuestbook = null; }
 });
 
+const GB_COOLDOWN_MS = 60 * 1000;
+
 let gbSubmitting = false;
 document.getElementById('gb-submit').addEventListener('click', async () => {
   if (!isConfigured || gbSubmitting) return;
-  const name    = document.getElementById('gb-name').value.trim();
-  const message = document.getElementById('gb-message').value.trim();
+
+  const honeypot = document.getElementById('gb-website').value;
+  const name     = document.getElementById('gb-name').value.trim();
+  const message  = document.getElementById('gb-message').value.trim();
   if (!name || !message) { showToast('이름과 메시지를 입력해주세요'); return; }
+
+  if (honeypot) {
+    // 봇이 숨겨진 필드를 채운 경우 — Firestore에 쓰지 않고 성공한 것처럼 보이게 함
+    document.getElementById('gb-name').value    = '';
+    document.getElementById('gb-message').value = '';
+    showToast('메시지가 등록되었습니다 🌸');
+    return;
+  }
+
+  const lastSubmit = Number(localStorage.getItem('gbLastSubmit') || 0);
+  const remainingMs = GB_COOLDOWN_MS - (Date.now() - lastSubmit);
+  if (remainingMs > 0) {
+    showToast(`잠시 후 다시 시도해주세요 (${Math.ceil(remainingMs / 1000)}초)`);
+    return;
+  }
+
   gbSubmitting = true;
   const btn = document.getElementById('gb-submit');
   btn.disabled = true;
   try {
     await addDoc(collection(db, 'guestbook'), { name, message, createdAt: serverTimestamp() });
+    localStorage.setItem('gbLastSubmit', String(Date.now()));
     document.getElementById('gb-name').value    = '';
     document.getElementById('gb-message').value = '';
     showToast('메시지가 등록되었습니다 🌸');
