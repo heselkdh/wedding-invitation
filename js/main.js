@@ -198,11 +198,14 @@ function startCountdown(dateStr, timeStr) {
   const target = new Date(dateStr);
   target.setHours(hour, min, 0, 0);
 
+  let intervalId = null;
+
   function tick() {
     const diff = target - Date.now();
     if (diff <= 0) {
       ['days','hours','mins','secs'].forEach(u =>
         (document.getElementById(`cd-${u}`).textContent = '0'));
+      if (intervalId !== null) clearInterval(intervalId);
       return;
     }
     const d = Math.floor(diff / 86400000);
@@ -215,7 +218,7 @@ function startCountdown(dateStr, timeStr) {
     document.getElementById('cd-secs').textContent  = String(s).padStart(2,'0');
   }
   tick();
-  setInterval(tick, 1000);
+  intervalId = setInterval(tick, 1000);
 }
 
 // ── 갤러리 ─────────────────────────────────────────────────────────
