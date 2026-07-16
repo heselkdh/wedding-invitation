@@ -35,8 +35,8 @@ async function loadConfig() {
   document.getElementById('hero-venue-short').textContent = d.venueName;
   document.getElementById('groom-name').textContent       = d.groomName;
   document.getElementById('bride-name').textContent       = d.brideName;
-  document.getElementById('groom-parents').innerHTML      = d.groomParents.replace(/,/g, '<br>');
-  document.getElementById('bride-parents').innerHTML      = d.brideParents.replace(/,/g, '<br>');
+  setCommaListWithBreaks(document.getElementById('groom-parents'), d.groomParents);
+  setCommaListWithBreaks(document.getElementById('bride-parents'), d.brideParents);
 
   const dateStr = formatDate(d.weddingDate);
   document.getElementById('hero-date').textContent  = dateStr;
@@ -163,6 +163,14 @@ function initMusic(url) {
       if (!playing) player.playVideo();
     }
     updateUI();
+  });
+}
+
+function setCommaListWithBreaks(el, text) {
+  el.textContent = '';
+  text.split(',').forEach((part, i) => {
+    if (i > 0) el.appendChild(document.createElement('br'));
+    el.appendChild(document.createTextNode(part));
   });
 }
 
