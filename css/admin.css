@@ -307,3 +307,14 @@ header h1 { font-size: 1rem; color: var(--pink); }
 
 /* ── 진행 표시 ── */
 .saving { opacity: 0.6; pointer-events: none; }
+
+/* ── 모바일 반응형 ── */
+@media (max-width: 480px) {
+  .photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
