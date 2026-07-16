@@ -125,7 +125,9 @@ document.getElementById('og-thumb-copy-btn').addEventListener('click', () => {
 document.getElementById('og-thumb-input').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
+  const area = document.getElementById('og-thumb-upload-area');
   const progress = document.getElementById('og-thumb-progress');
+  area.classList.add('saving');
   progress.textContent = '업로드 중...';
   try {
     const url = await uploadToCloudinary(file);
@@ -136,6 +138,7 @@ document.getElementById('og-thumb-input').addEventListener('change', async e => 
   } catch (err) {
     progress.textContent = `오류: ${err.message}`;
   }
+  area.classList.remove('saving');
   e.target.value = '';
 });
 
@@ -150,7 +153,9 @@ function showHeroBgPreview(url) {
 document.getElementById('hero-bg-input').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
+  const area = document.getElementById('hero-bg-upload-area');
   const progress = document.getElementById('hero-bg-progress');
+  area.classList.add('saving');
   progress.textContent = '업로드 중...';
   try {
     const url = await uploadToCloudinary(file);
@@ -161,6 +166,7 @@ document.getElementById('hero-bg-input').addEventListener('change', async e => {
   } catch (err) {
     progress.textContent = `오류: ${err.message}`;
   }
+  area.classList.remove('saving');
   e.target.value = '';
 });
 
@@ -184,7 +190,9 @@ function showMapPreview(url) {
 document.getElementById('map-image-input').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
+  const area = document.getElementById('map-upload-area');
   const progress = document.getElementById('map-upload-progress');
+  area.classList.add('saving');
   progress.textContent = '업로드 중...';
   try {
     const url = await uploadToCloudinary(file);
@@ -195,6 +203,7 @@ document.getElementById('map-image-input').addEventListener('change', async e =>
   } catch (err) {
     progress.textContent = `오류: ${err.message}`;
   }
+  area.classList.remove('saving');
   e.target.value = '';
 });
 
@@ -351,7 +360,9 @@ document.getElementById('photo-input').addEventListener('change', async e => {
   const files = Array.from(e.target.files);
   if (!files.length) return;
 
+  const area = document.getElementById('upload-area');
   const progressEl = document.getElementById('upload-progress');
+  area.classList.add('saving');
   progressEl.style.color = '#8a6a76';
   progressEl.textContent = `0 / ${files.length} 업로드 중...`;
 
@@ -389,6 +400,7 @@ document.getElementById('photo-input').addEventListener('change', async e => {
     progressEl.style.color = '#c0392b';
     progressEl.textContent = `${done}장 성공 / ${failed}장 실패 — 브라우저 콘솔(F12)에서 오류 확인`;
   }
+  area.classList.remove('saving');
   setTimeout(() => { progressEl.textContent = ''; progressEl.style.color = '#8a6a76'; }, 5000);
   e.target.value = '';
 });
