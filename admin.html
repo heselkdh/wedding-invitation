@@ -98,6 +98,16 @@
           </a>
         </div>
 
+        <label>QR 코드 (종이 청첩장 인쇄용)</label>
+        <button class="btn btn-primary" id="qr-generate-btn" type="button">🔗 QR 코드 생성</button>
+        <div id="qr-preview-wrap" style="display:none;margin-top:12px;margin-bottom:16px;">
+          <canvas id="qr-canvas" style="display:block;max-width:240px;border:1px solid #e8dde2;border-radius:8px;"></canvas>
+          <a id="qr-download-link" download="wedding-qr.png"
+             style="display:inline-block;margin-top:10px;font-size:0.8rem;color:#b5546a;text-decoration:underline;">
+            💾 PNG 다운로드
+          </a>
+        </div>
+
         <label>인트로 제목 (예: 소중한 분들을 초대합니다)</label>
         <input type="text" id="introTitle" placeholder="소중한 분들을 초대합니다">
         <label>인트로 본문 (Enter로 줄바꿈)</label>
