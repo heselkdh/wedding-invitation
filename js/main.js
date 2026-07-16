@@ -385,8 +385,14 @@ function makeAccountCard({ side, holder, bank, number }) {
 // ── 패럴랙스 ────────────────────────────────────────────────────────
 function initParallax() {
   const heroBg = document.getElementById('hero-bg');
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    heroBg.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      heroBg.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+      ticking = false;
+    });
   }, { passive: true });
 }
 
