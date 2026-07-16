@@ -1,4 +1,6 @@
 import { db, auth } from './firebase.js';
+import { SITE_URL } from './site-config.js';
+import QRCode from 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm';
 import {
   signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
@@ -237,6 +239,20 @@ document.getElementById('save-info-btn').addEventListener('click', async () => {
 
   btn.classList.remove('saving');
   btn.textContent = '저장';
+});
+
+document.getElementById('qr-generate-btn').addEventListener('click', () => {
+  const canvas = document.getElementById('qr-canvas');
+  QRCode.toCanvas(canvas, SITE_URL, { width: 600, margin: 2 }, err => {
+    if (err) {
+      showToast(`QR 코드 생성 실패: ${err.message}`);
+      return;
+    }
+    canvas.style.width = '240px';
+    canvas.style.height = '240px';
+    document.getElementById('qr-preview-wrap').style.display = 'block';
+    document.getElementById('qr-download-link').href = canvas.toDataURL('image/png');
+  });
 });
 
 // ── 2. 사진 관리 ────────────────────────────────────────────────────
