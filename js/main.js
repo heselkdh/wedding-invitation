@@ -1,5 +1,6 @@
 import { db, isConfigured } from './firebase.js';
 import { sanitizeHtml } from './sanitize.js';
+import { SITE_URL } from './site-config.js';
 
 // ▼ Kakao Developers(https://developers.kakao.com)에서 발급한 JavaScript 키로 교체
 const KAKAO_JS_KEY = '5469ca423793e964c6bdce93d58c29b2';
@@ -446,7 +447,6 @@ function initKakaoShare(cfg) {
   const btn = document.getElementById('kakao-share-btn');
   if (!btn) return;
 
-  const siteUrl = 'https://heselkdh.github.io/wedding-invitation/';
   const title   = `${cfg.groomName} ♥ ${cfg.brideName} 결혼합니다`;
   const text    = `${formatDate(cfg.weddingDate)} ${cfg.weddingTime} · ${cfg.venueName}`;
 
@@ -464,12 +464,12 @@ function initKakaoShare(cfg) {
         content: {
           title,
           description: text,
-          link: { mobileWebUrl: siteUrl, webUrl: siteUrl },
+          link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
           ...(imageUrl && { imageUrl }),
         },
         buttons: [
-          { title: '청첩장 보기', link: { mobileWebUrl: siteUrl, webUrl: siteUrl } },
-          { title: '위치 보기',   link: { mobileWebUrl: cfg.kakaoMapUrl || siteUrl, webUrl: cfg.kakaoMapUrl || siteUrl } },
+          { title: '청첩장 보기', link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL } },
+          { title: '위치 보기',   link: { mobileWebUrl: cfg.kakaoMapUrl || SITE_URL, webUrl: cfg.kakaoMapUrl || SITE_URL } },
         ],
       });
       return;
@@ -477,12 +477,12 @@ function initKakaoShare(cfg) {
 
     // 폴백: 기기 기본 공유 시트
     if (navigator.share) {
-      navigator.share({ title, text, url: siteUrl }).catch(() => {});
+      navigator.share({ title, text, url: SITE_URL }).catch(() => {});
       return;
     }
 
     // 최후 폴백: URL 복사
-    navigator.clipboard.writeText(siteUrl).then(() => showToast('링크가 복사되었습니다'));
+    navigator.clipboard.writeText(SITE_URL).then(() => showToast('링크가 복사되었습니다'));
   });
 }
 
