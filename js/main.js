@@ -424,7 +424,7 @@ function initKakaoShare(cfg) {
         },
         buttons: [
           { title: '청첩장 보기', link: { mobileWebUrl: siteUrl, webUrl: siteUrl } },
-          { title: '위치 보기',   link: { mobileWebUrl: cfg.kakaoMapUrl || siteUrl, webUrl: cfg.kakaoMapUrl || siteUrl } },
+          { title: '위치 보기',   link: { mobileWebUrl: `${siteUrl}#map`, webUrl: `${siteUrl}#map` } },
         ],
       });
       return;
