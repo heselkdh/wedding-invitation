@@ -41,6 +41,7 @@ async function loadConfig() {
   setCommaListWithBreaks(document.getElementById('bride-parents'), d.brideParents);
 
   const dateStr = formatDate(d.weddingDate);
+  initOpeningAnimation(d, dateStr);
   document.getElementById('hero-date').textContent  = dateStr;
   document.getElementById('dt-date').textContent    = dateStr;
   document.getElementById('dt-time').textContent    = d.weddingTime;
@@ -440,6 +441,22 @@ function showToast(msg) {
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, c =>
     ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// ── 오프닝 애니메이션 ──────────────────────────────────────────────────
+function initOpeningAnimation(cfg, dateStr) {
+  const overlay = document.getElementById('opening-overlay');
+  if (!overlay) return;
+
+  document.getElementById('opening-text').textContent = cfg.splashText || 'Save the Date';
+  document.getElementById('opening-date').textContent = dateStr;
+
+  const dismiss = () => overlay.classList.add('hide');
+  overlay.addEventListener('click', dismiss, { once: true });
+  overlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') dismiss();
+  }, { once: true });
+  setTimeout(dismiss, 2500);
 }
 
 // ── 공유 ────────────────────────────────────────────────────────────
