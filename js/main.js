@@ -41,7 +41,7 @@ async function loadConfig() {
   setCommaListWithBreaks(document.getElementById('bride-parents'), d.brideParents);
 
   const dateStr = formatDate(d.weddingDate);
-  initOpeningAnimation(d, dateStr);
+  setOpeningText(d, dateStr);
   document.getElementById('hero-date').textContent  = dateStr;
   document.getElementById('dt-date').textContent    = dateStr;
   document.getElementById('dt-time').textContent    = d.weddingTime;
@@ -444,14 +444,14 @@ function escapeHtml(str) {
 }
 
 // ── 오프닝 애니메이션 ──────────────────────────────────────────────────
-function initOpeningAnimation(cfg, dateStr) {
+function initOpeningAnimation() {
   const overlay = document.getElementById('opening-overlay');
   if (!overlay) return;
 
-  document.getElementById('opening-text').textContent = cfg.splashText || 'Save the Date';
-  document.getElementById('opening-date').textContent = dateStr;
-
-  const dismiss = () => overlay.classList.add('hide');
+  const dismiss = () => {
+    overlay.classList.add('hide');
+    overlay.setAttribute('tabindex', '-1');
+  };
   overlay.addEventListener('click', dismiss, { once: true });
   overlay.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') {
@@ -460,6 +460,14 @@ function initOpeningAnimation(cfg, dateStr) {
     }
   }, { once: true });
   setTimeout(dismiss, 2500);
+  overlay.focus({ preventScroll: true });
+}
+
+function setOpeningText(cfg, dateStr) {
+  const textEl = document.getElementById('opening-text');
+  const dateEl = document.getElementById('opening-date');
+  if (textEl) textEl.textContent = cfg.splashText || 'Save the Date';
+  if (dateEl) dateEl.textContent = dateStr;
 }
 
 // ── 공유 ────────────────────────────────────────────────────────────
@@ -507,6 +515,7 @@ function initKakaoShare(cfg) {
 }
 
 // ── 초기화 ──────────────────────────────────────────────────────────
+initOpeningAnimation();
 initParallax();
 initFadeIn();
 loadConfig();
