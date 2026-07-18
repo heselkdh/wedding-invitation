@@ -713,7 +713,6 @@ section { padding: 76px 28px; position: relative; }
   gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
-  flex-shrink: 0;
   margin-left: 12px;
 }
 
