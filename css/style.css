@@ -1,5 +1,5 @@
 /* ── 구글 폰트 ── */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+KR:wght@300;400&family=Noto+Sans+KR:wght@200;300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+KR:wght@300;400&family=Noto+Sans+KR:wght@200;300;400;500&family=Nanum+Pen+Script&display=swap');
 
 /* ── 디자인 토큰 ── */
 :root {
@@ -16,6 +16,7 @@
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-serif:   'Noto Serif KR',      Georgia, serif;
   --font-sans:    'Noto Sans KR', -apple-system, sans-serif;
+  --font-script:  'Nanum Pen Script', cursive;
   --radius:  6px;
   --ease:    0.25s ease;
 }
@@ -65,6 +66,57 @@ section { padding: 76px 28px; position: relative; }
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ════════════════════════════
+   0. 오프닝 애니메이션
+════════════════════════════ */
+#opening-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.5s ease;
+}
+#opening-overlay.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.opening-text {
+  font-family: var(--font-script);
+  font-size: 2.4rem;
+  color: var(--accent);
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent) 50%, transparent 50%, transparent 100%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: openingDraw 1.8s ease-in-out forwards;
+}
+@keyframes openingDraw {
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+
+.opening-date {
+  margin-top: 14px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--gray-2);
+  opacity: 0;
+  animation: openingDateIn 0.6s ease forwards;
+  animation-delay: 1.6s;
+}
+@keyframes openingDateIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 /* ════════════════════════════
    1. Hero
