@@ -454,7 +454,10 @@ function initOpeningAnimation(cfg, dateStr) {
   const dismiss = () => overlay.classList.add('hide');
   overlay.addEventListener('click', dismiss, { once: true });
   overlay.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') dismiss();
+    if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') {
+      e.preventDefault();
+      dismiss();
+    }
   }, { once: true });
   setTimeout(dismiss, 2500);
 }
