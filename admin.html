@@ -66,6 +66,8 @@
             <input type="text" id="weddingTime" placeholder="오후 2시 30분">
           </div>
         </div>
+        <label>오프닝 애니메이션 문구 (손글씨 스타일로 표시)</label>
+        <input type="text" id="splashText" placeholder="Save the Date">
         <label>예식장 이름</label>
         <input type="text" id="venueName" placeholder="○○웨딩홀 ○층 ○○홀">
         <label>예식장 주소</label>
@@ -95,6 +97,16 @@
           <a href="https://developers.kakao.com/tool/clear/og" target="_blank" rel="noopener"
              style="display:inline-block;margin-top:10px;font-size:0.8rem;color:#b5546a;text-decoration:underline;">
             🔄 카카오 OG 캐시 초기화 (새탭)
+          </a>
+        </div>
+
+        <label>QR 코드 (종이 청첩장 인쇄용)</label>
+        <button class="btn btn-primary" id="qr-generate-btn" type="button">🔗 QR 코드 생성</button>
+        <div id="qr-preview-wrap" style="display:none;margin-top:12px;margin-bottom:16px;">
+          <canvas id="qr-canvas" style="display:block;width:240px;height:240px;border:1px solid #e8dde2;border-radius:8px;"></canvas>
+          <a id="qr-download-link" download="wedding-qr.png"
+             style="display:inline-block;margin-top:10px;font-size:0.8rem;color:#b5546a;text-decoration:underline;">
+            💾 PNG 다운로드
           </a>
         </div>
 

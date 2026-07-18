@@ -1,4 +1,6 @@
 import { db, auth } from './firebase.js';
+import { SITE_URL } from './site-config.js';
+import QRCode from 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm';
 import {
   signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
@@ -97,7 +99,7 @@ async function loadInfoForm() {
   const d = snap.data();
   const fields = ['groomName','brideName','groomParents','brideParents',
                   'weddingDate','weddingTime','venueName','venueAddress',
-                  'kakaoMapUrl','transport','musicUrl','introTitle','introText'];
+                  'kakaoMapUrl','transport','musicUrl','introTitle','introText','splashText'];
   fields.forEach(f => {
     const el = document.getElementById(f);
     if (el && d[f] != null) el.value = d[f];
@@ -125,7 +127,9 @@ document.getElementById('og-thumb-copy-btn').addEventListener('click', () => {
 document.getElementById('og-thumb-input').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
+  const area = document.getElementById('og-thumb-upload-area');
   const progress = document.getElementById('og-thumb-progress');
+  area.classList.add('saving');
   progress.textContent = '업로드 중...';
   try {
     const url = await uploadToCloudinary(file);
@@ -136,6 +140,7 @@ document.getElementById('og-thumb-input').addEventListener('change', async e => 
   } catch (err) {
     progress.textContent = `오류: ${err.message}`;
   }
+  area.classList.remove('saving');
   e.target.value = '';
 });
 
@@ -150,7 +155,9 @@ function showHeroBgPreview(url) {
 document.getElementById('hero-bg-input').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
+  const area = document.getElementById('hero-bg-upload-area');
   const progress = document.getElementById('hero-bg-progress');
+  area.classList.add('saving');
   progress.textContent = '업로드 중...';
   try {
     const url = await uploadToCloudinary(file);
@@ -161,6 +168,7 @@ document.getElementById('hero-bg-input').addEventListener('change', async e => {
   } catch (err) {
     progress.textContent = `오류: ${err.message}`;
   }
+  area.classList.remove('saving');
   e.target.value = '';
 });
 
@@ -184,7 +192,9 @@ function showMapPreview(url) {
 document.getElementById('map-image-input').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
+  const area = document.getElementById('map-upload-area');
   const progress = document.getElementById('map-upload-progress');
+  area.classList.add('saving');
   progress.textContent = '업로드 중...';
   try {
     const url = await uploadToCloudinary(file);
@@ -195,6 +205,7 @@ document.getElementById('map-image-input').addEventListener('change', async e =>
   } catch (err) {
     progress.textContent = `오류: ${err.message}`;
   }
+  area.classList.remove('saving');
   e.target.value = '';
 });
 
@@ -214,7 +225,7 @@ document.getElementById('save-info-btn').addEventListener('click', async () => {
 
   const fields = ['groomName','brideName','groomParents','brideParents',
                   'weddingDate','weddingTime','venueName','venueAddress',
-                  'kakaoMapUrl','transport','musicUrl','introTitle','introText'];
+                  'kakaoMapUrl','transport','musicUrl','introTitle','introText','splashText'];
   const data = {};
   fields.forEach(f => { data[f] = document.getElementById(f).value.trim(); });
 
@@ -228,6 +239,20 @@ document.getElementById('save-info-btn').addEventListener('click', async () => {
 
   btn.classList.remove('saving');
   btn.textContent = '저장';
+});
+
+document.getElementById('qr-generate-btn').addEventListener('click', () => {
+  const canvas = document.getElementById('qr-canvas');
+  QRCode.toCanvas(canvas, SITE_URL, { width: 600, margin: 2 }, err => {
+    if (err) {
+      showToast(`QR 코드 생성 실패: ${err.message}`);
+      return;
+    }
+    canvas.style.width = '240px';
+    canvas.style.height = '240px';
+    document.getElementById('qr-preview-wrap').style.display = 'block';
+    document.getElementById('qr-download-link').href = canvas.toDataURL('image/png');
+  });
 });
 
 // ── 2. 사진 관리 ────────────────────────────────────────────────────
@@ -351,7 +376,9 @@ document.getElementById('photo-input').addEventListener('change', async e => {
   const files = Array.from(e.target.files);
   if (!files.length) return;
 
+  const area = document.getElementById('upload-area');
   const progressEl = document.getElementById('upload-progress');
+  area.classList.add('saving');
   progressEl.style.color = '#8a6a76';
   progressEl.textContent = `0 / ${files.length} 업로드 중...`;
 
@@ -389,6 +416,7 @@ document.getElementById('photo-input').addEventListener('change', async e => {
     progressEl.style.color = '#c0392b';
     progressEl.textContent = `${done}장 성공 / ${failed}장 실패 — 브라우저 콘솔(F12)에서 오류 확인`;
   }
+  area.classList.remove('saving');
   setTimeout(() => { progressEl.textContent = ''; progressEl.style.color = '#8a6a76'; }, 5000);
   e.target.value = '';
 });

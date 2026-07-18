@@ -1,4 +1,6 @@
 import { db, isConfigured } from './firebase.js';
+import { sanitizeHtml } from './sanitize.js';
+import { SITE_URL } from './site-config.js';
 
 // ▼ Kakao Developers(https://developers.kakao.com)에서 발급한 JavaScript 키로 교체
 const KAKAO_JS_KEY = '9cc67862123c23921bcde33c45851b3a';
@@ -35,10 +37,11 @@ async function loadConfig() {
   document.getElementById('hero-venue-short').textContent = d.venueName;
   document.getElementById('groom-name').textContent       = d.groomName;
   document.getElementById('bride-name').textContent       = d.brideName;
-  document.getElementById('groom-parents').innerHTML      = d.groomParents.replace(/,/g, '<br>');
-  document.getElementById('bride-parents').innerHTML      = d.brideParents.replace(/,/g, '<br>');
+  setCommaListWithBreaks(document.getElementById('groom-parents'), d.groomParents);
+  setCommaListWithBreaks(document.getElementById('bride-parents'), d.brideParents);
 
   const dateStr = formatDate(d.weddingDate);
+  setOpeningText(d, dateStr);
   document.getElementById('hero-date').textContent  = dateStr;
   document.getElementById('dt-date').textContent    = dateStr;
   document.getElementById('dt-time').textContent    = d.weddingTime;
@@ -63,7 +66,7 @@ async function loadConfig() {
     document.getElementById('map-image-wrap').style.display = 'block';
   }
 
-  document.getElementById('transport-info').innerHTML = d.transport || '';
+  document.getElementById('transport-info').innerHTML = sanitizeHtml(d.transport || '');
 
   // 인트로 섹션
   const introSec = document.getElementById('intro');
@@ -166,6 +169,14 @@ function initMusic(url) {
   });
 }
 
+function setCommaListWithBreaks(el, text) {
+  el.textContent = '';
+  text.split(',').forEach((part, i) => {
+    if (i > 0) el.appendChild(document.createElement('br'));
+    el.appendChild(document.createTextNode(part));
+  });
+}
+
 function formatDate(dateStr) {
   const dt   = new Date(dateStr);
   const days = ['일','월','화','수','목','금','토'];
@@ -189,11 +200,14 @@ function startCountdown(dateStr, timeStr) {
   const target = new Date(dateStr);
   target.setHours(hour, min, 0, 0);
 
+  let intervalId = null;
+
   function tick() {
     const diff = target - Date.now();
     if (diff <= 0) {
       ['days','hours','mins','secs'].forEach(u =>
         (document.getElementById(`cd-${u}`).textContent = '0'));
+      if (intervalId !== null) clearInterval(intervalId);
       return;
     }
     const d = Math.floor(diff / 86400000);
@@ -206,7 +220,7 @@ function startCountdown(dateStr, timeStr) {
     document.getElementById('cd-secs').textContent  = String(s).padStart(2,'0');
   }
   tick();
-  setInterval(tick, 1000);
+  intervalId = setInterval(tick, 1000);
 }
 
 // ── 갤러리 ─────────────────────────────────────────────────────────
@@ -261,6 +275,8 @@ function closeLightbox() {
 }
 
 // ── 방명록 ─────────────────────────────────────────────────────────
+let _unsubGuestbook = null;
+
 function loadGuestbook() {
   if (!isConfigured) {
     document.getElementById('guestbook-list').innerHTML =
@@ -270,7 +286,7 @@ function loadGuestbook() {
   }
 
   const q = query(collection(db, 'guestbook'), orderBy('createdAt', 'desc'));
-  onSnapshot(q, snap => {
+  _unsubGuestbook = onSnapshot(q, snap => {
     const list = document.getElementById('guestbook-list');
     list.innerHTML = '';
     snap.forEach(d => {
@@ -291,17 +307,42 @@ function loadGuestbook() {
   });
 }
 
+window.addEventListener('pagehide', () => {
+  if (_unsubGuestbook) { _unsubGuestbook(); _unsubGuestbook = null; }
+});
+
+const GB_COOLDOWN_MS = 60 * 1000;
+
 let gbSubmitting = false;
 document.getElementById('gb-submit').addEventListener('click', async () => {
   if (!isConfigured || gbSubmitting) return;
-  const name    = document.getElementById('gb-name').value.trim();
-  const message = document.getElementById('gb-message').value.trim();
+
+  const honeypot = document.getElementById('gb-website').value;
+  const name     = document.getElementById('gb-name').value.trim();
+  const message  = document.getElementById('gb-message').value.trim();
   if (!name || !message) { showToast('이름과 메시지를 입력해주세요'); return; }
+
+  if (honeypot) {
+    // 봇이 숨겨진 필드를 채운 경우 — Firestore에 쓰지 않고 성공한 것처럼 보이게 함
+    document.getElementById('gb-name').value    = '';
+    document.getElementById('gb-message').value = '';
+    showToast('메시지가 등록되었습니다 🌸');
+    return;
+  }
+
+  const lastSubmit = Number(localStorage.getItem('gbLastSubmit') || 0);
+  const remainingMs = GB_COOLDOWN_MS - (Date.now() - lastSubmit);
+  if (remainingMs > 0) {
+    showToast(`잠시 후 다시 시도해주세요 (${Math.ceil(remainingMs / 1000)}초)`);
+    return;
+  }
+
   gbSubmitting = true;
   const btn = document.getElementById('gb-submit');
   btn.disabled = true;
   try {
     await addDoc(collection(db, 'guestbook'), { name, message, createdAt: serverTimestamp() });
+    localStorage.setItem('gbLastSubmit', String(Date.now()));
     document.getElementById('gb-name').value    = '';
     document.getElementById('gb-message').value = '';
     showToast('메시지가 등록되었습니다 🌸');
@@ -367,8 +408,14 @@ function makeAccountCard({ side, holder, bank, number }) {
 // ── 패럴랙스 ────────────────────────────────────────────────────────
 function initParallax() {
   const heroBg = document.getElementById('hero-bg');
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    heroBg.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      heroBg.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+      ticking = false;
+    });
   }, { passive: true });
 }
 
@@ -396,12 +443,38 @@ function escapeHtml(str) {
     ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
+// ── 오프닝 애니메이션 ──────────────────────────────────────────────────
+function initOpeningAnimation() {
+  const overlay = document.getElementById('opening-overlay');
+  if (!overlay) return;
+
+  const dismiss = () => {
+    overlay.classList.add('hide');
+    overlay.setAttribute('tabindex', '-1');
+  };
+  overlay.addEventListener('click', dismiss, { once: true });
+  overlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ') {
+      e.preventDefault();
+      dismiss();
+    }
+  }, { once: true });
+  setTimeout(dismiss, 2500);
+  overlay.focus({ preventScroll: true });
+}
+
+function setOpeningText(cfg, dateStr) {
+  const textEl = document.getElementById('opening-text');
+  const dateEl = document.getElementById('opening-date');
+  if (textEl) textEl.textContent = cfg.splashText || 'Save the Date';
+  if (dateEl) dateEl.textContent = dateStr;
+}
+
 // ── 공유 ────────────────────────────────────────────────────────────
 function initKakaoShare(cfg) {
   const btn = document.getElementById('kakao-share-btn');
   if (!btn) return;
 
-  const siteUrl = 'https://heselkdh.github.io/wedding-invitation/';
   const title   = `${cfg.groomName} ♥ ${cfg.brideName} 결혼합니다`;
   const text    = `${formatDate(cfg.weddingDate)} ${cfg.weddingTime} · ${cfg.venueName}`;
 
@@ -419,12 +492,12 @@ function initKakaoShare(cfg) {
         content: {
           title,
           description: text,
-          link: { mobileWebUrl: siteUrl, webUrl: siteUrl },
+          link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL },
           ...(imageUrl && { imageUrl }),
         },
         buttons: [
-          { title: '청첩장 보기', link: { mobileWebUrl: siteUrl, webUrl: siteUrl } },
-          { title: '위치 보기',   link: { mobileWebUrl: `${siteUrl}#map`, webUrl: `${siteUrl}#map` } },
+          { title: '청첩장 보기', link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL } },
+          { title: '위치 보기',   link: { mobileWebUrl: `${SITE_URL}#map`, webUrl: `${SITE_URL}#map` } },
         ],
       });
       return;
@@ -432,16 +505,17 @@ function initKakaoShare(cfg) {
 
     // 폴백: 기기 기본 공유 시트
     if (navigator.share) {
-      navigator.share({ title, text, url: siteUrl }).catch(() => {});
+      navigator.share({ title, text, url: SITE_URL }).catch(() => {});
       return;
     }
 
     // 최후 폴백: URL 복사
-    navigator.clipboard.writeText(siteUrl).then(() => showToast('링크가 복사되었습니다'));
+    navigator.clipboard.writeText(SITE_URL).then(() => showToast('링크가 복사되었습니다'));
   });
 }
 
 // ── 초기화 ──────────────────────────────────────────────────────────
+initOpeningAnimation();
 initParallax();
 initFadeIn();
 loadConfig();
