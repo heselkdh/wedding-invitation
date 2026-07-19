@@ -1,5 +1,5 @@
 /* ── 구글 폰트 ── */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+KR:wght@300;400&family=Noto+Sans+KR:wght@200;300;400;500&family=Nanum+Pen+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@300;400&family=Noto+Sans+KR:wght@200;300;400;500&family=Nanum+Pen+Script&display=swap');
 
 /* ── 디자인 토큰 ── */
 :root {
@@ -14,8 +14,8 @@
   --accent-l:#e8e0d5;
 
   --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-serif:   'Noto Serif KR',      Georgia, serif;
-  --font-sans:    'Noto Sans KR', -apple-system, sans-serif;
+  --font-serif:   'Gowun Batang', 'Noto Serif KR', Georgia, serif;
+  --font-sans:    'Gowun Batang', 'Noto Sans KR', -apple-system, sans-serif;
   --font-script:  'Nanum Pen Script', cursive;
   --radius:  6px;
   --ease:    0.25s ease;
@@ -107,7 +107,7 @@ section { padding: 76px 28px; position: relative; }
 .opening-date {
   margin-top: 14px;
   font-family: var(--font-sans);
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   color: var(--gray-2);
   opacity: 0;
   animation: openingDateIn 0.6s ease forwards;
@@ -187,7 +187,7 @@ section { padding: 76px 28px; position: relative; }
 
 .hero-date {
   font-family: var(--font-sans);
-  font-size: 0.88rem;
+  font-size: 0.94rem;
   font-weight: 500;
   color: var(--black);
   letter-spacing: 0.06em;
@@ -197,7 +197,7 @@ section { padding: 76px 28px; position: relative; }
 
 .hero-venue-short {
   font-family: var(--font-sans);
-  font-size: 0.84rem;
+  font-size: 0.9rem;
   font-weight: 400;
   color: var(--gray-1);
   letter-spacing: 0.06em;
@@ -216,7 +216,7 @@ section { padding: 76px 28px; position: relative; }
   border-radius: 6px;
   padding: 11px 24px;
   font-family: var(--font-sans);
-  font-size: 0.83rem;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
   letter-spacing: 0.04em;
@@ -280,10 +280,10 @@ section { padding: 76px 28px; position: relative; }
 
 .intro-text {
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 300;
   color: var(--gray-1);
-  line-height: 2.4;
+  line-height: 2;
   white-space: pre-line;
   letter-spacing: 0.03em;
 }
@@ -344,10 +344,10 @@ section { padding: 76px 28px; position: relative; }
 
 .parents-name {
   font-family: var(--font-serif);
-  font-size: 0.97rem;
+  font-size: 1.02rem;
   font-weight: 400;
   color: var(--black);
-  line-height: 2.1;
+  line-height: 1.9;
 }
 
 /* ════════════════════════════
@@ -469,7 +469,8 @@ section { padding: 76px 28px; position: relative; }
 }
 
 .venue-address {
-  font-size: 0.82rem;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
   color: var(--gray-2);
   line-height: 1.8;
 }
@@ -499,7 +500,7 @@ section { padding: 76px 28px; position: relative; }
   border: none;
   border-radius: var(--radius);
   padding: 14px 28px;
-  font-size: 0.83rem;
+  font-size: 0.9rem;
   font-family: var(--font-sans);
   font-weight: 400;
   cursor: pointer;
@@ -518,7 +519,7 @@ section { padding: 76px 28px; position: relative; }
   border: 1px solid var(--gray-3);
   border-radius: var(--radius);
   padding: 24px;
-  font-size: 0.86rem;
+  font-size: 0.96rem;
   color: var(--gray-1);
   line-height: 1.9;
   white-space: pre-line;
@@ -674,7 +675,7 @@ section { padding: 76px 28px; position: relative; }
 
 .timeline-title {
   font-family: var(--font-serif);
-  font-size: 0.98rem;
+  font-size: 1.02rem;
   font-weight: 500;
   color: var(--black);
   margin-bottom: 6px;
@@ -682,7 +683,7 @@ section { padding: 76px 28px; position: relative; }
 
 .timeline-text {
   font-family: var(--font-sans);
-  font-size: 0.86rem;
+  font-size: 0.95rem;
   font-weight: 300;
   color: var(--gray-1);
   line-height: 1.8;
@@ -717,7 +718,7 @@ section { padding: 76px 28px; position: relative; }
   padding: 11px 0;
   font-family: var(--font-sans);
   font-weight: 400;
-  font-size: 0.9rem;
+  font-size: 0.98rem;
   color: var(--black);
   background: transparent;
   margin-bottom: 14px;
@@ -741,7 +742,7 @@ section { padding: 76px 28px; position: relative; }
   border: none;
   border-radius: var(--radius);
   padding: 14px;
-  font-size: 0.86rem;
+  font-size: 0.92rem;
   font-family: var(--font-sans);
   font-weight: 400;
   letter-spacing: 0.07em;
@@ -762,14 +763,15 @@ section { padding: 76px 28px; position: relative; }
 
 .guestbook-msg-name {
   font-family: var(--font-serif);
-  font-size: 0.87rem;
+  font-size: 0.95rem;
   font-weight: 400;
   color: var(--black);
   margin-bottom: 6px;
 }
 
 .guestbook-msg-text {
-  font-size: 0.87rem;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
   color: var(--gray-1);
   line-height: 1.8;
 }
@@ -829,14 +831,15 @@ section { padding: 76px 28px; position: relative; }
 
 .account-info .account-holder {
   font-family: var(--font-serif);
-  font-size: 0.92rem;
+  font-size: 1rem;
   font-weight: 400;
   color: var(--black);
   margin-bottom: 2px;
 }
 
 .account-info .account-number {
-  font-size: 0.78rem;
+  font-family: var(--font-serif);
+  font-size: 0.86rem;
   color: var(--gray-1);
   letter-spacing: 0.02em;
 }
@@ -847,7 +850,7 @@ section { padding: 76px 28px; position: relative; }
   border: 1px solid var(--gray-3);
   border-radius: var(--radius);
   padding: 7px 14px;
-  font-size: 0.73rem;
+  font-size: 0.8rem;
   font-family: var(--font-sans);
   font-weight: 400;
   cursor: pointer;
@@ -877,7 +880,7 @@ section { padding: 76px 28px; position: relative; }
   align-items: center;
   border-radius: var(--radius);
   padding: 7px 14px;
-  font-size: 0.73rem;
+  font-size: 0.8rem;
   font-family: var(--font-sans);
   font-weight: 500;
   text-decoration: none;
