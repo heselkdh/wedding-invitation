@@ -658,6 +658,7 @@ section { padding: 76px 28px; position: relative; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   border-bottom: 1px solid var(--gray-4);
 }
 
@@ -713,7 +714,8 @@ section { padding: 76px 28px; position: relative; }
   gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
-  margin-left: 12px;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .pay-btn {
