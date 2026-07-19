@@ -274,6 +274,35 @@ function closeLightbox() {
   document.body.style.overflow = '';
 }
 
+// ── 만남 스토리 ────────────────────────────────────────────────────
+function loadTimeline() {
+  const section = document.getElementById('timeline');
+  const list    = document.getElementById('timeline-list');
+  if (!isConfigured) return;
+
+  onSnapshot(query(collection(db, 'timeline'), orderBy('order')), snap => {
+    list.innerHTML = '';
+    if (snap.empty) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'block';
+    snap.forEach(d => list.appendChild(makeTimelineItem(d.data())));
+  });
+}
+
+function makeTimelineItem({ date, title, text, imageUrl }) {
+  const el = document.createElement('div');
+  el.className = 'timeline-item';
+  el.innerHTML = `
+    <div class="timeline-date">${escapeHtml(date || '')}</div>
+    <div class="timeline-title">${escapeHtml(title || '')}</div>
+    <div class="timeline-text">${escapeHtml(text || '')}</div>
+    ${imageUrl ? `<img class="timeline-photo" src="${escapeHtml(imageUrl)}" alt="">` : ''}
+  `;
+  return el;
+}
+
 // ── 방명록 ─────────────────────────────────────────────────────────
 let _unsubGuestbook = null;
 
@@ -524,5 +553,6 @@ initParallax();
 initFadeIn();
 loadConfig();
 loadGallery();
+loadTimeline();
 loadGuestbook();
 loadAccounts();
