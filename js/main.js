@@ -558,7 +558,7 @@ function initOpeningAnimation() {
 function setOpeningText(cfg, dateStr) {
   const textEl = document.getElementById('opening-text');
   const dateEl = document.getElementById('opening-date');
-  if (textEl) textEl.textContent = cfg.splashText || 'Save the Date';
+  if (textEl) textEl.textContent = cfg.splashText || '';
   if (dateEl) dateEl.textContent = dateStr;
 }
 
