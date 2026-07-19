@@ -77,6 +77,7 @@ async function loadConfig() {
   }
 
   startCountdown(d.weddingDate, d.weddingTime);
+  renderMiniCalendar(d.weddingDate);
 
   if (d.musicUrl) initMusic(d.musicUrl);
   initKakaoShare(d);
@@ -221,6 +222,31 @@ function startCountdown(dateStr, timeStr) {
   }
   tick();
   intervalId = setInterval(tick, 1000);
+}
+
+// ── 미니 달력 ────────────────────────────────────────────────────────
+function renderMiniCalendar(dateStr) {
+  const el = document.getElementById('mini-calendar');
+  if (!el) return;
+
+  const target     = new Date(dateStr);
+  const year       = target.getFullYear();
+  const month      = target.getMonth();
+  const targetDate = target.getDate();
+
+  const firstDay     = new Date(year, month, 1).getDay();
+  const daysInMonth  = new Date(year, month + 1, 0).getDate();
+  const dayLabels    = ['일','월','화','수','목','금','토'];
+
+  let html = `<div class="mini-cal-header">${year}년 ${month + 1}월</div><div class="mini-cal-grid">`;
+  dayLabels.forEach(d => { html += `<div class="mini-cal-day-label">${d}</div>`; });
+  for (let i = 0; i < firstDay; i++) html += `<div class="mini-cal-cell"></div>`;
+  for (let day = 1; day <= daysInMonth; day++) {
+    html += `<div class="mini-cal-cell${day === targetDate ? ' target' : ''}">${day}</div>`;
+  }
+  html += `</div>`;
+
+  el.innerHTML = html;
 }
 
 // ── 갤러리 ─────────────────────────────────────────────────────────
