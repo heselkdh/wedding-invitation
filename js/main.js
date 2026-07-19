@@ -1,6 +1,7 @@
 import { db, isConfigured } from './firebase.js';
 import { sanitizeHtml } from './sanitize.js';
 import { SITE_URL } from './site-config.js';
+import QRCode from 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm';
 
 // ▼ Kakao Developers(https://developers.kakao.com)에서 발급한 JavaScript 키로 교체
 const KAKAO_JS_KEY = '9cc67862123c23921bcde33c45851b3a';
@@ -86,7 +87,7 @@ async function loadConfig() {
   renderMiniCalendar(d.weddingDate);
 
   if (d.musicUrl) initMusic(d.musicUrl);
-  initKakaoShare(d);
+  initShareSheet(d);
 }
 
 // ── 음악 (YouTube IFrame API) ────────────────────────────────────────
@@ -95,32 +96,34 @@ function extractVideoId(url) {
   return m ? m[1] : null;
 }
 
+const MUSIC_ICON_ON  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const MUSIC_ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9l5 5M21 9l-5 5"/></svg>';
+
 function initMusic(url) {
   const videoId = extractVideoId(url);
   if (!videoId) return;
 
-  const bar      = document.getElementById('music-bar');
-  const playBtn  = document.getElementById('music-play-btn');
-  const muteBtn  = document.getElementById('music-mute-btn');
+  const btn = document.getElementById('nav-music-btn');
+  btn.style.display = 'flex';
+  document.getElementById('nav-music-divider').style.display = 'block';
 
-  bar.classList.add('visible');
-
-  let player  = null;
-  let muted   = false;
-  let playing = false;
+  let player     = null;
+  let muted      = true;
   let interacted = false;
 
   function updateUI() {
-    playBtn.textContent = playing ? '⏸' : '▶';
-    muteBtn.textContent = muted   ? '🔇' : '🔊';
-    bar.classList.toggle('playing', playing);
+    btn.innerHTML = muted ? MUSIC_ICON_OFF : MUSIC_ICON_ON;
+    btn.classList.toggle('muted', muted);
   }
+  updateUI();
 
   // 첫 인터랙션 시 자동 음소거 해제 (브라우저 자동재생 정책 우회)
   function onFirstInteraction() {
-    if (interacted || !player || muted) return;
+    if (interacted || !player) return;
     interacted = true;
+    muted = false;
     player.unMute();
+    player.playVideo();
     updateUI();
   }
   ['click','touchstart','scroll'].forEach(evt =>
@@ -135,10 +138,6 @@ function initMusic(url) {
         onReady: e => {
           e.target.mute();   // autoplay 허용을 위해 일시 음소거, 인터랙션 시 해제됨
           e.target.playVideo();
-        },
-        onStateChange: e => {
-          playing = e.data === window.YT.PlayerState.PLAYING;
-          updateUI();
         }
       }
     });
@@ -154,23 +153,15 @@ function initMusic(url) {
     };
   }
 
-  playBtn.addEventListener('click', () => {
-    if (!player) return;
-    if (playing) {
-      player.pauseVideo();
-    } else {
-      player.playVideo();
-    }
-  });
-
-  muteBtn.addEventListener('click', () => {
+  btn.addEventListener('click', () => {
     if (!player) return;
     muted = !muted;
+    interacted = true;
     if (muted) {
       player.mute();
     } else {
       player.unMute();
-      if (!playing) player.playVideo();
+      player.playVideo();
     }
     updateUI();
   });
@@ -571,20 +562,36 @@ function setOpeningText(cfg, dateStr) {
   if (dateEl) dateEl.textContent = dateStr;
 }
 
-// ── 공유 ────────────────────────────────────────────────────────────
-function initKakaoShare(cfg) {
-  const btn = document.getElementById('kakao-share-btn');
-  if (!btn) return;
+// ── 공유 시트 ────────────────────────────────────────────────────────
+function initShareSheet(cfg) {
+  const overlay  = document.getElementById('share-sheet-overlay');
+  const openBtn  = document.getElementById('nav-share-btn');
+  const closeBtn = document.getElementById('share-sheet-close');
+  const kakaoBtn = document.getElementById('share-kakao-btn');
+  const copyBtn  = document.getElementById('share-copy-btn');
+  const qrBtn    = document.getElementById('share-qr-btn');
+  const qrWrap   = document.getElementById('share-qr-wrap');
+  const qrCanvas = document.getElementById('share-qr-canvas');
 
-  const title   = `${cfg.groomName} ♥ ${cfg.brideName} 결혼합니다`;
-  const text    = `${formatDate(cfg.weddingDate)} ${cfg.weddingTime} · ${cfg.venueName}`;
+  const title = `${cfg.groomName} ♥ ${cfg.brideName} 결혼합니다`;
+  const text  = `${formatDate(cfg.weddingDate)} ${cfg.weddingTime} · ${cfg.venueName}`;
 
   // Kakao SDK 초기화 (실패해도 무관)
   if (window.Kakao && !Kakao.isInitialized() && KAKAO_JS_KEY !== 'YOUR_KAKAO_JS_KEY') {
     try { Kakao.init(KAKAO_JS_KEY); } catch (_) {}
   }
 
-  btn.addEventListener('click', () => {
+  function openSheet() { overlay.classList.add('open'); }
+  function closeSheet() {
+    overlay.classList.remove('open');
+    qrWrap.classList.remove('open');
+  }
+
+  openBtn.addEventListener('click', openSheet);
+  closeBtn.addEventListener('click', closeSheet);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeSheet(); });
+
+  kakaoBtn.addEventListener('click', () => {
     // Kakao SDK 우선 시도 (모바일/데스크탑 공통)
     if (window.Kakao && Kakao.isInitialized()) {
       const imageUrl = cfg.ogImageUrl || cfg.heroBgUrl;
@@ -613,12 +620,47 @@ function initKakaoShare(cfg) {
     // 최후 폴백: URL 복사
     navigator.clipboard.writeText(SITE_URL).then(() => showToast('링크가 복사되었습니다'));
   });
+
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(SITE_URL).then(() => showToast('URL이 복사되었습니다'));
+  });
+
+  qrBtn.addEventListener('click', () => {
+    if (qrWrap.classList.contains('open')) {
+      qrWrap.classList.remove('open');
+      return;
+    }
+    QRCode.toCanvas(qrCanvas, SITE_URL, { width: 180, margin: 1 }, err => {
+      if (err) { showToast(`QR 코드 생성 실패: ${err.message}`); return; }
+      qrWrap.classList.add('open');
+    });
+  });
+}
+
+// ── 글씨 크기 ────────────────────────────────────────────────────────
+function initFontSizeToggle() {
+  const btn = document.getElementById('nav-fontsize-btn');
+  const KEY = 'fontSizePref';
+
+  function apply(large) {
+    document.documentElement.classList.toggle('font-large', large);
+    btn.setAttribute('aria-pressed', String(large));
+  }
+
+  apply(localStorage.getItem(KEY) === 'large');
+
+  btn.addEventListener('click', () => {
+    const large = !document.documentElement.classList.contains('font-large');
+    apply(large);
+    localStorage.setItem(KEY, large ? 'large' : 'normal');
+  });
 }
 
 // ── 초기화 ──────────────────────────────────────────────────────────
 initOpeningAnimation();
 initParallax();
 initFadeIn();
+initFontSizeToggle();
 loadConfig();
 loadGallery();
 loadTimeline();

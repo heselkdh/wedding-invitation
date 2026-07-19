@@ -196,11 +196,6 @@
   </div>
 </section>
 
-<!-- 8. 공유하기 -->
-<section id="share">
-  <button id="kakao-share-btn" class="fade-up">💬 카카오톡으로 공유하기</button>
-</section>
-
 <footer>
   <p>🌸 두 사람의 새로운 시작을 축하해주세요 🌸</p>
 </footer>
@@ -208,15 +203,32 @@
 <!-- 토스트 메시지 -->
 <div id="toast"></div>
 
-<!-- 음악 컨트롤 바 -->
-<div id="music-bar">
-  <span class="music-bar-note">🎵</span>
-  <span class="music-bar-label">배경음악</span>
-  <button id="music-play-btn" aria-label="재생/정지">▶</button>
-  <div class="music-bar-divider"></div>
-  <button id="music-mute-btn" aria-label="음소거">🔇</button>
-</div>
 <div id="yt-player"></div>
+
+<!-- 하단 네비게이션 -->
+<nav id="bottom-nav">
+  <button id="nav-music-btn" aria-label="배경음악 켜기/끄기" style="display:none;"></button>
+  <div class="bottom-nav-divider" id="nav-music-divider" style="display:none;"></div>
+  <button id="nav-fontsize-btn" aria-label="글씨 크게/작게 보기" aria-pressed="false">가</button>
+  <div class="bottom-nav-divider"></div>
+  <button id="nav-share-btn" aria-label="공유하기">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.6l7.6-4.2M8.2 13.4l7.6 4.2"/></svg>
+  </button>
+</nav>
+
+<!-- 공유 시트 -->
+<div id="share-sheet-overlay">
+  <div id="share-sheet">
+    <button id="share-sheet-close" aria-label="닫기">×</button>
+    <p class="share-sheet-title">공유하기</p>
+    <button id="share-kakao-btn" class="share-sheet-btn share-sheet-kakao">💬 카카오톡으로 공유</button>
+    <button id="share-copy-btn" class="share-sheet-btn">🔗 URL 복사</button>
+    <button id="share-qr-btn" class="share-sheet-btn">📱 QR 코드 보기</button>
+    <div id="share-qr-wrap">
+      <canvas id="share-qr-canvas"></canvas>
+    </div>
+  </div>
+</div>
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
