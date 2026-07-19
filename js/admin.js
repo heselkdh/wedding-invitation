@@ -100,7 +100,7 @@ async function loadInfoForm() {
   const d = snap.data();
   const fields = ['groomName','brideName','groomParents','brideParents',
                   'weddingDate','weddingTime','venueName','venueAddress',
-                  'kakaoMapUrl','transport','musicUrl','introTitle','introText','splashText'];
+                  'kakaoMapUrl','naverMapUrl','transport','musicUrl','introTitle','introText','splashText'];
   fields.forEach(f => {
     const el = document.getElementById(f);
     if (el && d[f] != null) el.value = d[f];
@@ -226,7 +226,7 @@ document.getElementById('save-info-btn').addEventListener('click', async () => {
 
   const fields = ['groomName','brideName','groomParents','brideParents',
                   'weddingDate','weddingTime','venueName','venueAddress',
-                  'kakaoMapUrl','transport','musicUrl','introTitle','introText','splashText'];
+                  'kakaoMapUrl','naverMapUrl','transport','musicUrl','introTitle','introText','splashText'];
   const data = {};
   fields.forEach(f => { data[f] = document.getElementById(f).value.trim(); });
 
