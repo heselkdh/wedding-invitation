@@ -543,6 +543,76 @@ section { padding: 76px 28px; position: relative; }
 #lightbox-close:hover { opacity: 1; }
 
 /* ════════════════════════════
+   5.5. 만남 스토리
+════════════════════════════ */
+#timeline {
+  background: var(--white);
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: 28px;
+  padding-bottom: 36px;
+}
+
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.timeline-item::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 18px;
+  bottom: -4px;
+  width: 1px;
+  background: var(--gray-3);
+}
+
+.timeline-item:last-child::after { display: none; }
+
+.timeline-date {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.78rem;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.timeline-title {
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+
+.timeline-text {
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 300;
+  color: var(--gray-1);
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.timeline-photo {
+  width: 100%;
+  border-radius: var(--radius);
+  margin-top: 12px;
+  display: block;
+}
+
+/* ════════════════════════════
    6. 방명록
 ════════════════════════════ */
 #guestbook { background: var(--white); }
