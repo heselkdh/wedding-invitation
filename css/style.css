@@ -459,6 +459,7 @@ section { padding: 76px 28px; position: relative; }
   font-size: 0.86rem;
   color: var(--gray-1);
   line-height: 1.9;
+  white-space: pre-line;
 }
 
 .transport-info h4 {
@@ -541,6 +542,27 @@ section { padding: 76px 28px; position: relative; }
   transition: opacity 0.2s;
 }
 #lightbox-close:hover { opacity: 1; }
+
+#lightbox-prev,
+#lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 2.4rem;
+  cursor: pointer;
+  line-height: 1;
+  opacity: 0.65;
+  transition: opacity 0.2s;
+  padding: 8px 14px;
+}
+#lightbox-prev:hover,
+#lightbox-next:hover { opacity: 1; }
+
+#lightbox-prev { left: 8px; }
+#lightbox-next { right: 8px; }
 
 /* ════════════════════════════
    5.5. 만남 스토리
