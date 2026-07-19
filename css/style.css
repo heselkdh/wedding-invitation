@@ -397,6 +397,8 @@ section { padding: 76px 28px; position: relative; }
   padding-bottom: 4px;
 }
 
+.mini-cal-day-label.sunday { color: #c0392b; }
+
 .mini-cal-cell {
   aspect-ratio: 1;
   display: flex;
@@ -406,6 +408,8 @@ section { padding: 76px 28px; position: relative; }
   color: var(--gray-1);
   border-radius: 50%;
 }
+
+.mini-cal-cell.holiday { color: #c0392b; }
 
 .mini-cal-cell.target {
   background: var(--accent);
