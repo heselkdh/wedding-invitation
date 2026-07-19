@@ -434,12 +434,12 @@ async function loadAccountsForm() {
   const snap = await getDoc(doc(db, 'accounts', 'main'));
   if (!snap.exists()) return;
   const d = snap.data();
-  const fields = ['groomBank','groomHolder','groomAccount',
-                  'groomFatherBank','groomFatherHolder','groomFatherAccount',
-                  'groomMotherBank','groomMotherHolder','groomMotherAccount',
-                  'brideBank','brideHolder','brideAccount',
-                  'brideFatherBank','brideFatherHolder','brideFatherAccount',
-                  'brideMotherBank','brideMotherHolder','brideMotherAccount'];
+  const fields = ['groomBank','groomHolder','groomAccount','groomKakaoPay','groomToss',
+                  'groomFatherBank','groomFatherHolder','groomFatherAccount','groomFatherKakaoPay','groomFatherToss',
+                  'groomMotherBank','groomMotherHolder','groomMotherAccount','groomMotherKakaoPay','groomMotherToss',
+                  'brideBank','brideHolder','brideAccount','brideKakaoPay','brideToss',
+                  'brideFatherBank','brideFatherHolder','brideFatherAccount','brideFatherKakaoPay','brideFatherToss',
+                  'brideMotherBank','brideMotherHolder','brideMotherAccount','brideMotherKakaoPay','brideMotherToss'];
   fields.forEach(f => {
     const el = document.getElementById(f);
     if (el && d[f] != null) el.value = d[f];
@@ -451,12 +451,12 @@ document.getElementById('save-accounts-btn').addEventListener('click', async () 
   btn.classList.add('saving');
   btn.textContent = '저장 중...';
 
-  const fields = ['groomBank','groomHolder','groomAccount',
-                  'groomFatherBank','groomFatherHolder','groomFatherAccount',
-                  'groomMotherBank','groomMotherHolder','groomMotherAccount',
-                  'brideBank','brideHolder','brideAccount',
-                  'brideFatherBank','brideFatherHolder','brideFatherAccount',
-                  'brideMotherBank','brideMotherHolder','brideMotherAccount'];
+  const fields = ['groomBank','groomHolder','groomAccount','groomKakaoPay','groomToss',
+                  'groomFatherBank','groomFatherHolder','groomFatherAccount','groomFatherKakaoPay','groomFatherToss',
+                  'groomMotherBank','groomMotherHolder','groomMotherAccount','groomMotherKakaoPay','groomMotherToss',
+                  'brideBank','brideHolder','brideAccount','brideKakaoPay','brideToss',
+                  'brideFatherBank','brideFatherHolder','brideFatherAccount','brideFatherKakaoPay','brideFatherToss',
+                  'brideMotherBank','brideMotherHolder','brideMotherAccount','brideMotherKakaoPay','brideMotherToss'];
   const data = {};
   fields.forEach(f => { data[f] = document.getElementById(f).value.trim(); });
 

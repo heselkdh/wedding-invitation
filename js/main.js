@@ -357,12 +357,12 @@ document.getElementById('gb-submit').addEventListener('click', async () => {
 // ── 계좌번호 ────────────────────────────────────────────────────────
 async function loadAccounts() {
   let data = {
-    groomHolder:'', groomBank:'', groomAccount:'',
-    groomFatherHolder:'', groomFatherBank:'', groomFatherAccount:'',
-    groomMotherHolder:'', groomMotherBank:'', groomMotherAccount:'',
-    brideHolder:'', brideBank:'', brideAccount:'',
-    brideFatherHolder:'', brideFatherBank:'', brideFatherAccount:'',
-    brideMotherHolder:'', brideMotherBank:'', brideMotherAccount:''
+    groomHolder:'', groomBank:'', groomAccount:'', groomKakaoPay:'', groomToss:'',
+    groomFatherHolder:'', groomFatherBank:'', groomFatherAccount:'', groomFatherKakaoPay:'', groomFatherToss:'',
+    groomMotherHolder:'', groomMotherBank:'', groomMotherAccount:'', groomMotherKakaoPay:'', groomMotherToss:'',
+    brideHolder:'', brideBank:'', brideAccount:'', brideKakaoPay:'', brideToss:'',
+    brideFatherHolder:'', brideFatherBank:'', brideFatherAccount:'', brideFatherKakaoPay:'', brideFatherToss:'',
+    brideMotherHolder:'', brideMotherBank:'', brideMotherAccount:'', brideMotherKakaoPay:'', brideMotherToss:''
   };
 
   if (isConfigured) {
@@ -374,21 +374,21 @@ async function loadAccounts() {
   const bridePanel = document.getElementById('account-panel-bride');
 
   const groomList = [
-    { side:'신랑',      holder:data.groomHolder,       bank:data.groomBank,       number:data.groomAccount },
-    { side:'아버지',    holder:data.groomFatherHolder, bank:data.groomFatherBank, number:data.groomFatherAccount },
-    { side:'어머니',    holder:data.groomMotherHolder, bank:data.groomMotherBank, number:data.groomMotherAccount },
+    { side:'신랑',      holder:data.groomHolder,       bank:data.groomBank,       number:data.groomAccount,       kakaoPay:data.groomKakaoPay,       toss:data.groomToss },
+    { side:'아버지',    holder:data.groomFatherHolder, bank:data.groomFatherBank, number:data.groomFatherAccount, kakaoPay:data.groomFatherKakaoPay, toss:data.groomFatherToss },
+    { side:'어머니',    holder:data.groomMotherHolder, bank:data.groomMotherBank, number:data.groomMotherAccount, kakaoPay:data.groomMotherKakaoPay, toss:data.groomMotherToss },
   ];
   const brideList = [
-    { side:'신부',      holder:data.brideHolder,       bank:data.brideBank,       number:data.brideAccount },
-    { side:'아버지',    holder:data.brideFatherHolder, bank:data.brideFatherBank, number:data.brideFatherAccount },
-    { side:'어머니',    holder:data.brideMotherHolder, bank:data.brideMotherBank, number:data.brideMotherAccount },
+    { side:'신부',      holder:data.brideHolder,       bank:data.brideBank,       number:data.brideAccount,       kakaoPay:data.brideKakaoPay,       toss:data.brideToss },
+    { side:'아버지',    holder:data.brideFatherHolder, bank:data.brideFatherBank, number:data.brideFatherAccount, kakaoPay:data.brideFatherKakaoPay, toss:data.brideFatherToss },
+    { side:'어머니',    holder:data.brideMotherHolder, bank:data.brideMotherBank, number:data.brideMotherAccount, kakaoPay:data.brideMotherKakaoPay, toss:data.brideMotherToss },
   ];
 
   groomList.filter(a => a.number?.trim()).forEach(a => groomPanel.appendChild(makeAccountCard(a)));
   brideList.filter(a => a.number?.trim()).forEach(a => bridePanel.appendChild(makeAccountCard(a)));
 }
 
-function makeAccountCard({ side, holder, bank, number }) {
+function makeAccountCard({ side, holder, bank, number, kakaoPay, toss }) {
   const el = document.createElement('div');
   el.className = 'account-card';
   el.innerHTML = `
@@ -397,7 +397,11 @@ function makeAccountCard({ side, holder, bank, number }) {
       <div class="account-holder">${escapeHtml(holder)}</div>
       <div class="account-number">${escapeHtml(bank)} ${escapeHtml(number)}</div>
     </div>
-    <button class="copy-btn">복사</button>
+    <div class="account-actions">
+      <button class="copy-btn">복사</button>
+      ${kakaoPay?.trim() ? `<a class="pay-btn pay-kakao" href="${escapeHtml(kakaoPay)}" target="_blank" rel="noopener">카카오페이</a>` : ''}
+      ${toss?.trim() ? `<a class="pay-btn pay-toss" href="${escapeHtml(toss)}" target="_blank" rel="noopener">토스</a>` : ''}
+    </div>
   `;
   el.querySelector('.copy-btn').addEventListener('click', () => {
     navigator.clipboard.writeText(number).then(() => showToast('복사되었습니다'));
