@@ -77,6 +77,7 @@ async function loadConfig() {
   }
 
   startCountdown(d.weddingDate, d.weddingTime);
+  renderMiniCalendar(d.weddingDate);
 
   if (d.musicUrl) initMusic(d.musicUrl);
   initKakaoShare(d);
@@ -221,6 +222,53 @@ function startCountdown(dateStr, timeStr) {
   }
   tick();
   intervalId = setInterval(tick, 1000);
+}
+
+// ── 미니 달력 ────────────────────────────────────────────────────────
+// 2026년 대한민국 공휴일 + 대체공휴일 (출처: publicholidays.co.kr)
+const KR_HOLIDAYS_2026 = new Set([
+  '2026-01-01', // 신정
+  '2026-02-16', '2026-02-17', '2026-02-18', // 설날 연휴
+  '2026-03-01', '2026-03-02', // 삼일절 + 대체공휴일
+  '2026-05-05', // 어린이날
+  '2026-05-24', '2026-05-25', // 부처님오신날 + 대체공휴일
+  '2026-06-06', // 현충일
+  '2026-07-17', // 제헌절
+  '2026-08-15', '2026-08-17', // 광복절 + 대체공휴일
+  '2026-09-24', '2026-09-25', '2026-09-26', // 추석 연휴
+  '2026-10-03', '2026-10-05', // 개천절 + 대체공휴일
+  '2026-10-09', // 한글날
+  '2026-12-25', // 크리스마스
+]);
+
+function renderMiniCalendar(dateStr) {
+  const el = document.getElementById('mini-calendar');
+  if (!el) return;
+
+  const target     = new Date(dateStr);
+  const year       = target.getFullYear();
+  const month      = target.getMonth();
+  const targetDate = target.getDate();
+
+  const firstDay     = new Date(year, month, 1).getDay();
+  const daysInMonth  = new Date(year, month + 1, 0).getDate();
+  const dayLabels    = ['일','월','화','수','목','금','토'];
+
+  let html = `<div class="mini-cal-header">${year}년 ${month + 1}월</div><div class="mini-cal-grid">`;
+  dayLabels.forEach((d, i) => {
+    html += `<div class="mini-cal-day-label${i === 0 ? ' sunday' : ''}">${d}</div>`;
+  });
+  for (let i = 0; i < firstDay; i++) html += `<div class="mini-cal-cell"></div>`;
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dow = new Date(year, month, day).getDay();
+    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const isHoliday = dow === 0 || KR_HOLIDAYS_2026.has(dateKey);
+    const isTarget  = day === targetDate;
+    html += `<div class="mini-cal-cell${isHoliday ? ' holiday' : ''}${isTarget ? ' target' : ''}">${day}</div>`;
+  }
+  html += `</div>`;
+
+  el.innerHTML = html;
 }
 
 // ── 갤러리 ─────────────────────────────────────────────────────────
