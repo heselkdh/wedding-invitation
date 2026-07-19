@@ -84,6 +84,7 @@ function initAdmin() {
   loadInfoForm();
   loadAccountsForm();
   loadPhotos();
+  loadTimelineAdmin();
   loadGuestbookAdmin();
 }
 
@@ -427,6 +428,155 @@ async function deletePhoto(e) {
   _orderChanged = false; // 미저장 순서 초기화 후 Firestore에서 새로 로드
   await deleteDoc(doc(db, 'photos', id));
   showToast('사진이 삭제되었습니다');
+}
+
+// ── 4. 만남 스토리 ────────────────────────────────────────────────
+let _unsubTimeline = null;
+let _timelineList  = [];
+let _timelineOrderChanged = false;
+let _timelineDragSrcIdx   = null;
+
+function loadTimelineAdmin() {
+  if (_unsubTimeline) { _unsubTimeline(); _unsubTimeline = null; }
+
+  const q = query(collection(db, 'timeline'), orderBy('order'));
+  _unsubTimeline = onSnapshot(q, snap => {
+    if (_timelineOrderChanged) return;
+    _timelineList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderTimelineList();
+  }, err => {
+    console.error('타임라인 목록 오류:', err);
+  });
+}
+
+function renderTimelineList() {
+  const list = document.getElementById('timeline-grid');
+  const saveBtn = document.getElementById('save-timeline-order-btn');
+  list.innerHTML = '';
+  saveBtn.style.display = (_timelineOrderChanged && _timelineList.length > 1) ? 'flex' : 'none';
+
+  if (_timelineList.length === 0) {
+    const msg = document.createElement('p');
+    msg.style.cssText = 'color:#8a6a76;font-size:0.85rem;';
+    msg.textContent = '등록된 항목이 없습니다';
+    list.appendChild(msg);
+    return;
+  }
+
+  _timelineList.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'timeline-row';
+    row.draggable = true;
+
+    row.innerHTML = `
+      <div class="drag-handle" title="드래그하여 순서 변경">⠿</div>
+      ${item.imageUrl ? `<img class="timeline-row-thumb" src="${item.imageUrl}" alt="">` : ''}
+      <div class="timeline-row-content">
+        <div class="timeline-row-date">${escapeHtml(item.date || '')}</div>
+        <div class="timeline-row-title">${escapeHtml(item.title || '')}</div>
+        <div class="timeline-row-text">${escapeHtml(item.text || '')}</div>
+      </div>
+      <button class="btn btn-danger del-timeline-btn" data-id="${item.id}" style="flex-shrink:0;">삭제</button>
+    `;
+
+    row.querySelector('.del-timeline-btn').addEventListener('click', deleteTimelineItem);
+
+    row.addEventListener('dragstart', e => {
+      _timelineDragSrcIdx = idx;
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => row.classList.add('dragging'), 0);
+    });
+    row.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (_timelineDragSrcIdx !== null && _timelineDragSrcIdx !== idx)
+        row.classList.add('drag-over');
+    });
+    row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      row.classList.remove('drag-over');
+      if (_timelineDragSrcIdx === null || _timelineDragSrcIdx === idx) return;
+      const [moved] = _timelineList.splice(_timelineDragSrcIdx, 1);
+      _timelineList.splice(idx, 0, moved);
+      _timelineOrderChanged = true;
+      _timelineDragSrcIdx = null;
+      renderTimelineList();
+    });
+    row.addEventListener('dragend', () => {
+      _timelineDragSrcIdx = null;
+      document.querySelectorAll('.timeline-row').forEach(r =>
+        r.classList.remove('dragging', 'drag-over'));
+    });
+
+    list.appendChild(row);
+  });
+}
+
+document.getElementById('save-timeline-order-btn').addEventListener('click', async () => {
+  if (!_timelineOrderChanged || !_timelineList.length) return;
+  const btn = document.getElementById('save-timeline-order-btn');
+  btn.textContent = '저장 중...';
+  btn.disabled = true;
+  try {
+    const batch = writeBatch(db);
+    _timelineList.forEach((item, i) => {
+      batch.update(doc(db, 'timeline', item.id), { order: i + 1 });
+    });
+    await batch.commit();
+    _timelineOrderChanged = false;
+    btn.style.display = 'none';
+    showToast('순서가 저장되었습니다 ✅');
+  } catch (err) {
+    console.error('순서 저장 실패:', err);
+    showToast(`순서 저장 실패: ${err.message}`);
+  }
+  btn.textContent = '💾 순서 저장';
+  btn.disabled = false;
+});
+
+document.getElementById('timeline-add-btn').addEventListener('click', async () => {
+  const date  = document.getElementById('timeline-date').value.trim();
+  const title = document.getElementById('timeline-title').value.trim();
+  const text  = document.getElementById('timeline-text').value.trim();
+  const file  = document.getElementById('timeline-photo-input').files[0];
+
+  if (!title) { showToast('제목을 입력해주세요'); return; }
+
+  const btn = document.getElementById('timeline-add-btn');
+  btn.disabled = true;
+  btn.textContent = '추가 중...';
+
+  try {
+    let imageUrl = '';
+    if (file) imageUrl = await uploadToCloudinary(file);
+
+    const snap = await getDocs(query(collection(db, 'timeline'), orderBy('order', 'desc')));
+    const maxOrder = snap.empty ? 0 : (snap.docs[0].data().order ?? 0);
+
+    await addDoc(collection(db, 'timeline'), {
+      date, title, text, imageUrl, order: maxOrder + 1, createdAt: serverTimestamp()
+    });
+
+    document.getElementById('timeline-date').value  = '';
+    document.getElementById('timeline-title').value = '';
+    document.getElementById('timeline-text').value  = '';
+    document.getElementById('timeline-photo-input').value = '';
+    showToast('항목이 추가되었습니다 ✅');
+  } catch (err) {
+    console.error('항목 추가 실패:', err);
+    showToast(`추가 실패: ${err.message}`);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '+ 항목 추가';
+});
+
+async function deleteTimelineItem(e) {
+  const id = e.currentTarget.dataset.id;
+  if (!confirm('이 항목을 삭제할까요?')) return;
+  _timelineOrderChanged = false;
+  await deleteDoc(doc(db, 'timeline', id));
+  showToast('항목이 삭제되었습니다');
 }
 
 // ── 3. 계좌번호 ────────────────────────────────────────────────────
