@@ -57,6 +57,12 @@ async function loadConfig() {
   const mapBtn = document.getElementById('kakao-map-btn');
   if (d.kakaoMapUrl && d.kakaoMapUrl !== '#') mapBtn.href = d.kakaoMapUrl;
 
+  const naverMapBtn = document.getElementById('naver-map-btn');
+  if (d.naverMapUrl) {
+    naverMapBtn.href = d.naverMapUrl;
+    naverMapBtn.style.display = 'inline-flex';
+  }
+
   if (d.heroBgUrl) {
     document.getElementById('hero-bg').style.backgroundImage = `url('${d.heroBgUrl}')`;
   }

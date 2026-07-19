@@ -36,7 +36,6 @@
     </div>
     <div class="hero-date" id="hero-date">0000년 00월 00일</div>
     <div class="hero-venue-short" id="hero-venue-short"></div>
-    <button id="kakao-share-btn">💬 카카오톡으로 공유하기</button>
   </div>
   <div class="hero-scroll-hint"><span>SCROLL</span></div>
 </section>
@@ -122,9 +121,14 @@
     <img id="map-image" src="" alt="약도" style="width:100%;border-radius:12px;display:block;">
   </div>
 
-  <a id="kakao-map-btn" class="map-btn fade-up" href="#" target="_blank" rel="noopener">
-    🗺️ 카카오맵으로 보기
-  </a>
+  <div class="map-btn-row fade-up">
+    <a id="kakao-map-btn" class="map-btn" href="#" target="_blank" rel="noopener">
+      🗺️ 카카오맵으로 보기
+    </a>
+    <a id="naver-map-btn" class="map-btn naver" href="#" target="_blank" rel="noopener" style="display:none;">
+      🗺️ 네이버지도로 보기
+    </a>
+  </div>
 
   <div class="transport-info fade-up" id="transport-info">
     <h4>🚇 지하철</h4>
@@ -190,6 +194,11 @@
     <p class="account-group-label" style="margin-top:20px;">신부 측</p>
     <div class="account-cards" id="account-panel-bride"></div>
   </div>
+</section>
+
+<!-- 8. 공유하기 -->
+<section id="share">
+  <button id="kakao-share-btn" class="fade-up">💬 카카오톡으로 공유하기</button>
 </section>
 
 <footer>
