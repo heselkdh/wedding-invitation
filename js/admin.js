@@ -446,6 +446,12 @@ function loadTimelineAdmin() {
     renderTimelineList();
   }, err => {
     console.error('타임라인 목록 오류:', err);
+    const list = document.getElementById('timeline-grid');
+    list.innerHTML = '';
+    const errMsg = document.createElement('p');
+    errMsg.style.cssText = 'color:#c0392b;font-size:0.85rem;';
+    errMsg.textContent = `타임라인 불러오기 실패: ${err.message}`;
+    list.appendChild(errMsg);
   });
 }
 
@@ -470,7 +476,7 @@ function renderTimelineList() {
 
     row.innerHTML = `
       <div class="drag-handle" title="드래그하여 순서 변경">⠿</div>
-      ${item.imageUrl ? `<img class="timeline-row-thumb" src="${item.imageUrl}" alt="">` : ''}
+      ${item.imageUrl ? `<img class="timeline-row-thumb" src="${escapeHtml(item.imageUrl)}" alt="">` : ''}
       <div class="timeline-row-content">
         <div class="timeline-row-date">${escapeHtml(item.date || '')}</div>
         <div class="timeline-row-title">${escapeHtml(item.title || '')}</div>
