@@ -580,9 +580,14 @@ document.getElementById('timeline-add-btn').addEventListener('click', async () =
 async function deleteTimelineItem(e) {
   const id = e.currentTarget.dataset.id;
   if (!confirm('이 항목을 삭제할까요?')) return;
-  _timelineOrderChanged = false;
-  await deleteDoc(doc(db, 'timeline', id));
-  showToast('항목이 삭제되었습니다');
+  try {
+    await deleteDoc(doc(db, 'timeline', id));
+    _timelineOrderChanged = false;
+    showToast('항목이 삭제되었습니다');
+  } catch (err) {
+    console.error('항목 삭제 실패:', err);
+    showToast(`삭제 실패: ${err.message}`);
+  }
 }
 
 // ── 3. 계좌번호 ────────────────────────────────────────────────────
