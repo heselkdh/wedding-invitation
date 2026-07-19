@@ -229,6 +229,9 @@ const CAT_PHOTOS = [
   'assets/photos/cat4.jpg','assets/photos/cat5.jpg','assets/photos/cat6.jpg',
 ];
 
+let _galleryPhotos = [];
+let _lightboxIndex = 0;
+
 function loadGallery() {
   const grid = document.getElementById('gallery-grid');
 
@@ -239,6 +242,7 @@ function loadGallery() {
 
   onSnapshot(query(collection(db, 'photos'), orderBy('order')), snap => {
     grid.innerHTML = '';
+    _galleryPhotos = [];
     if (snap.empty) {
       CAT_PHOTOS.forEach(src => appendPhoto(grid, src));
     } else {
@@ -248,23 +252,33 @@ function loadGallery() {
 }
 
 function appendPhoto(grid, src) {
+  const idx = _galleryPhotos.length;
+  _galleryPhotos.push(src);
   const item = document.createElement('div');
   item.className = 'gallery-item';
   const img = document.createElement('img');
   img.src = src; img.alt = '웨딩 사진'; img.loading = 'lazy';
   item.appendChild(img);
-  item.addEventListener('click', () => openLightbox(src));
+  item.addEventListener('click', () => openLightbox(idx));
   grid.appendChild(item);
 }
 
 // ── Lightbox ────────────────────────────────────────────────────────
-function openLightbox(src) {
-  document.getElementById('lightbox-img').src = src;
+function openLightbox(idx) {
+  _lightboxIndex = idx;
+  document.getElementById('lightbox-img').src = _galleryPhotos[idx];
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
+function showLightboxPhoto(idx) {
+  _lightboxIndex = (idx + _galleryPhotos.length) % _galleryPhotos.length;
+  document.getElementById('lightbox-img').src = _galleryPhotos[_lightboxIndex];
+}
+
 document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+document.getElementById('lightbox-prev').addEventListener('click', () => showLightboxPhoto(_lightboxIndex - 1));
+document.getElementById('lightbox-next').addEventListener('click', () => showLightboxPhoto(_lightboxIndex + 1));
 document.getElementById('lightbox').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeLightbox();
 });
