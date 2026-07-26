@@ -75,13 +75,13 @@ async function loadConfig() {
 
   document.getElementById('transport-info').innerHTML = sanitizeHtml(d.transport || '');
 
-  // 인트로 섹션
+  // 인트로 섹션 (기본 인사말 제공, 미설정 시에도 항상 표시)
   const introSec = document.getElementById('intro');
-  if (d.introTitle || d.introText) {
-    document.getElementById('intro-title').textContent = d.introTitle || '';
-    document.getElementById('intro-text').textContent  = d.introText  || '';
-    introSec.style.display = 'block';
-  }
+  document.getElementById('intro-title').textContent = d.introTitle ||
+    '초대합니다';
+  document.getElementById('intro-text').textContent = d.introText ||
+    '저희 두 사람이 사랑의 결실을 맺어\n새로운 가정을 이루게 되었습니다.\n귀한 걸음 하시어 축복해 주시면 감사하겠습니다.';
+  introSec.style.display = 'block';
 
   startCountdown(d.weddingDate, d.weddingTime);
   renderMiniCalendar(d.weddingDate);
@@ -368,7 +368,7 @@ let _unsubGuestbook = null;
 function loadGuestbook() {
   if (!isConfigured) {
     document.getElementById('guestbook-list').innerHTML =
-      '<p style="text-align:center;color:#b08898;font-size:0.85rem;">Firebase 연동 후 방명록을 사용할 수 있습니다 🌸</p>';
+      '<p class="gb-empty-note">Firebase 연동 후 방명록을 사용할 수 있습니다 🌸</p>';
     document.getElementById('gb-submit').disabled = true;
     return;
   }
@@ -583,8 +583,13 @@ function initShareSheet(cfg) {
 
   function openSheet() { overlay.classList.add('open'); }
   function closeSheet() {
+    if (!overlay.classList.contains('open')) return;
     overlay.classList.remove('open');
-    qrWrap.classList.remove('open');
+    overlay.classList.add('closing');
+    setTimeout(() => {
+      overlay.classList.remove('closing');
+      qrWrap.classList.remove('open');
+    }, 220);
   }
 
   openBtn.addEventListener('click', openSheet);
