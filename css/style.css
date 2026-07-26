@@ -182,12 +182,11 @@ section { padding: 96px 32px; position: relative; }
 }
 
 .hero-amp {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 300;
+  font-family: var(--font-sans);
+  font-weight: 200;
   color: var(--accent);
-  font-size: 1.7rem;
-  margin: 0 10px;
+  font-size: 1.3rem;
+  margin: 0 12px;
   vertical-align: middle;
 }
 
