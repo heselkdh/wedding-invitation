@@ -175,12 +175,19 @@
         <input type="text" id="timeline-title" placeholder="처음 만난 날">
         <label>본문</label>
         <textarea id="timeline-text" placeholder="어떻게 만났는지 이야기를 들려주세요"></textarea>
+        <div id="timeline-current-photo" style="display:none;margin-bottom:10px;">
+          <img id="timeline-current-photo-img" src="" alt="" style="max-width:120px;border-radius:8px;display:block;margin-bottom:6px;">
+          <button type="button" class="btn btn-ghost" id="timeline-remove-photo-btn" style="font-size:0.78rem;padding:6px 10px;">사진 제거</button>
+        </div>
         <label class="upload-area" id="timeline-upload-area">
           <span style="font-size:1.5rem;">🖼️</span>
-          <p>클릭하여 사진 추가 (선택)</p>
+          <p id="timeline-upload-label">클릭하여 사진 추가 (선택)</p>
           <input type="file" id="timeline-photo-input" accept="image/*">
         </label>
-        <button class="btn btn-primary" id="timeline-add-btn" style="width:100%;justify-content:center;margin-bottom:16px;">+ 항목 추가</button>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <button class="btn btn-primary" id="timeline-add-btn" style="flex:1;justify-content:center;">+ 항목 추가</button>
+          <button class="btn btn-ghost" id="timeline-cancel-edit-btn" style="display:none;justify-content:center;">취소</button>
+        </div>
 
         <div id="timeline-grid"></div>
         <button class="btn btn-primary" id="save-timeline-order-btn" style="display:none;width:100%;justify-content:center;margin-top:12px;">💾 순서 저장</button>

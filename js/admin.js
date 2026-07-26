@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import {
-  doc, collection, getDoc, getDocs, setDoc, addDoc, deleteDoc,
+  doc, collection, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, serverTimestamp, writeBatch
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
@@ -435,6 +435,8 @@ let _unsubTimeline = null;
 let _timelineList  = [];
 let _timelineOrderChanged = false;
 let _timelineDragSrcIdx   = null;
+let _editingTimelineId = null;
+let _editingTimelineRemoveImage = false;
 
 function loadTimelineAdmin() {
   if (_unsubTimeline) { _unsubTimeline(); _unsubTimeline = null; }
@@ -482,9 +484,13 @@ function renderTimelineList() {
         <div class="timeline-row-title">${escapeHtml(item.title || '')}</div>
         <div class="timeline-row-text">${escapeHtml(item.text || '')}</div>
       </div>
-      <button class="btn btn-danger del-timeline-btn" data-id="${item.id}" style="flex-shrink:0;">삭제</button>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <button class="btn btn-ghost edit-timeline-btn" data-id="${item.id}" style="font-size:0.78rem;padding:6px 12px;">수정</button>
+        <button class="btn btn-danger del-timeline-btn" data-id="${item.id}">삭제</button>
+      </div>
     `;
 
+    row.querySelector('.edit-timeline-btn').addEventListener('click', () => startEditTimelineItem(item));
     row.querySelector('.del-timeline-btn').addEventListener('click', deleteTimelineItem);
 
     row.addEventListener('dragstart', e => {
@@ -540,6 +546,51 @@ document.getElementById('save-timeline-order-btn').addEventListener('click', asy
   btn.disabled = false;
 });
 
+function startEditTimelineItem(item) {
+  _editingTimelineId = item.id;
+  _editingTimelineRemoveImage = false;
+
+  document.getElementById('timeline-date').value  = item.date  || '';
+  document.getElementById('timeline-title').value = item.title || '';
+  document.getElementById('timeline-text').value  = item.text  || '';
+  document.getElementById('timeline-photo-input').value = '';
+
+  const currentPhoto = document.getElementById('timeline-current-photo');
+  if (item.imageUrl) {
+    document.getElementById('timeline-current-photo-img').src = item.imageUrl;
+    currentPhoto.style.display = 'block';
+  } else {
+    currentPhoto.style.display = 'none';
+  }
+
+  document.getElementById('timeline-upload-label').textContent = '클릭하여 사진 교체 (선택)';
+  document.getElementById('timeline-add-btn').textContent = '수정 완료';
+  document.getElementById('timeline-cancel-edit-btn').style.display = 'flex';
+
+  document.getElementById('panel-timeline').classList.remove('collapsed');
+  document.getElementById('timeline-date').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetTimelineForm() {
+  _editingTimelineId = null;
+  _editingTimelineRemoveImage = false;
+  document.getElementById('timeline-date').value  = '';
+  document.getElementById('timeline-title').value = '';
+  document.getElementById('timeline-text').value  = '';
+  document.getElementById('timeline-photo-input').value = '';
+  document.getElementById('timeline-current-photo').style.display = 'none';
+  document.getElementById('timeline-upload-label').textContent = '클릭하여 사진 추가 (선택)';
+  document.getElementById('timeline-add-btn').textContent = '+ 항목 추가';
+  document.getElementById('timeline-cancel-edit-btn').style.display = 'none';
+}
+
+document.getElementById('timeline-remove-photo-btn').addEventListener('click', () => {
+  _editingTimelineRemoveImage = true;
+  document.getElementById('timeline-current-photo').style.display = 'none';
+});
+
+document.getElementById('timeline-cancel-edit-btn').addEventListener('click', resetTimelineForm);
+
 document.getElementById('timeline-add-btn').addEventListener('click', async () => {
   const date  = document.getElementById('timeline-date').value.trim();
   const title = document.getElementById('timeline-title').value.trim();
@@ -549,32 +600,43 @@ document.getElementById('timeline-add-btn').addEventListener('click', async () =
   if (!title) { showToast('제목을 입력해주세요'); return; }
 
   const btn = document.getElementById('timeline-add-btn');
+  const editingId = _editingTimelineId;
   btn.disabled = true;
-  btn.textContent = '추가 중...';
+  btn.textContent = editingId ? '수정 중...' : '추가 중...';
 
   try {
-    let imageUrl = '';
-    if (file) imageUrl = await uploadToCloudinary(file);
+    if (editingId) {
+      const data = { date, title, text };
+      if (file) {
+        data.imageUrl = await uploadToCloudinary(file);
+      } else if (_editingTimelineRemoveImage) {
+        data.imageUrl = '';
+      }
+      await updateDoc(doc(db, 'timeline', editingId), data);
+      showToast('항목이 수정되었습니다 ✅');
+    } else {
+      let imageUrl = '';
+      if (file) imageUrl = await uploadToCloudinary(file);
 
-    const snap = await getDocs(query(collection(db, 'timeline'), orderBy('order', 'desc')));
-    const maxOrder = snap.empty ? 0 : (snap.docs[0].data().order ?? 0);
+      const snap = await getDocs(query(collection(db, 'timeline'), orderBy('order', 'desc')));
+      const maxOrder = snap.empty ? 0 : (snap.docs[0].data().order ?? 0);
 
-    await addDoc(collection(db, 'timeline'), {
-      date, title, text, imageUrl, order: maxOrder + 1, createdAt: serverTimestamp()
-    });
+      await addDoc(collection(db, 'timeline'), {
+        date, title, text, imageUrl, order: maxOrder + 1, createdAt: serverTimestamp()
+      });
+      showToast('항목이 추가되었습니다 ✅');
+    }
 
-    document.getElementById('timeline-date').value  = '';
-    document.getElementById('timeline-title').value = '';
-    document.getElementById('timeline-text').value  = '';
-    document.getElementById('timeline-photo-input').value = '';
-    showToast('항목이 추가되었습니다 ✅');
+    resetTimelineForm();
   } catch (err) {
-    console.error('항목 추가 실패:', err);
-    showToast(`추가 실패: ${err.message}`);
+    console.error(editingId ? '항목 수정 실패:' : '항목 추가 실패:', err);
+    showToast(`${editingId ? '수정' : '추가'} 실패: ${err.message}`);
+    btn.disabled = false;
+    btn.textContent = editingId ? '수정 완료' : '+ 항목 추가';
+    return;
   }
 
   btn.disabled = false;
-  btn.textContent = '+ 항목 추가';
 });
 
 async function deleteTimelineItem(e) {
@@ -583,6 +645,7 @@ async function deleteTimelineItem(e) {
   try {
     await deleteDoc(doc(db, 'timeline', id));
     _timelineOrderChanged = false;
+    if (_editingTimelineId === id) resetTimelineForm();
     showToast('항목이 삭제되었습니다');
   } catch (err) {
     console.error('항목 삭제 실패:', err);
