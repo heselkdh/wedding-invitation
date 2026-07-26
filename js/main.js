@@ -251,7 +251,7 @@ function renderMiniCalendar(dateStr) {
   const daysInMonth  = new Date(year, month + 1, 0).getDate();
   const dayLabels    = ['일','월','화','수','목','금','토'];
 
-  let html = `<div class="mini-cal-header">${year}년 ${month + 1}월</div><div class="mini-cal-grid">`;
+  let html = `<div class="mini-cal-grid">`;
   dayLabels.forEach((d, i) => {
     html += `<div class="mini-cal-day-label${i === 0 ? ' sunday' : ''}">${d}</div>`;
   });
