@@ -716,7 +716,7 @@ function loadGuestbookAdmin() {
       row.className = 'gb-row';
       row.innerHTML = `
         <div class="gb-row-content">
-          <div class="gb-row-name">🌸 ${escapeHtml(data.name)}</div>
+          <div class="gb-row-name">${escapeHtml(data.name)}</div>
           <div class="gb-row-text">${escapeHtml(data.message)}</div>
           <div class="gb-row-date">${dateStr}</div>
         </div>

@@ -163,13 +163,6 @@ section { padding: 96px 32px; position: relative; }
   padding: 0 32px;
 }
 
-.hero-flower {
-  font-size: 0.9rem;
-  margin-bottom: 32px;
-  opacity: 0.35;
-  letter-spacing: 0.9em;
-}
-
 .hero-names {
   font-family: var(--font-sans);
   font-size: 2.8rem;
@@ -292,9 +285,9 @@ section { padding: 96px 32px; position: relative; }
 }
 
 .couple-divider {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.95rem;
+  font-family: var(--font-sans);
+  font-weight: 200;
+  font-size: 1.1rem;
   color: var(--accent);
 }
 

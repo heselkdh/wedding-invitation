@@ -368,7 +368,7 @@ let _unsubGuestbook = null;
 function loadGuestbook() {
   if (!isConfigured) {
     document.getElementById('guestbook-list').innerHTML =
-      '<p class="gb-empty-note">Firebase 연동 후 방명록을 사용할 수 있습니다 🌸</p>';
+      '<p class="gb-empty-note">Firebase 연동 후 방명록을 사용할 수 있습니다</p>';
     document.getElementById('gb-submit').disabled = true;
     return;
   }
@@ -386,7 +386,7 @@ function loadGuestbook() {
       const el = document.createElement('div');
       el.className = 'guestbook-msg';
       el.innerHTML = `
-        <div class="guestbook-msg-name">🌸 ${escapeHtml(data.name)}</div>
+        <div class="guestbook-msg-name">${escapeHtml(data.name)}</div>
         <div class="guestbook-msg-text">${escapeHtml(data.message)}</div>
         <div class="guestbook-msg-date">${dateStr}</div>
       `;
@@ -414,7 +414,7 @@ document.getElementById('gb-submit').addEventListener('click', async () => {
     // 봇이 숨겨진 필드를 채운 경우 — Firestore에 쓰지 않고 성공한 것처럼 보이게 함
     document.getElementById('gb-name').value    = '';
     document.getElementById('gb-message').value = '';
-    showToast('메시지가 등록되었습니다 🌸');
+    showToast('메시지가 등록되었습니다');
     return;
   }
 
@@ -433,7 +433,7 @@ document.getElementById('gb-submit').addEventListener('click', async () => {
     localStorage.setItem('gbLastSubmit', String(Date.now()));
     document.getElementById('gb-name').value    = '';
     document.getElementById('gb-message').value = '';
-    showToast('메시지가 등록되었습니다 🌸');
+    showToast('메시지가 등록되었습니다');
   } catch {
     showToast('등록에 실패했습니다. 다시 시도해주세요');
   } finally {
