@@ -35,7 +35,6 @@ async function loadConfig() {
 
   document.getElementById('hero-groom').textContent       = d.groomName;
   document.getElementById('hero-bride').textContent       = d.brideName;
-  document.getElementById('hero-venue-short').textContent = d.venueName;
   document.getElementById('groom-name').textContent       = d.groomName;
   document.getElementById('bride-name').textContent       = d.brideName;
   setCommaListWithBreaks(document.getElementById('groom-parents'), d.groomParents);
@@ -43,7 +42,6 @@ async function loadConfig() {
 
   const dateStr = formatDate(d.weddingDate);
   setOpeningText(d, dateStr);
-  document.getElementById('hero-date').textContent  = dateStr;
   document.getElementById('dt-date').textContent    = dateStr;
   document.getElementById('dt-time').textContent    = d.weddingTime;
   document.getElementById('venue-name').textContent = d.venueName;

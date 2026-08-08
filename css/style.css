@@ -148,29 +148,28 @@ section { padding: 96px 32px; position: relative; }
   z-index: 0;
 }
 
-#hero-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.52);
+#hero-header {
+  background: var(--white);
+  text-align: center;
+  padding: 40px 32px 32px;
 }
 
-.hero-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 0 32px;
+.hero-eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--gray-1);
+  margin-bottom: 14px;
 }
 
 .hero-names {
   font-family: var(--font-sans);
-  font-size: 2.8rem;
-  font-weight: 200;
+  font-size: 2rem;
+  font-weight: 300;
   color: var(--black);
-  letter-spacing: 0.18em;
-  margin-bottom: 22px;
+  letter-spacing: 0.12em;
   line-height: 1.1;
-  text-shadow: 0 1px 8px rgba(255,255,255,0.8);
 }
 
 .hero-amp {
@@ -180,25 +179,6 @@ section { padding: 96px 32px; position: relative; }
   font-size: 1.3rem;
   margin: 0 12px;
   vertical-align: middle;
-}
-
-.hero-date {
-  font-family: var(--font-sans);
-  font-size: 0.94rem;
-  font-weight: 500;
-  color: var(--black);
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
-  text-shadow: 0 1px 6px rgba(255,255,255,0.9);
-}
-
-.hero-venue-short {
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  font-weight: 400;
-  color: var(--gray-1);
-  letter-spacing: 0.06em;
-  text-shadow: 0 1px 6px rgba(255,255,255,0.9);
 }
 
 .hero-scroll-hint {
@@ -237,7 +217,7 @@ section { padding: 96px 32px; position: relative; }
    1.5. 인트로
 ════════════════════════════ */
 #intro {
-  background: var(--accent-l);
+  background: var(--white);
   text-align: center;
 }
 
