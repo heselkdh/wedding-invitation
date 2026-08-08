@@ -15,7 +15,7 @@
   --accent-l:#EDE0C8;      /* 샴페인 골드 (하이라이트 배경) */
   --accent-deep: #8C6F42;  /* 골드 hover/active */
 
-  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-display: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif;
   --font-serif:   'Noto Serif KR', Georgia, serif;
   --font-sans:    'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
   --font-script:  'Nanum Pen Script', cursive;
@@ -49,9 +49,9 @@ section { padding: 96px 32px; position: relative; }
 .section-title {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 0.6875rem;
-  font-weight: 300;
-  letter-spacing: 0.28em;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   color: var(--accent-deep);
   text-align: center;
   margin-bottom: 16px;
@@ -308,10 +308,10 @@ section { padding: 96px 32px; position: relative; }
 
 .parents-label {
   font-family: var(--font-display);
-  font-size: 0.6rem;
-  font-weight: 300;
-  color: var(--gray-2);
-  letter-spacing: 0.22em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-deep);
+  letter-spacing: 0.16em;
   margin-bottom: 12px;
   text-transform: uppercase;
 }
@@ -761,10 +761,10 @@ section { padding: 96px 32px; position: relative; }
 
 .account-group-label {
   font-family: var(--font-display);
-  font-size: 0.64rem;
-  font-weight: 300;
-  color: var(--gray-2);
-  letter-spacing: 0.22em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-deep);
+  letter-spacing: 0.16em;
   text-align: center;
   margin-bottom: 14px;
   text-transform: uppercase;
