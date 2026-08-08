@@ -49,10 +49,10 @@ section { padding: 96px 32px; position: relative; }
 .section-title {
   font-family: var(--font-display);
   font-style: normal;
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--black);
+  color: var(--gray-1);
   text-align: center;
   margin-bottom: 16px;
 }
@@ -307,9 +307,9 @@ section { padding: 96px 32px; position: relative; }
 
 .parents-label {
   font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--black);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-1);
   letter-spacing: 0.06em;
   margin-bottom: 12px;
 }
@@ -759,9 +759,9 @@ section { padding: 96px 32px; position: relative; }
 
 .account-group-label {
   font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--black);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-1);
   letter-spacing: 0.06em;
   text-align: center;
   margin-bottom: 14px;
