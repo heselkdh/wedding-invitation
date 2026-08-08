@@ -2,18 +2,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+KR:wght@400;500&family=Nanum+Pen+Script&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
 
-/* ── 디자인 토큰 (호텔 프리미엄: 화이트 · 아이보리 · 골드) ── */
+/* ── 디자인 토큰 (모노톤 미니멀) ── */
 :root {
-  --black:   #262220;      /* 웜 잉크 블랙 */
-  --gray-1:  #6E6459;      /* 보조 텍스트 */
-  --gray-2:  #9C9184;      /* 캡션/메타 텍스트 */
-  --gray-3:  #E4D9C8;      /* 보더 베이지 */
-  --gray-4:  #EFE7DA;      /* 카드 내부 구분선 */
-  --gray-5:  #F8F3EC;      /* 아이보리 배경 */
+  --black:   #1A1A1A;      /* 잉크 블랙 */
+  --gray-1:  #767068;      /* 보조 텍스트 */
+  --gray-2:  #9D968E;      /* 캡션/메타 텍스트 */
+  --gray-3:  #E5E2DD;      /* 보더 뉴트럴 */
+  --gray-4:  #EFEDE9;      /* 카드 내부 구분선 */
+  --gray-5:  #FAFAF9;      /* 섹션 배경 (거의 화이트) */
   --white:   #ffffff;
-  --accent:  #B4915B;      /* 골드 — 단일 포인트 */
-  --accent-l:#EDE0C8;      /* 샴페인 골드 (하이라이트 배경) */
-  --accent-deep: #8C6F42;  /* 골드 hover/active */
+  --accent:  #3D3A36;      /* 차콜 — 단일 포인트 */
+  --accent-l:#F0EEEB;      /* 옅은 뉴트럴 하이라이트 */
+  --accent-deep: #262220;  /* 차콜 hover/active */
 
   --font-display: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif;
   --font-serif:   'Noto Serif KR', Georgia, serif;
