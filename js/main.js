@@ -21,7 +21,10 @@ const SAMPLE = {
   kakaoMapUrl: '#',
   transport: `<h4>🚇 지하철</h4><p>2호선 강남역 3번 출구 도보 5분</p>
 <h4>🚌 버스</h4><p>146, 360, 740번 강남역 하차</p>
-<h4>🚗 자가용</h4><p>건물 지하 주차장 2시간 무료</p>`
+<h4>🚗 자가용</h4><p>건물 지하 주차장 2시간 무료</p>`,
+  ceremonyInfo: `<h4>💐 화환 안내</h4><p>축하하는 마음만으로 감사히 받겠습니다.</p>
+<h4>🍽️ 식사 안내</h4><p>예식 후 같은 건물 내 연회장에서 식사가 준비되어 있습니다.</p>
+<h4>👶 어린이 동반</h4><p>안전을 위해 보호자와 함께 동반해 주시기 바랍니다.</p>`
 };
 
 // ── Firestore 또는 샘플 데이터 로드 ───────────────────────────────
@@ -73,6 +76,7 @@ async function loadConfig() {
   }
 
   document.getElementById('transport-info').innerHTML = sanitizeHtml(d.transport || '');
+  document.getElementById('ceremony-info').innerHTML = sanitizeHtml(d.ceremonyInfo || '');
 
   // 인트로 섹션 (기본 인사말 제공, 미설정 시에도 항상 표시)
   const introSec = document.getElementById('intro');

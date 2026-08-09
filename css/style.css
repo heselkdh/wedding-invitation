@@ -424,6 +424,11 @@ section { padding: 96px 32px; position: relative; }
   text-align: center;
 }
 
+#ceremony-info-section {
+  background: var(--white);
+  text-align: center;
+}
+
 .map-btn-row {
   display: flex;
   flex-wrap: wrap;
