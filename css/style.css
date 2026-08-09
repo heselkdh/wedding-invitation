@@ -2,18 +2,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif+KR:wght@400;500&family=Nanum+Pen+Script&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
 
-/* ── 디자인 토큰 (모노톤 미니멀) ── */
+/* ── 디자인 토큰 (베이지 톤) ── */
 :root {
-  --black:   #1A1A1A;      /* 잉크 블랙 */
-  --gray-1:  #767068;      /* 보조 텍스트 */
-  --gray-2:  #9D968E;      /* 캡션/메타 텍스트 */
-  --gray-3:  #E5E2DD;      /* 보더 뉴트럴 */
-  --gray-4:  #EFEDE9;      /* 카드 내부 구분선 */
-  --gray-5:  #FAFAF9;      /* 섹션 배경 (거의 화이트) */
-  --white:   #ffffff;
-  --accent:  #3D3A36;      /* 차콜 — 단일 포인트 */
-  --accent-l:#F0EEEB;      /* 옅은 뉴트럴 하이라이트 */
-  --accent-deep: #262220;  /* 차콜 hover/active */
+  --black:   #33291F;      /* 잉크 브라운 */
+  --gray-1:  #8C7B62;      /* 보조 텍스트 */
+  --gray-2:  #AFA083;      /* 캡션/메타 텍스트 */
+  --gray-3:  #E2D3B8;      /* 보더 뉴트럴 */
+  --gray-4:  #F2E9D6;      /* 카드 내부 구분선 */
+  --gray-5:  #F7F1E3;      /* 섹션 배경 (베이지) */
+  --white:   #FFFBF3;
+  --accent:  #6B6142;      /* 올리브 브론즈 — 단일 포인트 */
+  --accent-l:#EFE6CE;      /* 옅은 베이지 하이라이트 */
+  --accent-deep: #4F4830;  /* 올리브 브론즈 hover/active */
 
   --font-display: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif;
   --font-serif:   'Noto Serif KR', Georgia, serif;
