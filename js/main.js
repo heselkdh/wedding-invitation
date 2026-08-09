@@ -42,8 +42,8 @@ async function loadConfig() {
 
   document.getElementById('hero-groom').textContent       = d.groomName;
   document.getElementById('hero-bride').textContent       = d.brideName;
-  renderParentsLine('groom-parents-line', d.groomParents, d.groomName, '아들', 'son', d.groomPhone, d.groomFatherPhone, d.groomMotherPhone);
-  renderParentsLine('bride-parents-line', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone, d.brideFatherPhone, d.brideMotherPhone);
+  renderParentsLine('groom-parents-line', 'groom-contact-dropdown', d.groomParents, d.groomName, '아들', 'son', d.groomPhone, d.groomFatherPhone, d.groomMotherPhone);
+  renderParentsLine('bride-parents-line', 'bride-contact-dropdown', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone, d.brideFatherPhone, d.brideMotherPhone);
 
   const dateStr = formatDate(d.weddingDate);
   setOpeningText(d, dateStr);
@@ -171,29 +171,20 @@ function initMusic(url) {
   });
 }
 
-function appendCallIcon(el, name, phone) {
-  if (!phone) return;
-  const link = document.createElement('a');
-  link.className = 'parents-contact';
-  link.href = `tel:${phone}`;
-  link.setAttribute('aria-label', `${name}에게 전화`);
-  link.textContent = '📞';
-  el.appendChild(link);
-}
-
-function renderParentsLine(elId, parentsStr, childName, relation, relationClass, phone, fatherPhone, motherPhone) {
+function renderParentsLine(elId, dropdownId, parentsStr, childName, relation, relationClass, phone, fatherPhone, motherPhone) {
   const el = document.getElementById(elId);
   el.textContent = '';
 
   // 관례상 첫 항목은 아버지, 두 번째 항목은 어머니로 취급 (관리자 placeholder와 동일한 순서)
   const parts = (parentsStr || '').split(',').map(s => s.trim()).filter(Boolean);
   const parentPhones = [fatherPhone, motherPhone];
+  const contacts = [];
 
   parts.forEach((part, i) => {
     const name = part.replace(/^(아버지|어머니)\s*/, '');
     if (i > 0) el.appendChild(document.createTextNode(' · '));
     el.appendChild(document.createTextNode(name));
-    appendCallIcon(el, name, parentPhones[i]);
+    if (parentPhones[i]) contacts.push({ name, phone: parentPhones[i] });
   });
 
   el.appendChild(document.createTextNode(' '));
@@ -202,7 +193,44 @@ function renderParentsLine(elId, parentsStr, childName, relation, relationClass,
   relSpan.textContent = `의 ${relation}`;
   el.appendChild(relSpan);
   el.appendChild(document.createTextNode(` ${childName}`));
-  appendCallIcon(el, childName, phone);
+  if (phone) contacts.push({ name: childName, phone });
+
+  if (contacts.length) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'parents-contact';
+    btn.setAttribute('aria-label', '연락처 보기');
+    btn.textContent = '📞';
+    btn.addEventListener('click', () => toggleContactDropdown(dropdownId, contacts));
+    el.appendChild(btn);
+  }
+}
+
+// ── 연락처 드롭다운 ──────────────────────────────────────────────────
+function toggleContactDropdown(dropdownId, contacts) {
+  const dropdown = document.getElementById(dropdownId);
+  if (dropdown.classList.contains('open')) {
+    dropdown.classList.remove('open');
+    return;
+  }
+
+  dropdown.innerHTML = '';
+  contacts.forEach(({ name, phone }) => {
+    const row = document.createElement('div');
+    row.className = 'contact-row';
+    row.innerHTML = `
+      <div class="contact-row-info">
+        <span class="contact-row-name">${escapeHtml(name)}</span>
+        <span class="contact-row-phone">${escapeHtml(phone)}</span>
+      </div>
+      <button class="copy-btn" type="button">복사</button>
+    `;
+    row.querySelector('.copy-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(phone).then(() => showToast('복사되었습니다'));
+    });
+    dropdown.appendChild(row);
+  });
+  dropdown.classList.add('open');
 }
 
 function formatDate(dateStr) {

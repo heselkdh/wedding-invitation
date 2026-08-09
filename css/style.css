@@ -270,17 +270,54 @@ section { padding: 96px 32px; position: relative; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   margin-left: 6px;
+  border: none;
   border-radius: 50%;
   background: var(--gray-4);
   color: var(--gray-1);
-  font-size: 0.78rem;
-  text-decoration: none;
+  font-size: 0.8rem;
+  cursor: pointer;
   vertical-align: middle;
+  font-family: inherit;
 }
 .parents-contact:hover { background: var(--gray-3); }
+
+/* ── 연락처 드롭다운 ── */
+.parents-contact-dropdown {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  max-width: 280px;
+  margin: 0 auto;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease;
+}
+
+.parents-contact-dropdown.open {
+  max-height: 300px;
+  opacity: 1;
+  margin: 10px auto 0;
+  padding: 6px 16px;
+  border: 1px solid var(--gray-3);
+  border-radius: var(--radius);
+  background: var(--white);
+  text-align: left;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray-4);
+}
+.contact-row:last-child { border-bottom: none; }
+
+.contact-row-info { display: flex; flex-direction: column; gap: 2px; }
+.contact-row-name { font-size: 0.8rem; color: var(--gray-1); }
+.contact-row-phone { font-size: 0.92rem; color: var(--black); font-weight: 500; }
 
 /* ════════════════════════════
    3. 일시 / 장소
@@ -434,6 +471,7 @@ section { padding: 96px 32px; position: relative; }
 
 .notice-cards {
   display: flex;
+  justify-content: center;
   gap: 12px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
