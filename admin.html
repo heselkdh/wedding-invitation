@@ -194,6 +194,36 @@
       </div>
     </div>
 
+    <!-- 패널: 예식정보 및 안내사항 -->
+    <div class="panel collapsed" id="panel-notices">
+      <div class="panel-header" onclick="togglePanel('panel-notices')">
+        <h2>📋 예식정보 및 안내사항</h2>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="panel-body">
+        <label>제목</label>
+        <input type="text" id="notice-title" placeholder="피로연 안내">
+        <label>본문</label>
+        <textarea id="notice-text" placeholder="예식 후 2층 연회장에서 피로연이 진행됩니다"></textarea>
+        <div id="notice-current-photo" style="display:none;margin-bottom:10px;">
+          <img id="notice-current-photo-img" src="" alt="" style="max-width:120px;border-radius:8px;display:block;margin-bottom:6px;">
+          <button type="button" class="btn btn-ghost" id="notice-remove-photo-btn" style="font-size:0.78rem;padding:6px 10px;">사진 제거</button>
+        </div>
+        <label class="upload-area" id="notice-upload-area">
+          <span style="font-size:1.5rem;">🖼️</span>
+          <p id="notice-upload-label">클릭하여 사진 추가 (선택)</p>
+          <input type="file" id="notice-photo-input" accept="image/*">
+        </label>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <button class="btn btn-primary" id="notice-add-btn" style="flex:1;justify-content:center;">+ 항목 추가</button>
+          <button class="btn btn-ghost" id="notice-cancel-edit-btn" style="display:none;justify-content:center;">취소</button>
+        </div>
+
+        <div id="notice-grid"></div>
+        <button class="btn btn-primary" id="save-notice-order-btn" style="display:none;width:100%;justify-content:center;margin-top:12px;">💾 순서 저장</button>
+      </div>
+    </div>
+
     <!-- 패널 3: 계좌번호 -->
     <div class="panel collapsed" id="panel-accounts">
       <div class="panel-header" onclick="togglePanel('panel-accounts')">

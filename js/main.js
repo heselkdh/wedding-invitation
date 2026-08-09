@@ -24,6 +24,13 @@ const SAMPLE = {
 <h4>🚗 자가용</h4><p>건물 지하 주차장 2시간 무료</p>`
 };
 
+const SAMPLE_NOTICES = [
+  { title: '화환 안내', text: '축하하는 마음만으로 감사히 받겠습니다.', imageUrl: '' },
+  { title: '식사 안내', text: '예식 후 같은 건물 내 연회장에서 식사가 준비되어 있습니다.', imageUrl: '' },
+  { title: '피로연 안내', text: '예식 후 2층 연회장에서 피로연이 진행됩니다.', imageUrl: '' },
+  { title: '포토부스 안내', text: '로비에 마련된 포토부스에서 추억을 남겨보세요.', imageUrl: '' },
+];
+
 // ── Firestore 또는 샘플 데이터 로드 ───────────────────────────────
 async function loadConfig() {
   let d = SAMPLE;
@@ -37,8 +44,8 @@ async function loadConfig() {
   document.getElementById('hero-bride').textContent       = d.brideName;
   document.getElementById('groom-name').textContent       = d.groomName;
   document.getElementById('bride-name').textContent       = d.brideName;
-  setCommaListWithBreaks(document.getElementById('groom-parents'), d.groomParents);
-  setCommaListWithBreaks(document.getElementById('bride-parents'), d.brideParents);
+  document.getElementById('groom-parents-line').textContent = formatParentsLine(d.groomParents, d.groomName, '아들');
+  document.getElementById('bride-parents-line').textContent = formatParentsLine(d.brideParents, d.brideName, '딸');
 
   const dateStr = formatDate(d.weddingDate);
   setOpeningText(d, dateStr);
@@ -46,6 +53,7 @@ async function loadConfig() {
   document.getElementById('dt-time').textContent    = d.weddingTime;
   document.getElementById('venue-name').textContent = d.venueName;
   document.getElementById('venue-address').textContent = d.venueAddress;
+  document.getElementById('cd-couple-names').textContent = `${d.groomName}, ${d.brideName}`;
 
   document.title = `${d.groomName} ♥ ${d.brideName} 결혼합니다`;
   setMeta('og:title',       `${d.groomName} ♥ ${d.brideName} 결혼합니다`);
@@ -165,12 +173,11 @@ function initMusic(url) {
   });
 }
 
-function setCommaListWithBreaks(el, text) {
-  el.textContent = '';
-  text.split(',').forEach((part, i) => {
-    if (i > 0) el.appendChild(document.createElement('br'));
-    el.appendChild(document.createTextNode(part));
-  });
+function formatParentsLine(parentsStr, childName, relation) {
+  const names = (parentsStr || '').split(',')
+    .map(s => s.trim().replace(/^(아버지|어머니)\s*/, ''))
+    .filter(Boolean);
+  return `${names.join(' · ')} 의 ${relation} ${childName}`;
 }
 
 function formatDate(dateStr) {
@@ -203,6 +210,7 @@ function startCountdown(dateStr, timeStr) {
     if (diff <= 0) {
       ['days','hours','mins','secs'].forEach(u =>
         (document.getElementById(`cd-${u}`).textContent = '0'));
+      document.getElementById('cd-dday').textContent = 'D-DAY';
       if (intervalId !== null) clearInterval(intervalId);
       return;
     }
@@ -214,6 +222,7 @@ function startCountdown(dateStr, timeStr) {
     document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
     document.getElementById('cd-mins').textContent  = String(m).padStart(2,'0');
     document.getElementById('cd-secs').textContent  = String(s).padStart(2,'0');
+    document.getElementById('cd-dday').textContent  = `${Math.ceil(diff / 86400000)}일`;
   }
   tick();
   intervalId = setInterval(tick, 1000);
@@ -273,38 +282,55 @@ const CAT_PHOTOS = [
 ];
 
 let _galleryPhotos = [];
+let _galleryIndex = 0;
 let _lightboxIndex = 0;
 
 function loadGallery() {
-  const grid = document.getElementById('gallery-grid');
+  const thumbs = document.getElementById('gallery-thumbs');
 
   if (!isConfigured) {
-    CAT_PHOTOS.forEach(src => appendPhoto(grid, src));
+    _galleryPhotos = CAT_PHOTOS.slice();
+    renderGalleryThumbs();
+    showGalleryPhoto(0);
     return;
   }
 
   onSnapshot(query(collection(db, 'photos'), orderBy('order')), snap => {
-    grid.innerHTML = '';
-    _galleryPhotos = [];
-    if (snap.empty) {
-      CAT_PHOTOS.forEach(src => appendPhoto(grid, src));
-    } else {
-      snap.forEach(d => appendPhoto(grid, d.data().url));
-    }
+    _galleryPhotos = snap.empty ? CAT_PHOTOS.slice() : snap.docs.map(d => d.data().url);
+    renderGalleryThumbs();
+    showGalleryPhoto(0);
   });
 }
 
-function appendPhoto(grid, src) {
-  const idx = _galleryPhotos.length;
-  _galleryPhotos.push(src);
-  const item = document.createElement('div');
-  item.className = 'gallery-item';
-  const img = document.createElement('img');
-  img.src = src; img.alt = '웨딩 사진'; img.loading = 'lazy';
-  item.appendChild(img);
-  item.addEventListener('click', () => openLightbox(idx));
-  grid.appendChild(item);
+function renderGalleryThumbs() {
+  const thumbs = document.getElementById('gallery-thumbs');
+  thumbs.innerHTML = '';
+  _galleryPhotos.forEach((src, idx) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'gallery-thumb';
+    const img = document.createElement('img');
+    img.src = src; img.alt = '웨딩 사진'; img.loading = 'lazy';
+    thumb.appendChild(img);
+    thumb.addEventListener('click', () => showGalleryPhoto(idx));
+    thumbs.appendChild(thumb);
+  });
 }
+
+function showGalleryPhoto(idx) {
+  if (!_galleryPhotos.length) return;
+  _galleryIndex = (idx + _galleryPhotos.length) % _galleryPhotos.length;
+  document.getElementById('gallery-main-img').src = _galleryPhotos[_galleryIndex];
+
+  document.querySelectorAll('.gallery-thumb').forEach((el, i) => {
+    el.classList.toggle('active', i === _galleryIndex);
+  });
+  const activeThumb = document.querySelectorAll('.gallery-thumb')[_galleryIndex];
+  if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+}
+
+document.getElementById('gallery-prev').addEventListener('click', () => showGalleryPhoto(_galleryIndex - 1));
+document.getElementById('gallery-next').addEventListener('click', () => showGalleryPhoto(_galleryIndex + 1));
+document.getElementById('gallery-main-img').addEventListener('click', () => openLightbox(_galleryIndex));
 
 // ── Lightbox ────────────────────────────────────────────────────────
 function openLightbox(idx) {
@@ -356,6 +382,36 @@ function makeTimelineItem({ date, title, text, imageUrl }) {
     <div class="timeline-title">${escapeHtml(title || '')}</div>
     <div class="timeline-text">${escapeHtml(text || '')}</div>
     ${imageUrl ? `<img class="timeline-photo" src="${escapeHtml(imageUrl)}" alt="">` : ''}
+  `;
+  return el;
+}
+
+// ── 예식정보 및 안내사항 ───────────────────────────────────────────
+function loadNotices() {
+  const cards = document.getElementById('notice-cards');
+
+  if (!isConfigured) {
+    SAMPLE_NOTICES.forEach(n => cards.appendChild(makeNoticeCard(n)));
+    return;
+  }
+
+  onSnapshot(query(collection(db, 'notices'), orderBy('order')), snap => {
+    cards.innerHTML = '';
+    if (snap.empty) {
+      SAMPLE_NOTICES.forEach(n => cards.appendChild(makeNoticeCard(n)));
+    } else {
+      snap.forEach(d => cards.appendChild(makeNoticeCard(d.data())));
+    }
+  }, err => console.error('안내사항 로드 오류:', err));
+}
+
+function makeNoticeCard({ title, text, imageUrl }) {
+  const el = document.createElement('div');
+  el.className = 'notice-card';
+  el.innerHTML = `
+    ${imageUrl ? `<img class="notice-card-img" src="${escapeHtml(imageUrl)}" alt="">` : ''}
+    <div class="notice-card-title">${escapeHtml(title || '')}</div>
+    <div class="notice-card-text">${escapeHtml(text || '')}</div>
   `;
   return el;
 }
@@ -667,5 +723,6 @@ initFontSizeToggle();
 loadConfig();
 loadGallery();
 loadTimeline();
+loadNotices();
 loadGuestbook();
 loadAccounts();
