@@ -14,7 +14,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=11">
+  <link rel="stylesheet" href="css/style.css?v=12">
 </head>
 <body>
 
@@ -62,15 +62,9 @@
     </div>
   </div>
 
-  <div class="parents-grid fade-up">
-    <div class="parents-side">
-      <div class="parents-label">신랑 측</div>
-      <div class="parents-name" id="groom-parents">아버지<br>어머니</div>
-    </div>
-    <div class="parents-side">
-      <div class="parents-label">신부 측</div>
-      <div class="parents-name" id="bride-parents">아버지<br>어머니</div>
-    </div>
+  <div class="parents-intro fade-up">
+    <p class="parents-line" id="groom-parents-line"></p>
+    <p class="parents-line" id="bride-parents-line"></p>
   </div>
 </section>
 
@@ -87,22 +81,13 @@
   <div class="mini-calendar fade-up" id="mini-calendar"></div>
 
   <div class="countdown fade-up">
-    <div class="countdown-box">
-      <span class="countdown-num" id="cd-days">--</span>
-      <span class="countdown-label">DAYS</span>
+    <div class="countdown-labels">
+      <span>DAYS</span><span>HOUR</span><span>MIN</span><span>SEC</span>
     </div>
-    <div class="countdown-box">
-      <span class="countdown-num" id="cd-hours">--</span>
-      <span class="countdown-label">HOURS</span>
+    <div class="countdown-nums">
+      <span class="countdown-num" id="cd-days">--</span><span class="countdown-colon">:</span><span class="countdown-num" id="cd-hours">--</span><span class="countdown-colon">:</span><span class="countdown-num" id="cd-mins">--</span><span class="countdown-colon">:</span><span class="countdown-num" id="cd-secs">--</span>
     </div>
-    <div class="countdown-box">
-      <span class="countdown-num" id="cd-mins">--</span>
-      <span class="countdown-label">MINS</span>
-    </div>
-    <div class="countdown-box">
-      <span class="countdown-num" id="cd-secs">--</span>
-      <span class="countdown-label">SECS</span>
-    </div>
+    <p class="countdown-sentence"><span id="cd-couple-names"></span>의 결혼식이 <span class="countdown-dday" id="cd-dday"></span> 남았습니다.</p>
   </div>
 </section>
 
@@ -144,8 +129,15 @@
   <p class="section-title">갤러리</p>
   <div class="section-divider"></div>
 
-  <div class="gallery-grid fade-up" id="gallery-grid">
-    <!-- main.js에서 동적 생성 -->
+  <div class="gallery-viewer fade-up">
+    <div class="gallery-main">
+      <img id="gallery-main-img" src="" alt="웨딩 사진">
+      <button id="gallery-prev" class="gallery-nav-btn" aria-label="이전 사진">‹</button>
+      <button id="gallery-next" class="gallery-nav-btn" aria-label="다음 사진">›</button>
+    </div>
+    <div class="gallery-thumbs" id="gallery-thumbs">
+      <!-- main.js에서 동적 생성 -->
+    </div>
   </div>
 </section>
 
@@ -231,6 +223,6 @@
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
-<script type="module" src="js/main.js?v=2"></script>
+<script type="module" src="js/main.js?v=4"></script>
 </body>
 </html>

@@ -270,36 +270,18 @@ section { padding: 96px 32px; position: relative; }
   color: var(--accent);
 }
 
-.parents-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border: 1px solid var(--gray-3);
-  border-radius: var(--radius);
-  overflow: hidden;
+.parents-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.parents-side {
-  padding: 24px 14px;
-  background: var(--white);
-}
-
-.parents-side:first-child { border-right: 1px solid var(--gray-3); }
-
-.parents-label {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--gray-1);
-  letter-spacing: 0.06em;
-  margin-bottom: 12px;
-}
-
-.parents-name {
+.parents-line {
   font-family: var(--font-serif);
   font-size: 1.02rem;
   font-weight: 400;
   color: var(--black);
-  line-height: 1.9;
+  line-height: 1.7;
 }
 
 /* ════════════════════════════
@@ -364,42 +346,59 @@ section { padding: 96px 32px; position: relative; }
 }
 
 .countdown {
-  display: flex;
-  justify-content: center;
-  border: 1px solid var(--gray-3);
-  border-radius: var(--radius);
-  overflow: hidden;
+  text-align: center;
   margin-bottom: 36px;
 }
 
-.countdown-box {
-  flex: 1;
-  background: var(--white);
-  padding: 18px 8px;
-  text-align: center;
-  border-right: 1px solid var(--gray-3);
+.countdown-labels {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  margin-bottom: 8px;
 }
 
-.countdown-box:last-child { border-right: none; }
+.countdown-labels span {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--gray-2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.countdown-nums {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 16px;
+}
 
 .countdown-num {
   font-family: var(--font-display);
   font-size: 2rem;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--black);
-  display: block;
+  line-height: 1;
+  min-width: 1.4em;
+}
+
+.countdown-colon {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--gray-3);
   line-height: 1;
 }
 
-.countdown-label {
-  font-family: var(--font-display);
-  font-size: 0.56rem;
-  font-weight: 300;
-  color: var(--gray-2);
-  letter-spacing: 0.14em;
-  display: block;
-  margin-top: 7px;
-  text-transform: uppercase;
+.countdown-sentence {
+  font-size: 0.92rem;
+  color: var(--black);
+}
+
+.countdown-dday {
+  color: var(--accent-deep);
+  font-weight: 700;
 }
 
 .venue-name {
@@ -493,29 +492,77 @@ section { padding: 96px 32px; position: relative; }
   padding: 72px 20px;
 }
 
-.gallery-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3px;
-}
-
-.gallery-item {
-  overflow: hidden;
-  aspect-ratio: 1;
-  cursor: pointer;
+.gallery-main {
   position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius);
+  background: var(--gray-4);
+  margin-bottom: 12px;
 }
 
-.gallery-item img {
+.gallery-main img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  display: block;
+  cursor: pointer;
+}
+
+.gallery-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--black);
+  font-size: 1.3rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+  transition: background var(--ease);
+}
+.gallery-nav-btn:hover { background: var(--white); }
+.gallery-nav-btn:first-of-type { left: 10px; }
+.gallery-nav-btn:last-of-type  { right: 10px; }
+
+.gallery-thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 2px;
+}
+
+.gallery-thumb {
+  flex: 0 0 auto;
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.5;
+  border: 2px solid transparent;
+  transition: opacity var(--ease), border-color var(--ease);
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
 
-.gallery-item:hover img,
-.gallery-item:active img { transform: scale(1.06); }
+.gallery-thumb.active {
+  opacity: 1;
+  border-color: var(--black);
+}
 
 /* Lightbox */
 #lightbox {
