@@ -803,6 +803,33 @@ section { padding: 96px 32px; position: relative; }
 
 .guestbook-messages { display: flex; flex-direction: column; }
 
+.guestbook-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.guestbook-pagination button {
+  background: none;
+  border: 1px solid var(--gray-3);
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--gray-1);
+  cursor: pointer;
+  transition: background var(--ease);
+}
+.guestbook-pagination button:hover:not(:disabled) { background: var(--gray-4); }
+.guestbook-pagination button:disabled { opacity: 0.35; cursor: default; }
+
+.guestbook-pagination #gb-page-info {
+  font-size: 0.78rem;
+  color: var(--gray-2);
+}
+
 .gb-empty-note { text-align: center; color: var(--gray-2); font-size: 0.85rem; }
 
 .guestbook-msg {
@@ -838,6 +865,14 @@ section { padding: 96px 32px; position: relative; }
    7. 계좌번호
 ════════════════════════════ */
 #accounts { background: var(--gray-5); }
+
+.accounts-note {
+  text-align: center;
+  font-size: 0.86rem;
+  color: var(--gray-1);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
 
 .account-group-label {
   font-family: var(--font-display);

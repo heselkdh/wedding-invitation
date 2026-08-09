@@ -459,6 +459,9 @@ function makeNoticeCard({ title, text, imageUrl }) {
 
 // ── 방명록 ─────────────────────────────────────────────────────────
 let _unsubGuestbook = null;
+let _guestbookMessages = [];
+let _guestbookPage = 0;
+const GUESTBOOK_PAGE_SIZE = 3;
 
 function loadGuestbook() {
   if (!isConfigured) {
@@ -470,25 +473,54 @@ function loadGuestbook() {
 
   const q = query(collection(db, 'guestbook'), orderBy('createdAt', 'desc'));
   _unsubGuestbook = onSnapshot(q, snap => {
-    const list = document.getElementById('guestbook-list');
-    list.innerHTML = '';
-    snap.forEach(d => {
-      const data = d.data();
-      const ts   = data.createdAt?.toDate();
-      const dateStr = ts
-        ? `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')}`
-        : '';
-      const el = document.createElement('div');
-      el.className = 'guestbook-msg';
-      el.innerHTML = `
-        <div class="guestbook-msg-name">${escapeHtml(data.name)}</div>
-        <div class="guestbook-msg-text">${escapeHtml(data.message)}</div>
-        <div class="guestbook-msg-date">${dateStr}</div>
-      `;
-      list.appendChild(el);
-    });
+    _guestbookMessages = snap.docs.map(d => d.data());
+    if (_guestbookPage > 0 && _guestbookPage * GUESTBOOK_PAGE_SIZE >= _guestbookMessages.length) {
+      _guestbookPage = 0;
+    }
+    renderGuestbookPage();
   });
 }
+
+function renderGuestbookPage() {
+  const list = document.getElementById('guestbook-list');
+  const pagination = document.getElementById('guestbook-pagination');
+  const start = _guestbookPage * GUESTBOOK_PAGE_SIZE;
+  const pageItems = _guestbookMessages.slice(start, start + GUESTBOOK_PAGE_SIZE);
+
+  list.innerHTML = '';
+  pageItems.forEach(data => {
+    const ts = data.createdAt?.toDate();
+    const dateStr = ts
+      ? `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')}`
+      : '';
+    const el = document.createElement('div');
+    el.className = 'guestbook-msg';
+    el.innerHTML = `
+      <div class="guestbook-msg-name">${escapeHtml(data.name)}</div>
+      <div class="guestbook-msg-text">${escapeHtml(data.message)}</div>
+      <div class="guestbook-msg-date">${dateStr}</div>
+    `;
+    list.appendChild(el);
+  });
+
+  const totalPages = Math.ceil(_guestbookMessages.length / GUESTBOOK_PAGE_SIZE);
+  if (totalPages > 1) {
+    pagination.style.display = 'flex';
+    document.getElementById('gb-page-info').textContent = `${_guestbookPage + 1} / ${totalPages}`;
+    document.getElementById('gb-prev-page').disabled = _guestbookPage === 0;
+    document.getElementById('gb-next-page').disabled = _guestbookPage >= totalPages - 1;
+  } else {
+    pagination.style.display = 'none';
+  }
+}
+
+document.getElementById('gb-prev-page').addEventListener('click', () => {
+  if (_guestbookPage > 0) { _guestbookPage--; renderGuestbookPage(); }
+});
+document.getElementById('gb-next-page').addEventListener('click', () => {
+  const totalPages = Math.ceil(_guestbookMessages.length / GUESTBOOK_PAGE_SIZE);
+  if (_guestbookPage < totalPages - 1) { _guestbookPage++; renderGuestbookPage(); }
+});
 
 window.addEventListener('pagehide', () => {
   if (_unsubGuestbook) { _unsubGuestbook(); _unsubGuestbook = null; }
