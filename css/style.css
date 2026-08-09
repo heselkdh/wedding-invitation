@@ -284,6 +284,25 @@ section { padding: 96px 32px; position: relative; }
   line-height: 1.7;
 }
 
+.relation-word.son,
+.relation-word.daughter { color: var(--gray-2); }
+
+.parents-contact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--gray-4);
+  color: var(--gray-1);
+  font-size: 0.78rem;
+  text-decoration: none;
+  vertical-align: middle;
+}
+.parents-contact:hover { background: var(--gray-3); }
+
 /* ════════════════════════════
    3. 일시 / 장소
 ════════════════════════════ */
@@ -294,17 +313,22 @@ section { padding: 96px 32px; position: relative; }
 
 .datetime-main {
   font-family: var(--font-sans);
-  font-size: 1.05rem;
-  font-weight: 400;
-  color: var(--black);
-  line-height: 2.2;
   margin-bottom: 32px;
 }
 
 .datetime-main strong {
-  font-weight: 400;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--black);
   display: block;
+  margin-bottom: 22px;
   letter-spacing: 0.02em;
+}
+
+.datetime-main span {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--gray-1);
 }
 
 .mini-calendar {
@@ -397,7 +421,7 @@ section { padding: 96px 32px; position: relative; }
 }
 
 .countdown-dday {
-  color: var(--accent-deep);
+  color: #c0392b;
   font-weight: 700;
 }
 
@@ -454,9 +478,10 @@ section { padding: 96px 32px; position: relative; }
 
 .notice-card-img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
   display: block;
+  cursor: pointer;
 }
 
 .notice-card-title {
@@ -841,8 +866,30 @@ section { padding: 96px 32px; position: relative; }
   font-weight: 600;
   color: var(--gray-1);
   letter-spacing: 0.06em;
-  text-align: center;
+}
+
+.account-group-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
   margin-bottom: 14px;
+}
+
+.account-group-chevron {
+  font-size: 1.2rem;
+  color: var(--black);
+  line-height: 1;
+  transition: transform var(--ease);
+}
+
+.account-group-toggle[aria-expanded="false"] .account-group-chevron {
+  transform: rotate(-90deg);
 }
 
 .account-cards {
@@ -851,6 +898,15 @@ section { padding: 96px 32px; position: relative; }
   border: 1px solid var(--gray-3);
   border-radius: var(--radius);
   overflow: hidden;
+  max-height: 2000px;
+  opacity: 1;
+  transition: max-height 0.35s ease, opacity 0.25s ease, border-width 0.35s ease;
+}
+
+.account-cards.collapsed {
+  max-height: 0;
+  opacity: 0;
+  border-width: 0;
 }
 
 .account-card {
