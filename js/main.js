@@ -186,7 +186,7 @@ function renderParentsLine(elId, dropdownId, parentsStr, childName, relation, re
     const name = part.replace(/^(아버지|어머니)\s*/, '');
     if (i > 0) el.appendChild(document.createTextNode(' · '));
     el.appendChild(document.createTextNode(name));
-    if (parentPhones[i]) contacts.push({ name: parentLabels[i], phone: parentPhones[i] });
+    if (parentPhones[i]) contacts.push({ name: `${parentLabels[i]} ${name}`, phone: parentPhones[i] });
   });
 
   el.appendChild(document.createTextNode(' '));
@@ -195,7 +195,7 @@ function renderParentsLine(elId, dropdownId, parentsStr, childName, relation, re
   relSpan.textContent = `의 ${relation}`;
   el.appendChild(relSpan);
   el.appendChild(document.createTextNode(` ${childName}`));
-  if (phone) contacts.push({ name: childLabel, phone });
+  if (phone) contacts.push({ name: `${childLabel} ${childName}`, phone });
 
   if (contacts.length) {
     const btn = document.createElement('button');
