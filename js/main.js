@@ -42,15 +42,16 @@ async function loadConfig() {
 
   document.getElementById('hero-groom').textContent       = d.groomName;
   document.getElementById('hero-bride').textContent       = d.brideName;
-  renderParentsLine('groom-parents-line', 'groom-contact-dropdown', d.groomParents, d.groomName, '아들', 'son', d.groomPhone, d.groomFatherPhone, d.groomMotherPhone, '신랑측');
-  renderParentsLine('bride-parents-line', 'bride-contact-dropdown', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone, d.brideFatherPhone, d.brideMotherPhone, '신부측');
+  renderParentsLine('groom-parents-line', 'groom-contact-dropdown', d.groomParents, d.groomName, '아들', 'son', d.groomPhone, d.groomFatherPhone, d.groomMotherPhone, '신랑측', '신랑');
+  renderParentsLine('bride-parents-line', 'bride-contact-dropdown', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone, d.brideFatherPhone, d.brideMotherPhone, '신부측', '신부');
 
   const dateStr = formatDate(d.weddingDate);
   setOpeningText(d, dateStr);
   document.getElementById('dt-date').textContent    = dateStr;
   document.getElementById('dt-time').textContent    = d.weddingTime;
   document.getElementById('venue-name').textContent = d.venueName;
-  document.getElementById('venue-address').textContent = d.venueAddress;
+  const addrLines = (d.venueAddress || '').split(/\n|\s{2,}/).map(s => s.trim()).filter(Boolean);
+  document.getElementById('venue-address').innerHTML = addrLines.map(escapeHtml).join('<br>');
   document.getElementById('cd-couple-names').textContent = `${d.groomName}, ${d.brideName}`;
 
   document.title = `${d.groomName} ♥ ${d.brideName} 결혼합니다`;
@@ -171,7 +172,7 @@ function initMusic(url) {
   });
 }
 
-function renderParentsLine(elId, dropdownId, parentsStr, childName, relation, relationClass, phone, fatherPhone, motherPhone, side) {
+function renderParentsLine(elId, dropdownId, parentsStr, childName, relation, relationClass, phone, fatherPhone, motherPhone, side, childLabel) {
   const el = document.getElementById(elId);
   el.textContent = '';
 
@@ -194,7 +195,7 @@ function renderParentsLine(elId, dropdownId, parentsStr, childName, relation, re
   relSpan.textContent = `의 ${relation}`;
   el.appendChild(relSpan);
   el.appendChild(document.createTextNode(` ${childName}`));
-  if (phone) contacts.push({ name: childName, phone });
+  if (phone) contacts.push({ name: childLabel, phone });
 
   if (contacts.length) {
     const btn = document.createElement('button');
