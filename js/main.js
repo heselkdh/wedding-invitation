@@ -42,8 +42,8 @@ async function loadConfig() {
 
   document.getElementById('hero-groom').textContent       = d.groomName;
   document.getElementById('hero-bride').textContent       = d.brideName;
-  renderParentsLine('groom-parents-line', 'groom-contact-dropdown', d.groomParents, d.groomName, '아들', 'son', d.groomPhone, d.groomFatherPhone, d.groomMotherPhone);
-  renderParentsLine('bride-parents-line', 'bride-contact-dropdown', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone, d.brideFatherPhone, d.brideMotherPhone);
+  renderParentsLine('groom-parents-line', 'groom-contact-dropdown', d.groomParents, d.groomName, '아들', 'son', d.groomPhone, d.groomFatherPhone, d.groomMotherPhone, '신랑측');
+  renderParentsLine('bride-parents-line', 'bride-contact-dropdown', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone, d.brideFatherPhone, d.brideMotherPhone, '신부측');
 
   const dateStr = formatDate(d.weddingDate);
   setOpeningText(d, dateStr);
@@ -171,20 +171,21 @@ function initMusic(url) {
   });
 }
 
-function renderParentsLine(elId, dropdownId, parentsStr, childName, relation, relationClass, phone, fatherPhone, motherPhone) {
+function renderParentsLine(elId, dropdownId, parentsStr, childName, relation, relationClass, phone, fatherPhone, motherPhone, side) {
   const el = document.getElementById(elId);
   el.textContent = '';
 
   // 관례상 첫 항목은 아버지, 두 번째 항목은 어머니로 취급 (관리자 placeholder와 동일한 순서)
   const parts = (parentsStr || '').split(',').map(s => s.trim()).filter(Boolean);
   const parentPhones = [fatherPhone, motherPhone];
+  const parentLabels = [`${side} 아버지`, `${side} 어머니`];
   const contacts = [];
 
   parts.forEach((part, i) => {
     const name = part.replace(/^(아버지|어머니)\s*/, '');
     if (i > 0) el.appendChild(document.createTextNode(' · '));
     el.appendChild(document.createTextNode(name));
-    if (parentPhones[i]) contacts.push({ name, phone: parentPhones[i] });
+    if (parentPhones[i]) contacts.push({ name: parentLabels[i], phone: parentPhones[i] });
   });
 
   el.appendChild(document.createTextNode(' '));
