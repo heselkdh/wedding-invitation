@@ -249,27 +249,6 @@ section { padding: 96px 32px; position: relative; }
   text-align: center;
 }
 
-.main-couple { margin-bottom: 40px; }
-
-.main-couple-names {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--black);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  letter-spacing: 0.06em;
-}
-
-.couple-divider {
-  font-family: var(--font-sans);
-  font-weight: 200;
-  font-size: 1.1rem;
-  color: var(--accent);
-}
-
 .parents-intro {
   display: flex;
   flex-direction: column;
@@ -824,6 +803,33 @@ section { padding: 96px 32px; position: relative; }
 
 .guestbook-messages { display: flex; flex-direction: column; }
 
+.guestbook-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.guestbook-pagination button {
+  background: none;
+  border: 1px solid var(--gray-3);
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--gray-1);
+  cursor: pointer;
+  transition: background var(--ease);
+}
+.guestbook-pagination button:hover:not(:disabled) { background: var(--gray-4); }
+.guestbook-pagination button:disabled { opacity: 0.35; cursor: default; }
+
+.guestbook-pagination #gb-page-info {
+  font-size: 0.78rem;
+  color: var(--gray-2);
+}
+
 .gb-empty-note { text-align: center; color: var(--gray-2); font-size: 0.85rem; }
 
 .guestbook-msg {
@@ -860,6 +866,14 @@ section { padding: 96px 32px; position: relative; }
 ════════════════════════════ */
 #accounts { background: var(--gray-5); }
 
+.accounts-note {
+  text-align: center;
+  font-size: 0.86rem;
+  color: var(--gray-1);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
 .account-group-label {
   font-family: var(--font-display);
   font-size: 0.95rem;
@@ -874,10 +888,11 @@ section { padding: 96px 32px; position: relative; }
   justify-content: center;
   gap: 8px;
   width: 100%;
-  background: none;
-  border: none;
+  background: var(--white);
+  border: 1px solid var(--gray-3);
+  border-radius: var(--radius);
   cursor: pointer;
-  padding: 4px 0;
+  padding: 14px 0;
   margin-bottom: 14px;
 }
 

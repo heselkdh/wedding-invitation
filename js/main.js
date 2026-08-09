@@ -42,10 +42,8 @@ async function loadConfig() {
 
   document.getElementById('hero-groom').textContent       = d.groomName;
   document.getElementById('hero-bride').textContent       = d.brideName;
-  document.getElementById('groom-name').textContent       = d.groomName;
-  document.getElementById('bride-name').textContent       = d.brideName;
-  renderParentsLine('groom-parents-line', d.groomParents, d.groomName, '아들', 'son', d.groomPhone);
-  renderParentsLine('bride-parents-line', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone);
+  renderParentsLine('groom-parents-line', d.groomParents, d.groomName, '아들', 'son', d.groomPhone, d.groomFatherPhone, d.groomMotherPhone);
+  renderParentsLine('bride-parents-line', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone, d.brideFatherPhone, d.brideMotherPhone);
 
   const dateStr = formatDate(d.weddingDate);
   setOpeningText(d, dateStr);
@@ -173,29 +171,38 @@ function initMusic(url) {
   });
 }
 
-function renderParentsLine(elId, parentsStr, childName, relation, relationClass, phone) {
+function appendCallIcon(el, name, phone) {
+  if (!phone) return;
+  const link = document.createElement('a');
+  link.className = 'parents-contact';
+  link.href = `tel:${phone}`;
+  link.setAttribute('aria-label', `${name}에게 전화`);
+  link.textContent = '📞';
+  el.appendChild(link);
+}
+
+function renderParentsLine(elId, parentsStr, childName, relation, relationClass, phone, fatherPhone, motherPhone) {
   const el = document.getElementById(elId);
   el.textContent = '';
 
-  const names = (parentsStr || '').split(',')
-    .map(s => s.trim().replace(/^(아버지|어머니)\s*/, ''))
-    .filter(Boolean);
+  // 관례상 첫 항목은 아버지, 두 번째 항목은 어머니로 취급 (관리자 placeholder와 동일한 순서)
+  const parts = (parentsStr || '').split(',').map(s => s.trim()).filter(Boolean);
+  const parentPhones = [fatherPhone, motherPhone];
 
-  el.appendChild(document.createTextNode(`${names.join(' · ')} `));
+  parts.forEach((part, i) => {
+    const name = part.replace(/^(아버지|어머니)\s*/, '');
+    if (i > 0) el.appendChild(document.createTextNode(' · '));
+    el.appendChild(document.createTextNode(name));
+    appendCallIcon(el, name, parentPhones[i]);
+  });
+
+  el.appendChild(document.createTextNode(' '));
   const relSpan = document.createElement('span');
   relSpan.className = `relation-word ${relationClass}`;
   relSpan.textContent = `의 ${relation}`;
   el.appendChild(relSpan);
   el.appendChild(document.createTextNode(` ${childName}`));
-
-  if (phone) {
-    const callLink = document.createElement('a');
-    callLink.className = 'parents-contact';
-    callLink.href = `tel:${phone}`;
-    callLink.setAttribute('aria-label', `${childName}에게 전화`);
-    callLink.textContent = '📞';
-    el.appendChild(callLink);
-  }
+  appendCallIcon(el, childName, phone);
 }
 
 function formatDate(dateStr) {
@@ -309,14 +316,14 @@ function loadGallery() {
   if (!isConfigured) {
     _galleryPhotos = CAT_PHOTOS.slice();
     renderGalleryThumbs();
-    showGalleryPhoto(0);
+    showGalleryPhoto(0, false);
     return;
   }
 
   onSnapshot(query(collection(db, 'photos'), orderBy('order')), snap => {
     _galleryPhotos = snap.empty ? CAT_PHOTOS.slice() : snap.docs.map(d => d.data().url);
     renderGalleryThumbs();
-    showGalleryPhoto(0);
+    showGalleryPhoto(0, false);
   });
 }
 
@@ -334,7 +341,7 @@ function renderGalleryThumbs() {
   });
 }
 
-function showGalleryPhoto(idx) {
+function showGalleryPhoto(idx, scrollThumb = true) {
   if (!_galleryPhotos.length) return;
   _galleryIndex = (idx + _galleryPhotos.length) % _galleryPhotos.length;
   document.getElementById('gallery-main-img').src = _galleryPhotos[_galleryIndex];
@@ -342,8 +349,10 @@ function showGalleryPhoto(idx) {
   document.querySelectorAll('.gallery-thumb').forEach((el, i) => {
     el.classList.toggle('active', i === _galleryIndex);
   });
-  const activeThumb = document.querySelectorAll('.gallery-thumb')[_galleryIndex];
-  if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  if (scrollThumb) {
+    const activeThumb = document.querySelectorAll('.gallery-thumb')[_galleryIndex];
+    if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
 }
 
 document.getElementById('gallery-prev').addEventListener('click', () => showGalleryPhoto(_galleryIndex - 1));
@@ -450,6 +459,9 @@ function makeNoticeCard({ title, text, imageUrl }) {
 
 // ── 방명록 ─────────────────────────────────────────────────────────
 let _unsubGuestbook = null;
+let _guestbookMessages = [];
+let _guestbookPage = 0;
+const GUESTBOOK_PAGE_SIZE = 3;
 
 function loadGuestbook() {
   if (!isConfigured) {
@@ -461,25 +473,54 @@ function loadGuestbook() {
 
   const q = query(collection(db, 'guestbook'), orderBy('createdAt', 'desc'));
   _unsubGuestbook = onSnapshot(q, snap => {
-    const list = document.getElementById('guestbook-list');
-    list.innerHTML = '';
-    snap.forEach(d => {
-      const data = d.data();
-      const ts   = data.createdAt?.toDate();
-      const dateStr = ts
-        ? `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')}`
-        : '';
-      const el = document.createElement('div');
-      el.className = 'guestbook-msg';
-      el.innerHTML = `
-        <div class="guestbook-msg-name">${escapeHtml(data.name)}</div>
-        <div class="guestbook-msg-text">${escapeHtml(data.message)}</div>
-        <div class="guestbook-msg-date">${dateStr}</div>
-      `;
-      list.appendChild(el);
-    });
+    _guestbookMessages = snap.docs.map(d => d.data());
+    if (_guestbookPage > 0 && _guestbookPage * GUESTBOOK_PAGE_SIZE >= _guestbookMessages.length) {
+      _guestbookPage = 0;
+    }
+    renderGuestbookPage();
   });
 }
+
+function renderGuestbookPage() {
+  const list = document.getElementById('guestbook-list');
+  const pagination = document.getElementById('guestbook-pagination');
+  const start = _guestbookPage * GUESTBOOK_PAGE_SIZE;
+  const pageItems = _guestbookMessages.slice(start, start + GUESTBOOK_PAGE_SIZE);
+
+  list.innerHTML = '';
+  pageItems.forEach(data => {
+    const ts = data.createdAt?.toDate();
+    const dateStr = ts
+      ? `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')}`
+      : '';
+    const el = document.createElement('div');
+    el.className = 'guestbook-msg';
+    el.innerHTML = `
+      <div class="guestbook-msg-name">${escapeHtml(data.name)}</div>
+      <div class="guestbook-msg-text">${escapeHtml(data.message)}</div>
+      <div class="guestbook-msg-date">${dateStr}</div>
+    `;
+    list.appendChild(el);
+  });
+
+  const totalPages = Math.ceil(_guestbookMessages.length / GUESTBOOK_PAGE_SIZE);
+  if (totalPages > 1) {
+    pagination.style.display = 'flex';
+    document.getElementById('gb-page-info').textContent = `${_guestbookPage + 1} / ${totalPages}`;
+    document.getElementById('gb-prev-page').disabled = _guestbookPage === 0;
+    document.getElementById('gb-next-page').disabled = _guestbookPage >= totalPages - 1;
+  } else {
+    pagination.style.display = 'none';
+  }
+}
+
+document.getElementById('gb-prev-page').addEventListener('click', () => {
+  if (_guestbookPage > 0) { _guestbookPage--; renderGuestbookPage(); }
+});
+document.getElementById('gb-next-page').addEventListener('click', () => {
+  const totalPages = Math.ceil(_guestbookMessages.length / GUESTBOOK_PAGE_SIZE);
+  if (_guestbookPage < totalPages - 1) { _guestbookPage++; renderGuestbookPage(); }
+});
 
 window.addEventListener('pagehide', () => {
   if (_unsubGuestbook) { _unsubGuestbook(); _unsubGuestbook = null; }

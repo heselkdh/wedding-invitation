@@ -100,6 +100,7 @@ async function loadInfoForm() {
   if (!snap.exists()) return;
   const d = snap.data();
   const fields = ['groomName','brideName','groomParents','brideParents','groomPhone','bridePhone',
+                  'groomFatherPhone','groomMotherPhone','brideFatherPhone','brideMotherPhone',
                   'weddingDate','weddingTime','venueName','venueAddress',
                   'kakaoMapUrl','naverMapUrl','transport','musicUrl','introTitle','introText','splashText'];
   fields.forEach(f => {
@@ -226,6 +227,7 @@ document.getElementById('save-info-btn').addEventListener('click', async () => {
   btn.textContent = '저장 중...';
 
   const fields = ['groomName','brideName','groomParents','brideParents','groomPhone','bridePhone',
+                  'groomFatherPhone','groomMotherPhone','brideFatherPhone','brideMotherPhone',
                   'weddingDate','weddingTime','venueName','venueAddress',
                   'kakaoMapUrl','naverMapUrl','transport','musicUrl','introTitle','introText','splashText'];
   const data = {};
