@@ -429,6 +429,52 @@ section { padding: 96px 32px; position: relative; }
   text-align: center;
 }
 
+.notice-cards {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: 4px;
+  margin: 0 -32px;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.notice-card {
+  flex: 0 0 78%;
+  max-width: 320px;
+  scroll-snap-align: start;
+  background: var(--white);
+  border: 1px solid var(--gray-3);
+  border-radius: var(--radius);
+  overflow: hidden;
+  text-align: left;
+}
+
+.notice-card-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.notice-card-title {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--black);
+  padding: 16px 16px 4px;
+}
+
+.notice-card-text {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: var(--gray-1);
+  line-height: 1.6;
+  padding: 0 16px 16px;
+}
+
 .map-btn-row {
   display: flex;
   flex-wrap: wrap;

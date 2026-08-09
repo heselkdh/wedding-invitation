@@ -85,6 +85,7 @@ function initAdmin() {
   loadAccountsForm();
   loadPhotos();
   loadTimelineAdmin();
+  loadNoticesAdmin();
   loadGuestbookAdmin();
 }
 
@@ -100,7 +101,7 @@ async function loadInfoForm() {
   const d = snap.data();
   const fields = ['groomName','brideName','groomParents','brideParents',
                   'weddingDate','weddingTime','venueName','venueAddress',
-                  'kakaoMapUrl','naverMapUrl','transport','ceremonyInfo','musicUrl','introTitle','introText','splashText'];
+                  'kakaoMapUrl','naverMapUrl','transport','musicUrl','introTitle','introText','splashText'];
   fields.forEach(f => {
     const el = document.getElementById(f);
     if (el && d[f] != null) el.value = d[f];
@@ -226,7 +227,7 @@ document.getElementById('save-info-btn').addEventListener('click', async () => {
 
   const fields = ['groomName','brideName','groomParents','brideParents',
                   'weddingDate','weddingTime','venueName','venueAddress',
-                  'kakaoMapUrl','naverMapUrl','transport','ceremonyInfo','musicUrl','introTitle','introText','splashText'];
+                  'kakaoMapUrl','naverMapUrl','transport','musicUrl','introTitle','introText','splashText'];
   const data = {};
   fields.forEach(f => { data[f] = document.getElementById(f).value.trim(); });
 
@@ -646,6 +647,225 @@ async function deleteTimelineItem(e) {
     await deleteDoc(doc(db, 'timeline', id));
     _timelineOrderChanged = false;
     if (_editingTimelineId === id) resetTimelineForm();
+    showToast('항목이 삭제되었습니다');
+  } catch (err) {
+    console.error('항목 삭제 실패:', err);
+    showToast(`삭제 실패: ${err.message}`);
+  }
+}
+
+// ── 5. 예식정보 및 안내사항 ──────────────────────────────────────────
+let _unsubNotices = null;
+let _noticeList  = [];
+let _noticeOrderChanged = false;
+let _noticeDragSrcIdx   = null;
+let _editingNoticeId = null;
+let _editingNoticeRemoveImage = false;
+
+function loadNoticesAdmin() {
+  if (_unsubNotices) { _unsubNotices(); _unsubNotices = null; }
+
+  const q = query(collection(db, 'notices'), orderBy('order'));
+  _unsubNotices = onSnapshot(q, snap => {
+    if (_noticeOrderChanged) return;
+    _noticeList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderNoticeList();
+  }, err => {
+    console.error('안내사항 목록 오류:', err);
+    const list = document.getElementById('notice-grid');
+    list.innerHTML = '';
+    const errMsg = document.createElement('p');
+    errMsg.style.cssText = 'color:#c0392b;font-size:0.85rem;';
+    errMsg.textContent = `안내사항 불러오기 실패: ${err.message}`;
+    list.appendChild(errMsg);
+  });
+}
+
+function renderNoticeList() {
+  const list = document.getElementById('notice-grid');
+  const saveBtn = document.getElementById('save-notice-order-btn');
+  list.innerHTML = '';
+  saveBtn.style.display = (_noticeOrderChanged && _noticeList.length > 1) ? 'flex' : 'none';
+
+  if (_noticeList.length === 0) {
+    const msg = document.createElement('p');
+    msg.style.cssText = 'color:#8a6a76;font-size:0.85rem;';
+    msg.textContent = '등록된 항목이 없습니다';
+    list.appendChild(msg);
+    return;
+  }
+
+  _noticeList.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'timeline-row';
+    row.draggable = true;
+
+    row.innerHTML = `
+      <div class="drag-handle" title="드래그하여 순서 변경">⠿</div>
+      ${item.imageUrl ? `<img class="timeline-row-thumb" src="${escapeHtml(item.imageUrl)}" alt="">` : ''}
+      <div class="timeline-row-content">
+        <div class="timeline-row-title">${escapeHtml(item.title || '')}</div>
+        <div class="timeline-row-text">${escapeHtml(item.text || '')}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <button class="btn btn-ghost edit-notice-btn" data-id="${item.id}" style="font-size:0.78rem;padding:6px 12px;">수정</button>
+        <button class="btn btn-danger del-notice-btn" data-id="${item.id}">삭제</button>
+      </div>
+    `;
+
+    row.querySelector('.edit-notice-btn').addEventListener('click', () => startEditNoticeItem(item));
+    row.querySelector('.del-notice-btn').addEventListener('click', deleteNoticeItem);
+
+    row.addEventListener('dragstart', e => {
+      _noticeDragSrcIdx = idx;
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => row.classList.add('dragging'), 0);
+    });
+    row.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (_noticeDragSrcIdx !== null && _noticeDragSrcIdx !== idx)
+        row.classList.add('drag-over');
+    });
+    row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      row.classList.remove('drag-over');
+      if (_noticeDragSrcIdx === null || _noticeDragSrcIdx === idx) return;
+      const [moved] = _noticeList.splice(_noticeDragSrcIdx, 1);
+      _noticeList.splice(idx, 0, moved);
+      _noticeOrderChanged = true;
+      _noticeDragSrcIdx = null;
+      renderNoticeList();
+    });
+    row.addEventListener('dragend', () => {
+      _noticeDragSrcIdx = null;
+      document.querySelectorAll('#notice-grid .timeline-row').forEach(r =>
+        r.classList.remove('dragging', 'drag-over'));
+    });
+
+    list.appendChild(row);
+  });
+}
+
+document.getElementById('save-notice-order-btn').addEventListener('click', async () => {
+  if (!_noticeOrderChanged || !_noticeList.length) return;
+  const btn = document.getElementById('save-notice-order-btn');
+  btn.textContent = '저장 중...';
+  btn.disabled = true;
+  try {
+    const batch = writeBatch(db);
+    _noticeList.forEach((item, i) => {
+      batch.update(doc(db, 'notices', item.id), { order: i + 1 });
+    });
+    await batch.commit();
+    _noticeOrderChanged = false;
+    btn.style.display = 'none';
+    showToast('순서가 저장되었습니다 ✅');
+  } catch (err) {
+    console.error('순서 저장 실패:', err);
+    showToast(`순서 저장 실패: ${err.message}`);
+  }
+  btn.textContent = '💾 순서 저장';
+  btn.disabled = false;
+});
+
+function startEditNoticeItem(item) {
+  _editingNoticeId = item.id;
+  _editingNoticeRemoveImage = false;
+
+  document.getElementById('notice-title').value = item.title || '';
+  document.getElementById('notice-text').value  = item.text  || '';
+  document.getElementById('notice-photo-input').value = '';
+
+  const currentPhoto = document.getElementById('notice-current-photo');
+  if (item.imageUrl) {
+    document.getElementById('notice-current-photo-img').src = item.imageUrl;
+    currentPhoto.style.display = 'block';
+  } else {
+    currentPhoto.style.display = 'none';
+  }
+
+  document.getElementById('notice-upload-label').textContent = '클릭하여 사진 교체 (선택)';
+  document.getElementById('notice-add-btn').textContent = '수정 완료';
+  document.getElementById('notice-cancel-edit-btn').style.display = 'flex';
+
+  document.getElementById('panel-notices').classList.remove('collapsed');
+  document.getElementById('notice-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetNoticeForm() {
+  _editingNoticeId = null;
+  _editingNoticeRemoveImage = false;
+  document.getElementById('notice-title').value = '';
+  document.getElementById('notice-text').value  = '';
+  document.getElementById('notice-photo-input').value = '';
+  document.getElementById('notice-current-photo').style.display = 'none';
+  document.getElementById('notice-upload-label').textContent = '클릭하여 사진 추가 (선택)';
+  document.getElementById('notice-add-btn').textContent = '+ 항목 추가';
+  document.getElementById('notice-cancel-edit-btn').style.display = 'none';
+}
+
+document.getElementById('notice-remove-photo-btn').addEventListener('click', () => {
+  _editingNoticeRemoveImage = true;
+  document.getElementById('notice-current-photo').style.display = 'none';
+});
+
+document.getElementById('notice-cancel-edit-btn').addEventListener('click', resetNoticeForm);
+
+document.getElementById('notice-add-btn').addEventListener('click', async () => {
+  const title = document.getElementById('notice-title').value.trim();
+  const text  = document.getElementById('notice-text').value.trim();
+  const file  = document.getElementById('notice-photo-input').files[0];
+
+  if (!title) { showToast('제목을 입력해주세요'); return; }
+
+  const btn = document.getElementById('notice-add-btn');
+  const editingId = _editingNoticeId;
+  btn.disabled = true;
+  btn.textContent = editingId ? '수정 중...' : '추가 중...';
+
+  try {
+    if (editingId) {
+      const data = { title, text };
+      if (file) {
+        data.imageUrl = await uploadToCloudinary(file);
+      } else if (_editingNoticeRemoveImage) {
+        data.imageUrl = '';
+      }
+      await updateDoc(doc(db, 'notices', editingId), data);
+      showToast('항목이 수정되었습니다 ✅');
+    } else {
+      let imageUrl = '';
+      if (file) imageUrl = await uploadToCloudinary(file);
+
+      const snap = await getDocs(query(collection(db, 'notices'), orderBy('order', 'desc')));
+      const maxOrder = snap.empty ? 0 : (snap.docs[0].data().order ?? 0);
+
+      await addDoc(collection(db, 'notices'), {
+        title, text, imageUrl, order: maxOrder + 1, createdAt: serverTimestamp()
+      });
+      showToast('항목이 추가되었습니다 ✅');
+    }
+
+    resetNoticeForm();
+  } catch (err) {
+    console.error(editingId ? '항목 수정 실패:' : '항목 추가 실패:', err);
+    showToast(`${editingId ? '수정' : '추가'} 실패: ${err.message}`);
+    btn.disabled = false;
+    btn.textContent = editingId ? '수정 완료' : '+ 항목 추가';
+    return;
+  }
+
+  btn.disabled = false;
+});
+
+async function deleteNoticeItem(e) {
+  const id = e.currentTarget.dataset.id;
+  if (!confirm('이 항목을 삭제할까요?')) return;
+  try {
+    await deleteDoc(doc(db, 'notices', id));
+    _noticeOrderChanged = false;
+    if (_editingNoticeId === id) resetNoticeForm();
     showToast('항목이 삭제되었습니다');
   } catch (err) {
     console.error('항목 삭제 실패:', err);

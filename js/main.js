@@ -21,11 +21,15 @@ const SAMPLE = {
   kakaoMapUrl: '#',
   transport: `<h4>🚇 지하철</h4><p>2호선 강남역 3번 출구 도보 5분</p>
 <h4>🚌 버스</h4><p>146, 360, 740번 강남역 하차</p>
-<h4>🚗 자가용</h4><p>건물 지하 주차장 2시간 무료</p>`,
-  ceremonyInfo: `<h4>💐 화환 안내</h4><p>축하하는 마음만으로 감사히 받겠습니다.</p>
-<h4>🍽️ 식사 안내</h4><p>예식 후 같은 건물 내 연회장에서 식사가 준비되어 있습니다.</p>
-<h4>👶 어린이 동반</h4><p>안전을 위해 보호자와 함께 동반해 주시기 바랍니다.</p>`
+<h4>🚗 자가용</h4><p>건물 지하 주차장 2시간 무료</p>`
 };
+
+const SAMPLE_NOTICES = [
+  { title: '화환 안내', text: '축하하는 마음만으로 감사히 받겠습니다.', imageUrl: '' },
+  { title: '식사 안내', text: '예식 후 같은 건물 내 연회장에서 식사가 준비되어 있습니다.', imageUrl: '' },
+  { title: '피로연 안내', text: '예식 후 2층 연회장에서 피로연이 진행됩니다.', imageUrl: '' },
+  { title: '포토부스 안내', text: '로비에 마련된 포토부스에서 추억을 남겨보세요.', imageUrl: '' },
+];
 
 // ── Firestore 또는 샘플 데이터 로드 ───────────────────────────────
 async function loadConfig() {
@@ -76,7 +80,6 @@ async function loadConfig() {
   }
 
   document.getElementById('transport-info').innerHTML = sanitizeHtml(d.transport || '');
-  document.getElementById('ceremony-info').innerHTML = sanitizeHtml(d.ceremonyInfo || '');
 
   // 인트로 섹션 (기본 인사말 제공, 미설정 시에도 항상 표시)
   const introSec = document.getElementById('intro');
@@ -379,6 +382,36 @@ function makeTimelineItem({ date, title, text, imageUrl }) {
     <div class="timeline-title">${escapeHtml(title || '')}</div>
     <div class="timeline-text">${escapeHtml(text || '')}</div>
     ${imageUrl ? `<img class="timeline-photo" src="${escapeHtml(imageUrl)}" alt="">` : ''}
+  `;
+  return el;
+}
+
+// ── 예식정보 및 안내사항 ───────────────────────────────────────────
+function loadNotices() {
+  const cards = document.getElementById('notice-cards');
+
+  if (!isConfigured) {
+    SAMPLE_NOTICES.forEach(n => cards.appendChild(makeNoticeCard(n)));
+    return;
+  }
+
+  onSnapshot(query(collection(db, 'notices'), orderBy('order')), snap => {
+    cards.innerHTML = '';
+    if (snap.empty) {
+      SAMPLE_NOTICES.forEach(n => cards.appendChild(makeNoticeCard(n)));
+    } else {
+      snap.forEach(d => cards.appendChild(makeNoticeCard(d.data())));
+    }
+  }, err => console.error('안내사항 로드 오류:', err));
+}
+
+function makeNoticeCard({ title, text, imageUrl }) {
+  const el = document.createElement('div');
+  el.className = 'notice-card';
+  el.innerHTML = `
+    ${imageUrl ? `<img class="notice-card-img" src="${escapeHtml(imageUrl)}" alt="">` : ''}
+    <div class="notice-card-title">${escapeHtml(title || '')}</div>
+    <div class="notice-card-text">${escapeHtml(text || '')}</div>
   `;
   return el;
 }
@@ -690,5 +723,6 @@ initFontSizeToggle();
 loadConfig();
 loadGallery();
 loadTimeline();
+loadNotices();
 loadGuestbook();
 loadAccounts();
