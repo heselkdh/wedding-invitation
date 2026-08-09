@@ -853,10 +853,11 @@ section { padding: 96px 32px; position: relative; }
   justify-content: center;
   gap: 8px;
   width: 100%;
-  background: none;
-  border: none;
+  background: var(--white);
+  border: 1px solid var(--gray-3);
+  border-radius: var(--radius);
   cursor: pointer;
-  padding: 4px 0;
+  padding: 14px 0;
   margin-bottom: 14px;
 }
 

@@ -42,8 +42,8 @@ async function loadConfig() {
 
   document.getElementById('hero-groom').textContent       = d.groomName;
   document.getElementById('hero-bride').textContent       = d.brideName;
-  renderParentsLine('groom-parents-line', d.groomParents, d.groomName, '아들', 'son', d.groomPhone);
-  renderParentsLine('bride-parents-line', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone);
+  renderParentsLine('groom-parents-line', d.groomParents, d.groomName, '아들', 'son', d.groomPhone, d.groomFatherPhone, d.groomMotherPhone);
+  renderParentsLine('bride-parents-line', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone, d.brideFatherPhone, d.brideMotherPhone);
 
   const dateStr = formatDate(d.weddingDate);
   setOpeningText(d, dateStr);
@@ -171,29 +171,38 @@ function initMusic(url) {
   });
 }
 
-function renderParentsLine(elId, parentsStr, childName, relation, relationClass, phone) {
+function appendCallIcon(el, name, phone) {
+  if (!phone) return;
+  const link = document.createElement('a');
+  link.className = 'parents-contact';
+  link.href = `tel:${phone}`;
+  link.setAttribute('aria-label', `${name}에게 전화`);
+  link.textContent = '📞';
+  el.appendChild(link);
+}
+
+function renderParentsLine(elId, parentsStr, childName, relation, relationClass, phone, fatherPhone, motherPhone) {
   const el = document.getElementById(elId);
   el.textContent = '';
 
-  const names = (parentsStr || '').split(',')
-    .map(s => s.trim().replace(/^(아버지|어머니)\s*/, ''))
-    .filter(Boolean);
+  // 관례상 첫 항목은 아버지, 두 번째 항목은 어머니로 취급 (관리자 placeholder와 동일한 순서)
+  const parts = (parentsStr || '').split(',').map(s => s.trim()).filter(Boolean);
+  const parentPhones = [fatherPhone, motherPhone];
 
-  el.appendChild(document.createTextNode(`${names.join(' · ')} `));
+  parts.forEach((part, i) => {
+    const name = part.replace(/^(아버지|어머니)\s*/, '');
+    if (i > 0) el.appendChild(document.createTextNode(' · '));
+    el.appendChild(document.createTextNode(name));
+    appendCallIcon(el, name, parentPhones[i]);
+  });
+
+  el.appendChild(document.createTextNode(' '));
   const relSpan = document.createElement('span');
   relSpan.className = `relation-word ${relationClass}`;
   relSpan.textContent = `의 ${relation}`;
   el.appendChild(relSpan);
   el.appendChild(document.createTextNode(` ${childName}`));
-
-  if (phone) {
-    const callLink = document.createElement('a');
-    callLink.className = 'parents-contact';
-    callLink.href = `tel:${phone}`;
-    callLink.setAttribute('aria-label', `${childName}에게 전화`);
-    callLink.textContent = '📞';
-    el.appendChild(callLink);
-  }
+  appendCallIcon(el, childName, phone);
 }
 
 function formatDate(dateStr) {
