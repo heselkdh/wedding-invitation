@@ -44,8 +44,8 @@ async function loadConfig() {
   document.getElementById('hero-bride').textContent       = d.brideName;
   document.getElementById('groom-name').textContent       = d.groomName;
   document.getElementById('bride-name').textContent       = d.brideName;
-  document.getElementById('groom-parents-line').textContent = formatParentsLine(d.groomParents, d.groomName, '아들');
-  document.getElementById('bride-parents-line').textContent = formatParentsLine(d.brideParents, d.brideName, '딸');
+  renderParentsLine('groom-parents-line', d.groomParents, d.groomName, '아들', 'son', d.groomPhone);
+  renderParentsLine('bride-parents-line', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone);
 
   const dateStr = formatDate(d.weddingDate);
   setOpeningText(d, dateStr);
@@ -173,11 +173,29 @@ function initMusic(url) {
   });
 }
 
-function formatParentsLine(parentsStr, childName, relation) {
+function renderParentsLine(elId, parentsStr, childName, relation, relationClass, phone) {
+  const el = document.getElementById(elId);
+  el.textContent = '';
+
   const names = (parentsStr || '').split(',')
     .map(s => s.trim().replace(/^(아버지|어머니)\s*/, ''))
     .filter(Boolean);
-  return `${names.join(' · ')} 의 ${relation} ${childName}`;
+
+  el.appendChild(document.createTextNode(`${names.join(' · ')} `));
+  const relSpan = document.createElement('span');
+  relSpan.className = `relation-word ${relationClass}`;
+  relSpan.textContent = `의 ${relation}`;
+  el.appendChild(relSpan);
+  el.appendChild(document.createTextNode(` ${childName}`));
+
+  if (phone) {
+    const callLink = document.createElement('a');
+    callLink.className = 'parents-contact';
+    callLink.href = `tel:${phone}`;
+    callLink.setAttribute('aria-label', `${childName}에게 전화`);
+    callLink.textContent = '📞';
+    el.appendChild(callLink);
+  }
 }
 
 function formatDate(dateStr) {
@@ -336,6 +354,17 @@ document.getElementById('gallery-main-img').addEventListener('click', () => open
 function openLightbox(idx) {
   _lightboxIndex = idx;
   document.getElementById('lightbox-img').src = _galleryPhotos[idx];
+  document.getElementById('lightbox-prev').style.display = '';
+  document.getElementById('lightbox-next').style.display = '';
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// 갤러리 배열과 무관한 단일 이미지(예: 안내사항 카드 사진)를 전체화면으로 보여줄 때 사용
+function openLightboxSingle(url) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox-prev').style.display = 'none';
+  document.getElementById('lightbox-next').style.display = 'none';
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -413,6 +442,9 @@ function makeNoticeCard({ title, text, imageUrl }) {
     <div class="notice-card-title">${escapeHtml(title || '')}</div>
     <div class="notice-card-text">${escapeHtml(text || '')}</div>
   `;
+  if (imageUrl) {
+    el.querySelector('.notice-card-img').addEventListener('click', () => openLightboxSingle(imageUrl));
+  }
   return el;
 }
 
@@ -497,6 +529,15 @@ document.getElementById('gb-submit').addEventListener('click', async () => {
 });
 
 // ── 계좌번호 ────────────────────────────────────────────────────────
+document.querySelectorAll('.account-group-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.target);
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    target.classList.toggle('collapsed', expanded);
+  });
+});
+
 async function loadAccounts() {
   let data = {
     groomHolder:'', groomBank:'', groomAccount:'', groomKakaoPay:'', groomToss:'',

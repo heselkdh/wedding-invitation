@@ -14,7 +14,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=14">
+  <link rel="stylesheet" href="css/style.css?v=16">
 </head>
 <body>
 
@@ -190,10 +190,17 @@
   <div class="section-divider"></div>
 
   <div class="fade-up">
-    <p class="account-group-label">신랑 측</p>
-    <div class="account-cards" id="account-panel-groom"></div>
-    <p class="account-group-label" style="margin-top:20px;">신부 측</p>
-    <div class="account-cards" id="account-panel-bride"></div>
+    <button class="account-group-toggle" data-target="account-panel-groom" aria-expanded="false">
+      <span class="account-group-label">신랑 측</span>
+      <span class="account-group-chevron">▾</span>
+    </button>
+    <div class="account-cards collapsed" id="account-panel-groom"></div>
+
+    <button class="account-group-toggle" data-target="account-panel-bride" aria-expanded="false" style="margin-top:20px;">
+      <span class="account-group-label">신부 측</span>
+      <span class="account-group-chevron">▾</span>
+    </button>
+    <div class="account-cards collapsed" id="account-panel-bride"></div>
   </div>
 </section>
 
@@ -233,6 +240,6 @@
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
-<script type="module" src="js/main.js?v=6"></script>
+<script type="module" src="js/main.js?v=7"></script>
 </body>
 </html>
