@@ -42,8 +42,6 @@ async function loadConfig() {
 
   document.getElementById('hero-groom').textContent       = d.groomName;
   document.getElementById('hero-bride').textContent       = d.brideName;
-  document.getElementById('groom-name').textContent       = d.groomName;
-  document.getElementById('bride-name').textContent       = d.brideName;
   renderParentsLine('groom-parents-line', d.groomParents, d.groomName, '아들', 'son', d.groomPhone);
   renderParentsLine('bride-parents-line', d.brideParents, d.brideName, '딸', 'daughter', d.bridePhone);
 
@@ -309,14 +307,14 @@ function loadGallery() {
   if (!isConfigured) {
     _galleryPhotos = CAT_PHOTOS.slice();
     renderGalleryThumbs();
-    showGalleryPhoto(0);
+    showGalleryPhoto(0, false);
     return;
   }
 
   onSnapshot(query(collection(db, 'photos'), orderBy('order')), snap => {
     _galleryPhotos = snap.empty ? CAT_PHOTOS.slice() : snap.docs.map(d => d.data().url);
     renderGalleryThumbs();
-    showGalleryPhoto(0);
+    showGalleryPhoto(0, false);
   });
 }
 
@@ -334,7 +332,7 @@ function renderGalleryThumbs() {
   });
 }
 
-function showGalleryPhoto(idx) {
+function showGalleryPhoto(idx, scrollThumb = true) {
   if (!_galleryPhotos.length) return;
   _galleryIndex = (idx + _galleryPhotos.length) % _galleryPhotos.length;
   document.getElementById('gallery-main-img').src = _galleryPhotos[_galleryIndex];
@@ -342,8 +340,10 @@ function showGalleryPhoto(idx) {
   document.querySelectorAll('.gallery-thumb').forEach((el, i) => {
     el.classList.toggle('active', i === _galleryIndex);
   });
-  const activeThumb = document.querySelectorAll('.gallery-thumb')[_galleryIndex];
-  if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  if (scrollThumb) {
+    const activeThumb = document.querySelectorAll('.gallery-thumb')[_galleryIndex];
+    if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
 }
 
 document.getElementById('gallery-prev').addEventListener('click', () => showGalleryPhoto(_galleryIndex - 1));

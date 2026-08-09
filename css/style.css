@@ -249,27 +249,6 @@ section { padding: 96px 32px; position: relative; }
   text-align: center;
 }
 
-.main-couple { margin-bottom: 40px; }
-
-.main-couple-names {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: var(--black);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  letter-spacing: 0.06em;
-}
-
-.couple-divider {
-  font-family: var(--font-sans);
-  font-weight: 200;
-  font-size: 1.1rem;
-  color: var(--accent);
-}
-
 .parents-intro {
   display: flex;
   flex-direction: column;
