@@ -321,7 +321,7 @@ section { padding: 96px 32px; position: relative; }
   font-size: 1.35rem;
   color: var(--black);
   display: block;
-  margin-bottom: 22px;
+  margin-bottom: 6px;
   letter-spacing: 0.02em;
 }
 
