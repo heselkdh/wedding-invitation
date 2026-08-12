@@ -389,6 +389,32 @@ document.getElementById('gallery-prev').addEventListener('click', () => showGall
 document.getElementById('gallery-next').addEventListener('click', () => showGalleryPhoto(_galleryIndex + 1));
 document.getElementById('gallery-main-img').addEventListener('click', () => openLightbox(_galleryIndex));
 
+// ── 스와이프 제스처 ────────────────────────────────────────────────
+function addSwipeHandler(el, onSwipeLeft, onSwipeRight) {
+  let startX = 0, startY = 0, tracking = false;
+  el.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    tracking = true;
+  }, { passive: true });
+  el.addEventListener('touchend', e => {
+    if (!tracking) return;
+    tracking = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) onSwipeLeft(); else onSwipeRight();
+    }
+  }, { passive: true });
+}
+
+addSwipeHandler(
+  document.querySelector('.gallery-main'),
+  () => showGalleryPhoto(_galleryIndex + 1),
+  () => showGalleryPhoto(_galleryIndex - 1)
+);
+
 // ── Lightbox ────────────────────────────────────────────────────────
 function openLightbox(idx) {
   _lightboxIndex = idx;
@@ -419,6 +445,12 @@ document.getElementById('lightbox-next').addEventListener('click', () => showLig
 document.getElementById('lightbox').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeLightbox();
 });
+
+addSwipeHandler(
+  document.getElementById('lightbox-img'),
+  () => { if (document.getElementById('lightbox-next').style.display !== 'none') showLightboxPhoto(_lightboxIndex + 1); },
+  () => { if (document.getElementById('lightbox-prev').style.display !== 'none') showLightboxPhoto(_lightboxIndex - 1); }
+);
 
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
