@@ -70,7 +70,7 @@ async function loadConfig() {
   }
 
   if (d.heroBgUrl) {
-    document.getElementById('hero-bg').style.backgroundImage = `url('${d.heroBgUrl}')`;
+    document.getElementById('hero-bg').src = d.heroBgUrl;
   }
 
   if (d.mapImageUrl) {
@@ -695,19 +695,6 @@ function makeAccountCard({ side, holder, bank, number, kakaoPay, toss }) {
   return el;
 }
 
-// ── 패럴랙스 ────────────────────────────────────────────────────────
-function initParallax() {
-  const heroBg = document.getElementById('hero-bg');
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      heroBg.style.transform = `translateY(${window.scrollY * 0.4}px)`;
-      ticking = false;
-    });
-  }, { passive: true });
-}
 
 // ── 스크롤 페이드인 ─────────────────────────────────────────────────
 function initFadeIn() {
@@ -861,7 +848,6 @@ function initFontSizeToggle() {
 
 // ── 초기화 ──────────────────────────────────────────────────────────
 initOpeningAnimation();
-initParallax();
 initFadeIn();
 initFontSizeToggle();
 loadConfig();

@@ -127,25 +127,15 @@ section { padding: 96px 32px; position: relative; }
    1. Hero
 ════════════════════════════ */
 #hero {
-  height: 100svh;
-  min-height: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   padding: 0;
-  overflow: hidden;
   position: relative;
   background: var(--gray-4);
 }
 
 #hero-bg {
-  position: absolute;
-  inset: -15% 0 -15% 0;
-  background-size: cover;
-  background-position: center;
-  will-change: transform;
-  z-index: 0;
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 #hero-header {
