@@ -401,6 +401,10 @@ section { padding: 96px 32px; position: relative; }
 .countdown {
   text-align: center;
   margin-bottom: 36px;
+  padding: 24px 20px;
+  border: 1px solid var(--gray-3);
+  border-radius: var(--radius);
+  background: var(--white);
 }
 
 .countdown-labels {
