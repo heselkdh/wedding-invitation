@@ -202,7 +202,7 @@ function renderParentsLine(elId, dropdownId, parentsStr, childName, relation, re
     btn.type = 'button';
     btn.className = 'parents-contact';
     btn.setAttribute('aria-label', '연락처 보기');
-    btn.textContent = '📞';
+    btn.innerHTML = '<span class="parents-contact-icon">📞</span>연락하기';
     btn.addEventListener('click', () => toggleContactDropdown(dropdownId, contacts));
     el.appendChild(btn);
   }
