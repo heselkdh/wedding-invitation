@@ -225,11 +225,11 @@ function toggleContactDropdown(dropdownId, contacts) {
         <span class="contact-row-name">${escapeHtml(name)}</span>
         <span class="contact-row-phone">${escapeHtml(phone)}</span>
       </div>
-      <button class="copy-btn" type="button">복사</button>
+      <div class="contact-row-actions">
+        <a class="contact-action-btn" href="tel:${escapeHtml(phone)}">📞 전화</a>
+        <a class="contact-action-btn" href="sms:${escapeHtml(phone)}">💬 문자</a>
+      </div>
     `;
-    row.querySelector('.copy-btn').addEventListener('click', () => {
-      navigator.clipboard.writeText(phone).then(() => showToast('복사되었습니다'));
-    });
     dropdown.appendChild(row);
   });
   dropdown.classList.add('open');
