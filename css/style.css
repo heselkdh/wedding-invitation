@@ -265,7 +265,7 @@ section { padding: 96px 32px; position: relative; }
   padding: 0 12px;
   border: none;
   border-radius: 999px;
-  background: var(--accent);
+  background: #E8637E;
   color: var(--white);
   font-size: 0.76rem;
   font-weight: 600;
@@ -273,7 +273,7 @@ section { padding: 96px 32px; position: relative; }
   vertical-align: middle;
   font-family: var(--font-sans);
 }
-.parents-contact:hover { background: var(--accent-deep); }
+.parents-contact:hover { background: #D14F6B; }
 .parents-contact-icon { font-size: 0.82rem; }
 
 /* ── 연락처 드롭다운 ── */
@@ -310,6 +310,24 @@ section { padding: 96px 32px; position: relative; }
 .contact-row-info { display: flex; flex-direction: column; gap: 2px; }
 .contact-row-name { font-size: 0.8rem; color: var(--gray-1); }
 .contact-row-phone { font-size: 0.92rem; color: var(--black); font-weight: 500; }
+
+.contact-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.contact-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--radius);
+  background: transparent;
+  border: 1px solid var(--gray-3);
+  color: var(--black);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.contact-action-btn:hover { background: var(--gray-4); }
 
 /* ════════════════════════════
    3. 일시 / 장소
@@ -372,7 +390,10 @@ section { padding: 96px 32px; position: relative; }
 .mini-cal-cell.holiday { color: #c0392b; }
 
 .mini-cal-cell.target {
-  background: var(--accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23E8637E' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+  background-size: 92% 92%;
+  background-repeat: no-repeat;
+  background-position: center;
   color: var(--white);
   font-weight: 500;
 }
@@ -380,6 +401,10 @@ section { padding: 96px 32px; position: relative; }
 .countdown {
   text-align: center;
   margin-bottom: 36px;
+  padding: 24px 20px;
+  border: 1px solid var(--gray-3);
+  border-radius: var(--radius);
+  background: var(--white);
 }
 
 .countdown-labels {
@@ -935,8 +960,8 @@ section { padding: 96px 32px; position: relative; }
   transition: transform var(--ease);
 }
 
-.account-group-toggle[aria-expanded="false"] .account-group-chevron {
-  transform: rotate(-90deg);
+.account-group-toggle[aria-expanded="true"] .account-group-chevron {
+  transform: rotate(180deg);
 }
 
 .account-cards {
