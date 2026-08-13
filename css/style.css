@@ -348,7 +348,8 @@ section { padding: 96px 32px; position: relative; }
   font-size: 1.35rem;
   color: var(--black);
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
+  line-height: 1.3;
   letter-spacing: 0.02em;
 }
 
