@@ -518,7 +518,7 @@ function makeNoticeCard({ title, text, imageUrl }) {
   el.className = 'notice-card';
   el.innerHTML = `
     ${imageUrl ? `<img class="notice-card-img" src="${escapeHtml(imageUrl)}" alt="">` : ''}
-    <div class="notice-card-title">${escapeHtml(title || '')}</div>
+    <div class="notice-card-title">${escapeHtml(title || '')} 〉</div>
     <div class="notice-card-text">${escapeHtml(text || '')}</div>
   `;
   if (imageUrl) {

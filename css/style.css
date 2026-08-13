@@ -523,11 +523,16 @@ section { padding: 96px 32px; position: relative; }
 }
 
 .notice-card-title {
-  font-family: var(--font-serif);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--black);
-  padding: 16px 16px 4px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #8A6844;
+  text-align: center;
+  background: var(--accent-l);
+  border-radius: 999px;
+  padding: 8px 20px;
+  margin: 16px auto 12px;
+  width: fit-content;
 }
 
 .notice-card-text {
