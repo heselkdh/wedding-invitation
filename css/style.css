@@ -281,13 +281,13 @@ section { padding: 96px 32px; position: relative; }
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  max-width: 280px;
+  max-width: 320px;
   margin: 0 auto;
   transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease;
 }
 
 .parents-contact-dropdown.open {
-  max-height: 300px;
+  max-height: 600px;
   opacity: 1;
   margin: 10px auto 0;
   padding: 6px 16px;
@@ -299,19 +299,19 @@ section { padding: 96px 32px; position: relative; }
 
 .contact-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 0;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
   border-bottom: 1px solid var(--gray-4);
 }
 .contact-row:last-child { border-bottom: none; }
 
 .contact-row-info { display: flex; flex-direction: column; gap: 2px; }
-.contact-row-name { font-size: 0.8rem; color: var(--gray-1); }
-.contact-row-phone { font-size: 0.92rem; color: var(--black); font-weight: 500; }
+.contact-row-name { font-size: 0.8rem; color: var(--gray-1); white-space: nowrap; }
+.contact-row-phone { font-size: 0.92rem; color: var(--black); font-weight: 500; white-space: nowrap; }
 
-.contact-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.contact-row-actions { display: flex; gap: 8px; }
+.contact-row-actions .contact-action-btn { flex: 1; }
 .contact-action-btn {
   display: inline-flex;
   align-items: center;
