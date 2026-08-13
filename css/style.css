@@ -5,8 +5,8 @@
 /* ── 디자인 토큰 (베이지 톤) ── */
 :root {
   --black:   #33291F;      /* 잉크 브라운 */
-  --gray-1:  #8C7B62;      /* 보조 텍스트 */
-  --gray-2:  #AFA083;      /* 캡션/메타 텍스트 */
+  --gray-1:  #6E5F49;      /* 보조 텍스트 */
+  --gray-2:  #8F8163;      /* 캡션/메타 텍스트 */
   --gray-3:  #E2D3B8;      /* 보더 뉴트럴 */
   --gray-4:  #F2E9D6;      /* 카드 내부 구분선 */
   --gray-5:  #F7F1E3;      /* 섹션 배경 (베이지) */
@@ -269,20 +269,22 @@ section { padding: 96px 32px; position: relative; }
 .parents-contact {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  margin-left: 6px;
+  gap: 4px;
+  height: 26px;
+  margin-left: 8px;
+  padding: 0 12px;
   border: none;
-  border-radius: 50%;
-  background: var(--gray-4);
-  color: var(--gray-1);
-  font-size: 0.8rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--white);
+  font-size: 0.76rem;
+  font-weight: 600;
   cursor: pointer;
   vertical-align: middle;
-  font-family: inherit;
+  font-family: var(--font-sans);
 }
-.parents-contact:hover { background: var(--gray-3); }
+.parents-contact:hover { background: var(--accent-deep); }
+.parents-contact-icon { font-size: 0.82rem; }
 
 /* ── 연락처 드롭다운 ── */
 .parents-contact-dropdown {
