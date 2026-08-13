@@ -660,14 +660,14 @@ async function loadAccounts() {
   const bridePanel = document.getElementById('account-panel-bride');
 
   const groomList = [
-    { side:'신랑',      holder:data.groomHolder,       bank:data.groomBank,       number:data.groomAccount,       kakaoPay:data.groomKakaoPay,       toss:data.groomToss },
-    { side:'아버지',    holder:data.groomFatherHolder, bank:data.groomFatherBank, number:data.groomFatherAccount, kakaoPay:data.groomFatherKakaoPay, toss:data.groomFatherToss },
-    { side:'어머니',    holder:data.groomMotherHolder, bank:data.groomMotherBank, number:data.groomMotherAccount, kakaoPay:data.groomMotherKakaoPay, toss:data.groomMotherToss },
+    { side:'신랑',        holder:data.groomHolder,       bank:data.groomBank,       number:data.groomAccount,       kakaoPay:data.groomKakaoPay,       toss:data.groomToss },
+    { side:'신랑측 아버지', holder:data.groomFatherHolder, bank:data.groomFatherBank, number:data.groomFatherAccount, kakaoPay:data.groomFatherKakaoPay, toss:data.groomFatherToss },
+    { side:'신랑측 어머니', holder:data.groomMotherHolder, bank:data.groomMotherBank, number:data.groomMotherAccount, kakaoPay:data.groomMotherKakaoPay, toss:data.groomMotherToss },
   ];
   const brideList = [
-    { side:'신부',      holder:data.brideHolder,       bank:data.brideBank,       number:data.brideAccount,       kakaoPay:data.brideKakaoPay,       toss:data.brideToss },
-    { side:'아버지',    holder:data.brideFatherHolder, bank:data.brideFatherBank, number:data.brideFatherAccount, kakaoPay:data.brideFatherKakaoPay, toss:data.brideFatherToss },
-    { side:'어머니',    holder:data.brideMotherHolder, bank:data.brideMotherBank, number:data.brideMotherAccount, kakaoPay:data.brideMotherKakaoPay, toss:data.brideMotherToss },
+    { side:'신부',        holder:data.brideHolder,       bank:data.brideBank,       number:data.brideAccount,       kakaoPay:data.brideKakaoPay,       toss:data.brideToss },
+    { side:'신부측 아버지', holder:data.brideFatherHolder, bank:data.brideFatherBank, number:data.brideFatherAccount, kakaoPay:data.brideFatherKakaoPay, toss:data.brideFatherToss },
+    { side:'신부측 어머니', holder:data.brideMotherHolder, bank:data.brideMotherBank, number:data.brideMotherAccount, kakaoPay:data.brideMotherKakaoPay, toss:data.brideMotherToss },
   ];
 
   groomList.filter(a => a.number?.trim()).forEach(a => groomPanel.appendChild(makeAccountCard(a)));
