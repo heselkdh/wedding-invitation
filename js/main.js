@@ -47,8 +47,9 @@ async function loadConfig() {
 
   const dateStr = formatDate(d.weddingDate);
   setOpeningText(d, dateStr);
-  document.getElementById('dt-date').textContent    = dateStr;
-  document.getElementById('dt-time').textContent    = d.weddingTime;
+  const dow = ['일','월','화','수','목','금','토'][new Date(d.weddingDate).getDay()] + '요일';
+  document.getElementById('dt-date').textContent    = formatDateNumeric(d.weddingDate);
+  document.getElementById('dt-time').textContent    = `${dow} ${(d.weddingTime || '').replace(/^(오전|오후)/, '낮')}`;
   document.getElementById('venue-name').textContent = d.venueName;
   const addrLines = (d.venueAddress || '').split(/\n|\s{2,}/).map(s => s.trim()).filter(Boolean);
   document.getElementById('venue-address').innerHTML = addrLines.map(escapeHtml).join('<br>');
@@ -239,6 +240,13 @@ function formatDate(dateStr) {
   const dt   = new Date(dateStr);
   const days = ['일','월','화','수','목','금','토'];
   return `${dt.getFullYear()}년 ${dt.getMonth()+1}월 ${dt.getDate()}일 ${days[dt.getDay()]}요일`;
+}
+
+function formatDateNumeric(dateStr) {
+  const dt = new Date(dateStr);
+  const mm = String(dt.getMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getDate()).padStart(2, '0');
+  return `${dt.getFullYear()}.${mm}.${dd}`;
 }
 
 function setMeta(property, content) {
