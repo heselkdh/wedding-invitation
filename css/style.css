@@ -237,6 +237,7 @@ section { padding: 96px 32px; position: relative; }
 #parents {
   background: var(--white);
   text-align: center;
+  padding-bottom: 192px;
 }
 
 .parents-intro {
@@ -347,7 +348,8 @@ section { padding: 96px 32px; position: relative; }
   font-size: 1.35rem;
   color: var(--black);
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
+  line-height: 1.3;
   letter-spacing: 0.02em;
 }
 
@@ -544,32 +546,44 @@ section { padding: 96px 32px; position: relative; }
   margin-bottom: 28px;
 }
 
+.map-btn-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
 .map-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   background: var(--black);
   color: var(--white);
   border: none;
-  border-radius: var(--radius);
-  padding: 14px 28px;
+  border-radius: 999px;
+  padding: 14px 26px;
   font-size: 0.9rem;
   font-family: var(--font-sans);
-  font-weight: 400;
+  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  letter-spacing: 0.07em;
-  transition: background var(--ease);
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 14px -4px rgba(51,41,31,0.35);
+  transition: background var(--ease), box-shadow var(--ease), transform var(--ease);
 }
 
-.map-btn:hover { background: var(--gray-1); }
+.map-btn:hover {
+  background: var(--gray-1);
+  box-shadow: 0 6px 18px -4px rgba(51,41,31,0.4);
+  transform: translateY(-1px);
+}
 
 .map-btn.naver {
   background: var(--white);
   color: #03C75A;
   border: 1.5px solid #03C75A;
+  box-shadow: none;
 }
-.map-btn.naver:hover { background: #F0FBF5; }
+.map-btn.naver:hover {
+  background: #F0FBF5;
+  box-shadow: 0 4px 14px -6px rgba(3,199,90,0.3);
+  transform: translateY(-1px);
+}
 
 .transport-info {
   text-align: left;
