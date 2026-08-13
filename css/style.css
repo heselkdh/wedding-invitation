@@ -141,7 +141,7 @@ section { padding: 96px 32px; position: relative; }
 
 #hero-bg {
   position: absolute;
-  inset: -30% 0 -30% 0;
+  inset: -15% 0 -15% 0;
   background-size: cover;
   background-position: center;
   will-change: transform;
