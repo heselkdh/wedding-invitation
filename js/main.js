@@ -113,9 +113,10 @@ function initMusic(url) {
   btn.style.display = 'flex';
   document.getElementById('nav-music-divider').style.display = 'block';
 
-  let player     = null;
-  let muted      = true;
-  let interacted = false;
+  let player        = null;
+  let muted         = true;
+  let interacted    = false;
+  let pendingUnmute = false;
 
   function updateUI() {
     btn.innerHTML = muted ? MUSIC_ICON_OFF : MUSIC_ICON_ON;
@@ -123,14 +124,23 @@ function initMusic(url) {
   }
   updateUI();
 
+  // 플레이어가 아직 준비되지 않았어도 의사를 기억해뒀다가 onReady에서 반영
+  function unmuteAndPlay() {
+    muted = false;
+    interacted = true;
+    if (player) {
+      player.unMute();
+      player.playVideo();
+    } else {
+      pendingUnmute = true;
+    }
+    updateUI();
+  }
+
   // 첫 인터랙션 시 자동 음소거 해제 (브라우저 자동재생 정책 우회)
   function onFirstInteraction() {
-    if (interacted || !player) return;
-    interacted = true;
-    muted = false;
-    player.unMute();
-    player.playVideo();
-    updateUI();
+    if (interacted) return;
+    unmuteAndPlay();
   }
   ['click','touchstart','scroll'].forEach(evt =>
     document.addEventListener(evt, onFirstInteraction, { once: true, passive: true })
@@ -144,6 +154,10 @@ function initMusic(url) {
         onReady: e => {
           e.target.mute();   // autoplay 허용을 위해 일시 음소거, 인터랙션 시 해제됨
           e.target.playVideo();
+          if (pendingUnmute) {
+            pendingUnmute = false;
+            e.target.unMute();
+          }
         }
       }
     });
@@ -160,16 +174,14 @@ function initMusic(url) {
   }
 
   btn.addEventListener('click', () => {
-    if (!player) return;
-    muted = !muted;
     interacted = true;
     if (muted) {
-      player.mute();
+      unmuteAndPlay();
     } else {
-      player.unMute();
-      player.playVideo();
+      muted = true;
+      if (player) player.mute();
+      updateUI();
     }
-    updateUI();
   });
 }
 
