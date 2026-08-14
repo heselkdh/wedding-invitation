@@ -492,7 +492,6 @@ section { padding: 96px 32px; position: relative; }
 
 .notice-cards {
   display: flex;
-  justify-content: center;
   gap: 12px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -501,12 +500,14 @@ section { padding: 96px 32px; position: relative; }
   margin: 0 -32px;
   padding-left: 32px;
   padding-right: 32px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.notice-cards::-webkit-scrollbar { display: none; }
 
 .notice-card {
-  flex: 0 0 78%;
-  max-width: 320px;
-  scroll-snap-align: start;
+  flex: 0 0 100%;
+  scroll-snap-align: center;
   background: var(--white);
   border: 1px solid var(--gray-3);
   border-radius: var(--radius);
