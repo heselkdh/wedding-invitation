@@ -490,6 +490,10 @@ section { padding: 96px 32px; position: relative; }
   text-align: center;
 }
 
+.notice-viewer {
+  position: relative;
+}
+
 .notice-cards {
   display: flex;
   gap: 12px;

@@ -527,6 +527,18 @@ function makeNoticeCard({ title, text, imageUrl }) {
   return el;
 }
 
+function scrollNoticeBy(direction) {
+  const container = document.getElementById('notice-cards');
+  const cards = [...container.children];
+  if (!cards.length) return;
+  const currentIndex = cards.findIndex(c => c.offsetLeft - 32 >= container.scrollLeft - 20);
+  const fromIndex = currentIndex === -1 ? cards.length - 1 : currentIndex;
+  const targetIndex = Math.min(Math.max(fromIndex + direction, 0), cards.length - 1);
+  container.scrollTo({ left: cards[targetIndex].offsetLeft - 32, behavior: 'smooth' });
+}
+document.getElementById('notice-prev').addEventListener('click', () => scrollNoticeBy(-1));
+document.getElementById('notice-next').addEventListener('click', () => scrollNoticeBy(1));
+
 // ── 방명록 ─────────────────────────────────────────────────────────
 let _unsubGuestbook = null;
 let _guestbookMessages = [];
