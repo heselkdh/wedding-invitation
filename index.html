@@ -14,7 +14,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=39">
+  <link rel="stylesheet" href="css/style.css?v=40">
 </head>
 <body>
 
@@ -126,8 +126,12 @@
   <p class="section-title">예식정보 및 안내사항</p>
   <div class="section-divider"></div>
 
-  <div class="notice-cards fade-up" id="notice-cards">
-    <!-- main.js에서 동적 생성 -->
+  <div class="notice-viewer fade-up">
+    <div class="notice-cards" id="notice-cards">
+      <!-- main.js에서 동적 생성 -->
+    </div>
+    <button id="notice-prev" class="gallery-nav-btn notice-nav-btn" aria-label="이전 안내">‹</button>
+    <button id="notice-next" class="gallery-nav-btn notice-nav-btn" aria-label="다음 안내">›</button>
   </div>
 </section>
 
@@ -244,6 +248,6 @@
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
-<script type="module" src="js/main.js?v=23"></script>
+<script type="module" src="js/main.js?v=24"></script>
 </body>
 </html>
