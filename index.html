@@ -14,7 +14,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=40">
+  <link rel="stylesheet" href="css/style.css?v=41">
 </head>
 <body>
 
@@ -169,18 +169,10 @@
 
 <!-- 6. 방명록 -->
 <section id="guestbook">
-  <p class="section-title">방명록</p>
-  <div class="section-divider"></div>
+  <p class="gb-eyebrow fade-up">GUESTBOOK</p>
+  <p class="section-title gb-title fade-up">방명록</p>
 
-  <div class="guestbook-form fade-up">
-    <input type="text" id="gb-name" placeholder="이름" maxlength="20">
-    <textarea id="gb-message" placeholder="축하 메시지를 남겨주세요" maxlength="200"></textarea>
-    <input type="text" id="gb-website" name="website" autocomplete="off" tabindex="-1"
-           style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true">
-    <button class="guestbook-submit" id="gb-submit">메시지 남기기</button>
-  </div>
-
-  <div class="guestbook-messages" id="guestbook-list">
+  <div class="guestbook-messages fade-up" id="guestbook-list">
     <!-- Firestore onSnapshot으로 동적 생성 -->
   </div>
   <div class="guestbook-pagination" id="guestbook-pagination" style="display:none;">
@@ -188,7 +180,36 @@
     <span id="gb-page-info"></span>
     <button id="gb-next-page" aria-label="다음 메시지">다음 ›</button>
   </div>
+
+  <button type="button" class="gb-write-btn fade-up" id="gb-write-open-btn">작성하기</button>
 </section>
+
+<!-- 방명록 작성/수정 모달 -->
+<div id="gb-modal-overlay">
+  <div id="gb-modal">
+    <div class="gb-modal-header">
+      <p class="gb-modal-title" id="gb-modal-title">방명록 작성하기</p>
+      <button type="button" id="gb-modal-close" aria-label="닫기">×</button>
+    </div>
+
+    <div class="gb-field">
+      <label><span class="gb-required">*</span> 이름</label>
+      <input type="text" id="gb-name" placeholder="이름을 입력해 주세요." maxlength="20">
+    </div>
+    <div class="gb-field">
+      <label><span class="gb-required">*</span> 내용</label>
+      <textarea id="gb-message" placeholder="내용을 작성해 주세요. (최대 200자)" maxlength="200"></textarea>
+    </div>
+    <div class="gb-field">
+      <label><span class="gb-required">*</span> 비밀번호</label>
+      <input type="password" id="gb-password" placeholder="비밀번호를 입력해 주세요." maxlength="20" inputmode="numeric">
+    </div>
+    <input type="text" id="gb-website" name="website" autocomplete="off" tabindex="-1"
+           style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true">
+
+    <button type="button" class="gb-submit-btn" id="gb-submit">작성완료</button>
+  </div>
+</div>
 
 <!-- 7. 계좌번호 -->
 <section id="accounts">
@@ -249,6 +270,6 @@
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
-<script type="module" src="js/main.js?v=27"></script>
+<script type="module" src="js/main.js?v=28"></script>
 </body>
 </html>
