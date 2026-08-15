@@ -1,0 +1,41 @@
+name: Sync OG meta tags
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        branch: [master, dev]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+
+      - name: Fetch Firestore config
+        run: |
+          curl -sf "https://firestore.googleapis.com/v1/projects/wedding-invitation-b3694/databases/(default)/documents/config/main" -o config.json
+
+      - name: Update og meta tags
+        run: node .github/scripts/sync-og-meta.js
+
+      - name: Commit changes if needed
+        run: |
+          rm -f config.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet index.html; then
+            git add index.html
+            git commit -m "chore: sync og meta tags from Firestore [skip ci]"
+            git push origin ${{ matrix.branch }}
+          else
+            echo "No changes to commit."
+          fi
