@@ -92,7 +92,8 @@ async function loadConfig() {
   startCountdown(d.weddingDate, d.weddingTime);
   renderMiniCalendar(d.weddingDate);
 
-  if (d.musicUrl) initMusic(d.musicUrl);
+  if (d.musicFileUrl) initMusicFile(d.musicFileUrl);
+  else if (d.musicUrl) initMusic(d.musicUrl);
   initShareSheet(d);
 }
 
@@ -180,6 +181,54 @@ function initMusic(url) {
     } else {
       muted = true;
       if (player) player.mute();
+      updateUI();
+    }
+  });
+}
+
+// ── 음악 (업로드한 파일) ─────────────────────────────────────────────
+function initMusicFile(url) {
+  const btn = document.getElementById('nav-music-btn');
+  btn.style.display = 'flex';
+  document.getElementById('nav-music-divider').style.display = 'block';
+
+  const audio = document.getElementById('bgm-audio');
+  audio.src = url;
+  audio.muted = true;
+  audio.play().catch(() => {});
+
+  let muted = true;
+  let interacted = false;
+
+  function updateUI() {
+    btn.innerHTML = muted ? MUSIC_ICON_OFF : MUSIC_ICON_ON;
+    btn.classList.toggle('muted', muted);
+  }
+  updateUI();
+
+  function unmuteAndPlay() {
+    muted = false;
+    interacted = true;
+    audio.muted = false;
+    audio.play().catch(() => {});
+    updateUI();
+  }
+
+  function onFirstInteraction() {
+    if (interacted) return;
+    unmuteAndPlay();
+  }
+  ['click','touchstart','scroll'].forEach(evt =>
+    document.addEventListener(evt, onFirstInteraction, { once: true, passive: true })
+  );
+
+  btn.addEventListener('click', () => {
+    interacted = true;
+    if (muted) {
+      unmuteAndPlay();
+    } else {
+      muted = true;
+      audio.muted = true;
       updateUI();
     }
   });

@@ -57,6 +57,23 @@ async function uploadToCloudinary(file) {
   return data.secure_url;
 }
 
+async function uploadAudioToCloudinary(file) {
+  if (!file.type.startsWith('audio/') && !file.type.startsWith('video/')) {
+    throw new Error('오디오 또는 mp4 파일만 업로드할 수 있습니다');
+  }
+  if (file.size > 50 * 1024 * 1024) throw new Error('파일 크기는 50MB 이하여야 합니다');
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`, {
+    method: 'POST', body: formData
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message ?? '업로드 실패');
+  return data.secure_url;
+}
+
 // ── 로그인/로그아웃 ────────────────────────────────────────────────
 document.getElementById('login-btn').addEventListener('click', async () => {
   const email = document.getElementById('login-email').value.trim();
@@ -107,10 +124,48 @@ async function loadInfoForm() {
     const el = document.getElementById(f);
     if (el && d[f] != null) el.value = d[f];
   });
-  if (d.heroBgUrl)   showHeroBgPreview(d.heroBgUrl);
-  if (d.mapImageUrl) showMapPreview(d.mapImageUrl);
-  if (d.ogImageUrl)  showOgThumbPreview(d.ogImageUrl);
+  if (d.heroBgUrl)    showHeroBgPreview(d.heroBgUrl);
+  if (d.mapImageUrl)  showMapPreview(d.mapImageUrl);
+  if (d.ogImageUrl)   showOgThumbPreview(d.ogImageUrl);
+  if (d.musicFileUrl) showMusicFilePreview(d.musicFileUrl);
 }
+
+// 배경음악 파일 미리보기
+function showMusicFilePreview(url) {
+  document.getElementById('music-file-preview-audio').src = url;
+  document.getElementById('music-file-preview').style.display = 'block';
+  document.getElementById('music-file-upload-area').style.display = 'none';
+}
+
+// 배경음악 파일 업로드
+document.getElementById('music-file-input').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const area = document.getElementById('music-file-upload-area');
+  const progress = document.getElementById('music-file-progress');
+  area.classList.add('saving');
+  progress.textContent = '업로드 중...';
+  try {
+    const url = await uploadAudioToCloudinary(file);
+    await setDoc(doc(db, 'config', 'main'), { musicFileUrl: url }, { merge: true });
+    showMusicFilePreview(url);
+    progress.textContent = '배경음악 파일 업로드 완료! ✅';
+    setTimeout(() => { progress.textContent = ''; }, 3000);
+  } catch (err) {
+    progress.textContent = `오류: ${err.message}`;
+  }
+  area.classList.remove('saving');
+  e.target.value = '';
+});
+
+// 배경음악 파일 삭제
+document.getElementById('music-file-delete-btn').addEventListener('click', async () => {
+  if (!confirm('배경음악 파일을 삭제할까요? (유튜브 URL이 있다면 그쪽으로 전환됩니다)')) return;
+  await setDoc(doc(db, 'config', 'main'), { musicFileUrl: '' }, { merge: true });
+  document.getElementById('music-file-preview').style.display = 'none';
+  document.getElementById('music-file-upload-area').style.display = 'block';
+  showToast('배경음악 파일이 삭제되었습니다');
+});
 
 // OG 썸네일 미리보기
 function showOgThumbPreview(url) {
