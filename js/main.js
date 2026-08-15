@@ -143,7 +143,9 @@ function initMusic(url) {
     if (interacted) return;
     unmuteAndPlay();
   }
-  ['click','touchstart','scroll'].forEach(evt =>
+  // scroll은 브라우저 자동재생 정책상 유효한 사용자 제스처로 인정되지 않아
+  // 제외함 (포함 시 상태만 "재생 중"으로 착각해 버튼을 눌러도 꺼지는 문제 발생)
+  ['click','touchstart'].forEach(evt =>
     document.addEventListener(evt, onFirstInteraction, { once: true, passive: true })
   );
 
@@ -218,7 +220,9 @@ function initMusicFile(url) {
     if (interacted) return;
     unmuteAndPlay();
   }
-  ['click','touchstart','scroll'].forEach(evt =>
+  // scroll은 브라우저 자동재생 정책상 유효한 사용자 제스처로 인정되지 않아
+  // 제외함 (포함 시 상태만 "재생 중"으로 착각해 버튼을 눌러도 꺼지는 문제 발생)
+  ['click','touchstart'].forEach(evt =>
     document.addEventListener(evt, onFirstInteraction, { once: true, passive: true })
   );
 
