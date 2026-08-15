@@ -7,7 +7,7 @@ import QRCode from 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm';
 const KAKAO_JS_KEY = '9cc67862123c23921bcde33c45851b3a';
 import {
   doc, collection, getDoc, addDoc, onSnapshot,
-  serverTimestamp, query, orderBy
+  serverTimestamp, query, orderBy, updateDoc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 // ── 기본 샘플 데이터 (Firebase 미연동 시 표시) ──────────────────────
@@ -614,13 +614,13 @@ function loadGuestbook() {
   if (!isConfigured) {
     document.getElementById('guestbook-list').innerHTML =
       '<p class="gb-empty-note">Firebase 연동 후 방명록을 사용할 수 있습니다</p>';
-    document.getElementById('gb-submit').disabled = true;
+    document.getElementById('gb-write-open-btn').disabled = true;
     return;
   }
 
   const q = query(collection(db, 'guestbook'), orderBy('createdAt', 'desc'));
   _unsubGuestbook = onSnapshot(q, snap => {
-    _guestbookMessages = snap.docs.map(d => d.data());
+    _guestbookMessages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (_guestbookPage > 0 && _guestbookPage * GUESTBOOK_PAGE_SIZE >= _guestbookMessages.length) {
       _guestbookPage = 0;
     }
@@ -641,12 +641,20 @@ function renderGuestbookPage() {
       ? `${ts.getFullYear()}.${String(ts.getMonth()+1).padStart(2,'0')}.${String(ts.getDate()).padStart(2,'0')}`
       : '';
     const el = document.createElement('div');
-    el.className = 'guestbook-msg';
+    el.className = 'gb-card';
     el.innerHTML = `
-      <div class="guestbook-msg-name">${escapeHtml(data.name)}</div>
-      <div class="guestbook-msg-text">${escapeHtml(data.message)}</div>
-      <div class="guestbook-msg-date">${dateStr}</div>
+      <div class="gb-card-header">
+        <span class="gb-card-name">${escapeHtml(data.name)}</span>
+        <button type="button" class="gb-card-delete-btn" aria-label="삭제">×</button>
+      </div>
+      <div class="gb-card-text">${escapeHtml(data.message)}</div>
+      <div class="gb-card-date">${dateStr}</div>
     `;
+    el.addEventListener('click', () => openGuestbookModal(data));
+    el.querySelector('.gb-card-delete-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      deleteGuestbookMessage(data);
+    });
     list.appendChild(el);
   });
 
@@ -673,6 +681,42 @@ window.addEventListener('pagehide', () => {
   if (_unsubGuestbook) { _unsubGuestbook(); _unsubGuestbook = null; }
 });
 
+// ── 방명록 작성/수정 모달 ────────────────────────────────────────────
+let _gbEditingId = null;
+
+function openGuestbookModal(editData) {
+  _gbEditingId = editData ? editData.id : null;
+  document.getElementById('gb-modal-title').textContent = editData ? '방명록 수정하기' : '방명록 작성하기';
+  document.getElementById('gb-submit').textContent = editData ? '수정완료' : '작성완료';
+  document.getElementById('gb-name').value     = editData ? editData.name : '';
+  document.getElementById('gb-message').value  = editData ? editData.message : '';
+  document.getElementById('gb-password').value = '';
+  document.getElementById('gb-modal-overlay').classList.add('open');
+}
+
+function closeGuestbookModal() {
+  document.getElementById('gb-modal-overlay').classList.remove('open');
+  _gbEditingId = null;
+}
+
+document.getElementById('gb-write-open-btn').addEventListener('click', () => openGuestbookModal(null));
+document.getElementById('gb-modal-close').addEventListener('click', closeGuestbookModal);
+document.getElementById('gb-modal-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeGuestbookModal();
+});
+
+async function deleteGuestbookMessage(data) {
+  const input = prompt('삭제하려면 작성 시 입력한 비밀번호를 입력해주세요.');
+  if (input == null) return;
+  if (input !== data.password) { showToast('비밀번호가 일치하지 않습니다'); return; }
+  try {
+    await deleteDoc(doc(db, 'guestbook', data.id));
+    showToast('삭제되었습니다');
+  } catch {
+    showToast('삭제에 실패했습니다. 다시 시도해주세요');
+  }
+}
+
 const GB_COOLDOWN_MS = 60 * 1000;
 
 let gbSubmitting = false;
@@ -682,13 +726,34 @@ document.getElementById('gb-submit').addEventListener('click', async () => {
   const honeypot = document.getElementById('gb-website').value;
   const name     = document.getElementById('gb-name').value.trim();
   const message  = document.getElementById('gb-message').value.trim();
-  if (!name || !message) { showToast('이름과 메시지를 입력해주세요'); return; }
+  const password = document.getElementById('gb-password').value.trim();
+  if (!name || !message || !password) { showToast('이름, 내용, 비밀번호를 모두 입력해주세요'); return; }
 
+  // 수정 모드
+  if (_gbEditingId) {
+    const target = _guestbookMessages.find(m => m.id === _gbEditingId);
+    if (!target || password !== target.password) { showToast('비밀번호가 일치하지 않습니다'); return; }
+    gbSubmitting = true;
+    const btn = document.getElementById('gb-submit');
+    btn.disabled = true;
+    try {
+      await updateDoc(doc(db, 'guestbook', _gbEditingId), { name, message });
+      showToast('수정되었습니다');
+      closeGuestbookModal();
+    } catch {
+      showToast('수정에 실패했습니다. 다시 시도해주세요');
+    } finally {
+      gbSubmitting = false;
+      btn.disabled = false;
+    }
+    return;
+  }
+
+  // 작성 모드
   if (honeypot) {
     // 봇이 숨겨진 필드를 채운 경우 — Firestore에 쓰지 않고 성공한 것처럼 보이게 함
-    document.getElementById('gb-name').value    = '';
-    document.getElementById('gb-message').value = '';
     showToast('메시지가 등록되었습니다');
+    closeGuestbookModal();
     return;
   }
 
@@ -703,11 +768,10 @@ document.getElementById('gb-submit').addEventListener('click', async () => {
   const btn = document.getElementById('gb-submit');
   btn.disabled = true;
   try {
-    await addDoc(collection(db, 'guestbook'), { name, message, createdAt: serverTimestamp() });
+    await addDoc(collection(db, 'guestbook'), { name, message, password, createdAt: serverTimestamp() });
     localStorage.setItem('gbLastSubmit', String(Date.now()));
-    document.getElementById('gb-name').value    = '';
-    document.getElementById('gb-message').value = '';
     showToast('메시지가 등록되었습니다');
+    closeGuestbookModal();
   } catch {
     showToast('등록에 실패했습니다. 다시 시도해주세요');
   } finally {

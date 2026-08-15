@@ -35,8 +35,23 @@ service cloud.firestore {
                    && request.resource.data.message is string
                    && request.resource.data.message.size() > 0
                    && request.resource.data.message.size() <= 200
-                   && request.resource.data.keys().hasOnly(['name', 'message', 'createdAt']);
-      allow delete: if request.auth != null;
+                   && request.resource.data.password is string
+                   && request.resource.data.password.size() > 0
+                   && request.resource.data.password.size() <= 20
+                   && request.resource.data.keys().hasOnly(['name', 'message', 'password', 'createdAt']);
+      // 비밀번호 확인은 클라이언트에서만 수행됨 (별도 서버리스 검증 없음) —
+      // 작성자 본인 수정/삭제 편의 기능이며, 강한 보안 목적은 아님
+      allow update: if request.auth != null
+                   || (request.resource.data.password == resource.data.password
+                       && request.resource.data.createdAt == resource.data.createdAt
+                       && request.resource.data.name is string
+                       && request.resource.data.name.size() > 0
+                       && request.resource.data.name.size() <= 20
+                       && request.resource.data.message is string
+                       && request.resource.data.message.size() > 0
+                       && request.resource.data.message.size() <= 200
+                       && request.resource.data.keys().hasOnly(['name', 'message', 'password', 'createdAt']));
+      allow delete: if true;
     }
   }
 }

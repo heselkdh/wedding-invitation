@@ -829,60 +829,96 @@ section { padding: 96px 32px; position: relative; }
 /* ════════════════════════════
    6. 방명록
 ════════════════════════════ */
-#guestbook { background: var(--white); }
+#guestbook { background: var(--gray-5); text-align: center; }
 
-.guestbook-form {
-  border: 1px solid var(--gray-3);
+.gb-eyebrow {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: var(--gray-2);
+  margin-bottom: 6px;
+}
+
+.gb-title {
+  font-family: var(--font-serif);
+  color: #D14F6B;
+  font-weight: 700;
+  margin-bottom: 28px;
+}
+
+.guestbook-messages { display: flex; flex-direction: column; gap: 14px; }
+
+.gb-empty-note { text-align: center; color: var(--gray-2); font-size: 0.85rem; }
+
+.gb-card {
+  background: var(--white);
   border-radius: var(--radius);
-  padding: 24px 22px;
-  margin-bottom: 32px;
+  box-shadow: 0 4px 16px -6px rgba(51,41,31,0.14);
+  padding: 20px 22px;
+  text-align: left;
+  cursor: pointer;
 }
 
-.guestbook-form input,
-.guestbook-form textarea {
-  width: 100%;
-  border: none;
-  border-bottom: 1px solid var(--gray-3);
-  border-radius: 0;
-  padding: 14px 0;
+.gb-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.gb-card-name {
   font-family: var(--font-sans);
-  font-weight: 400;
-  font-size: 1rem;
+  font-size: 0.98rem;
+  font-weight: 700;
   color: var(--black);
-  background: transparent;
-  margin-bottom: 14px;
-  outline: none;
-  transition: border-color var(--ease);
-  line-height: 1.7;
 }
 
-.guestbook-form input:focus,
-.guestbook-form textarea:focus { border-color: var(--black); }
+.gb-card-delete-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--gray-2);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px;
+}
+.gb-card-delete-btn:hover { color: var(--gray-1); }
 
-.guestbook-form input::placeholder,
-.guestbook-form textarea::placeholder { color: var(--gray-2); font-weight: 300; }
+.gb-card-text {
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  color: var(--gray-1);
+  line-height: 1.75;
+  white-space: pre-line;
+}
 
-.guestbook-form textarea { height: 76px; resize: none; }
+.gb-card-date {
+  font-family: var(--font-display);
+  font-size: 0.64rem;
+  color: var(--gray-2);
+  margin-top: 10px;
+  letter-spacing: 0.08em;
+}
 
-.guestbook-submit {
-  width: 100%;
-  background: var(--black);
+.gb-write-btn {
+  display: block;
+  margin: 24px auto 0;
+  background: var(--accent);
   color: var(--white);
   border: none;
-  border-radius: var(--radius);
-  padding: 14px;
-  font-size: 0.92rem;
+  border-radius: 999px;
+  padding: 13px 32px;
+  font-size: 0.9rem;
   font-family: var(--font-sans);
-  font-weight: 400;
-  letter-spacing: 0.07em;
+  font-weight: 600;
   cursor: pointer;
   transition: background var(--ease);
-  margin-top: 4px;
 }
-
-.guestbook-submit:hover { background: var(--gray-1); }
-
-.guestbook-messages { display: flex; flex-direction: column; }
+.gb-write-btn:hover { background: var(--accent-deep); }
 
 .guestbook-pagination {
   display: flex;
@@ -911,36 +947,104 @@ section { padding: 96px 32px; position: relative; }
   color: var(--gray-2);
 }
 
-.gb-empty-note { text-align: center; color: var(--gray-2); font-size: 0.85rem; }
-
-.guestbook-msg {
-  padding: 20px 0;
-  border-bottom: 1px solid var(--gray-4);
+/* ── 방명록 작성/수정 모달 ── */
+#gb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(38,31,24,0.45);
+  z-index: 500;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
 }
-.guestbook-msg:last-child { border-bottom: none; }
+#gb-modal-overlay.open { display: flex; }
 
-.guestbook-msg-name {
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
-  font-weight: 400;
+#gb-modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--white);
+  border-radius: 20px 20px 0 0;
+  padding: 28px 28px 32px;
+  animation: gbModalUp 0.3s var(--ease-reveal);
+}
+
+@keyframes gbModalUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.gb-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.gb-modal-title {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 700;
   color: var(--black);
-  margin-bottom: 6px;
 }
 
-.guestbook-msg-text {
+#gb-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--gray-1);
+  cursor: pointer;
+}
+
+.gb-field { margin-bottom: 24px; }
+
+.gb-field label {
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+
+.gb-required { color: #D14F6B; margin-right: 2px; }
+
+.gb-field input,
+.gb-field textarea {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--gray-3);
+  border-radius: 0;
+  padding: 8px 0;
   font-family: var(--font-sans);
   font-size: 0.95rem;
-  color: var(--gray-1);
-  line-height: 1.8;
+  color: var(--black);
+  background: transparent;
+  outline: none;
+  transition: border-color var(--ease);
 }
+.gb-field input:focus,
+.gb-field textarea:focus { border-color: var(--black); }
+.gb-field input::placeholder,
+.gb-field textarea::placeholder { color: var(--gray-2); font-weight: 300; }
+.gb-field textarea { height: 72px; resize: none; line-height: 1.7; }
 
-.guestbook-msg-date {
-  font-family: var(--font-display);
-  font-size: 0.64rem;
-  color: var(--gray-2);
-  margin-top: 8px;
-  letter-spacing: 0.08em;
+.gb-submit-btn {
+  display: block;
+  margin-left: auto;
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  border-radius: 999px;
+  padding: 12px 28px;
+  font-size: 0.88rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--ease);
 }
+.gb-submit-btn:hover { background: var(--accent-deep); }
 
 /* ════════════════════════════
    7. 계좌번호
