@@ -420,6 +420,7 @@ function loadGallery() {
     _galleryPhotos = CAT_PHOTOS.slice();
     renderGalleryThumbs();
     showGalleryPhoto(0, false);
+    preloadGalleryMainImages();
     return;
   }
 
@@ -427,6 +428,15 @@ function loadGallery() {
     _galleryPhotos = snap.empty ? CAT_PHOTOS.slice() : snap.docs.map(d => d.data().url);
     renderGalleryThumbs();
     showGalleryPhoto(0, false);
+    preloadGalleryMainImages();
+  });
+}
+
+// 넘길 때 매번 새로 받아오지 않도록 본문 해상도(w_960) 이미지를 미리 캐싱
+function preloadGalleryMainImages() {
+  _galleryPhotos.forEach(src => {
+    const img = new Image();
+    img.src = cldOptimize(src, 960);
   });
 }
 
