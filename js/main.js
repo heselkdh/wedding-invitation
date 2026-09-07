@@ -71,11 +71,11 @@ async function loadConfig() {
   }
 
   if (d.heroBgUrl) {
-    document.getElementById('hero-bg').src = d.heroBgUrl;
+    document.getElementById('hero-bg').src = cldOptimize(d.heroBgUrl, 960);
   }
 
   if (d.mapImageUrl) {
-    document.getElementById('map-image').src = d.mapImageUrl;
+    document.getElementById('map-image').src = cldOptimize(d.mapImageUrl, 800);
     document.getElementById('map-image-wrap').style.display = 'block';
   }
 
@@ -437,7 +437,7 @@ function renderGalleryThumbs() {
     const thumb = document.createElement('div');
     thumb.className = 'gallery-thumb';
     const img = document.createElement('img');
-    img.src = src; img.alt = '웨딩 사진'; img.loading = 'lazy';
+    img.src = cldOptimize(src, 200); img.alt = '웨딩 사진'; img.loading = 'lazy';
     thumb.appendChild(img);
     thumb.addEventListener('click', () => showGalleryPhoto(idx));
     thumbs.appendChild(thumb);
@@ -447,7 +447,7 @@ function renderGalleryThumbs() {
 function showGalleryPhoto(idx, scrollThumb = true) {
   if (!_galleryPhotos.length) return;
   _galleryIndex = (idx + _galleryPhotos.length) % _galleryPhotos.length;
-  document.getElementById('gallery-main-img').src = _galleryPhotos[_galleryIndex];
+  document.getElementById('gallery-main-img').src = cldOptimize(_galleryPhotos[_galleryIndex], 960);
 
   document.querySelectorAll('.gallery-thumb').forEach((el, i) => {
     el.classList.toggle('active', i === _galleryIndex);
@@ -491,7 +491,7 @@ addSwipeHandler(
 // ── Lightbox ────────────────────────────────────────────────────────
 function openLightbox(idx) {
   _lightboxIndex = idx;
-  document.getElementById('lightbox-img').src = _galleryPhotos[idx];
+  document.getElementById('lightbox-img').src = cldOptimize(_galleryPhotos[idx], 1200);
   document.getElementById('lightbox-prev').style.display = '';
   document.getElementById('lightbox-next').style.display = '';
   document.getElementById('lightbox').classList.add('open');
@@ -500,7 +500,7 @@ function openLightbox(idx) {
 
 // 갤러리 배열과 무관한 단일 이미지(예: 안내사항 카드 사진)를 전체화면으로 보여줄 때 사용
 function openLightboxSingle(url) {
-  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox-img').src = cldOptimize(url, 1200);
   document.getElementById('lightbox-prev').style.display = 'none';
   document.getElementById('lightbox-next').style.display = 'none';
   document.getElementById('lightbox').classList.add('open');
@@ -509,7 +509,7 @@ function openLightboxSingle(url) {
 
 function showLightboxPhoto(idx) {
   _lightboxIndex = (idx + _galleryPhotos.length) % _galleryPhotos.length;
-  document.getElementById('lightbox-img').src = _galleryPhotos[_lightboxIndex];
+  document.getElementById('lightbox-img').src = cldOptimize(_galleryPhotos[_lightboxIndex], 1200);
 }
 
 document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
@@ -582,7 +582,7 @@ function makeNoticeCard({ title, text, imageUrl }) {
   const el = document.createElement('div');
   el.className = 'notice-card';
   el.innerHTML = `
-    ${imageUrl ? `<img class="notice-card-img" src="${escapeHtml(imageUrl)}" alt="">` : ''}
+    ${imageUrl ? `<img class="notice-card-img" src="${escapeHtml(cldOptimize(imageUrl, 800))}" alt="">` : ''}
     <div class="notice-card-title">${escapeHtml(title || '')} 〉</div>
     <div class="notice-card-text">${escapeHtml(text || '')}</div>
   `;
@@ -867,6 +867,13 @@ function showToast(msg) {
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, c =>
     ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// Cloudinary 대역폭 절감: 자동 포맷/화질 압축 + 실제 표시 크기에 맞는 리사이즈
+function cldOptimize(url, width) {
+  if (!url || !url.includes('cloudinary.com') || !url.includes('/upload/')) return url;
+  const transform = width ? `f_auto,q_auto,w_${width}` : 'f_auto,q_auto';
+  return url.replace('/upload/', `/upload/${transform}/`);
 }
 
 // ── 오프닝 애니메이션 ──────────────────────────────────────────────────
