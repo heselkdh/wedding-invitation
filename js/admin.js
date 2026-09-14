@@ -1,4 +1,5 @@
 import { db, auth } from './firebase.js';
+import { supabase, MEDIA_BUCKET } from './supabase-client.js';
 import { SITE_URL } from './site-config.js';
 import QRCode from 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm';
 import {
@@ -9,20 +10,26 @@ import {
   onSnapshot, query, orderBy, serverTimestamp, writeBatch
 } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
-const CLOUDINARY_CLOUD = 'drgkuhjnc';
-const CLOUDINARY_PRESET = 'wedding';
+// Supabase Storage는 Cloudinary와 달리 자동 리사이즈가 없으므로,
+// 업로드 시점에 큰 변의 길이를 2000px로 제한해 용량/대역폭을 절감
+const MAX_DIMENSION = 2000;
 
-// 9MB 초과 시 캔버스로 리사이즈 압축 (Cloudinary 10MB 제한 대응)
 async function compressImage(file) {
   const LIMIT = 9 * 1024 * 1024;
-  if (file.size <= LIMIT) return file;
   try {
     return await new Promise((resolve, reject) => {
       const img = new Image();
       const url = URL.createObjectURL(file);
       img.onload = () => {
         URL.revokeObjectURL(url);
-        const ratio = Math.sqrt(LIMIT / file.size) * 0.9;
+        const longestSide = Math.max(img.width, img.height);
+        const needsResize = file.size > LIMIT || longestSide > MAX_DIMENSION;
+        if (!needsResize) { resolve(file); return; }
+
+        const sizeRatio = file.size > LIMIT ? Math.sqrt(LIMIT / file.size) * 0.9 : 1;
+        const dimRatio = longestSide > MAX_DIMENSION ? MAX_DIMENSION / longestSide : 1;
+        const ratio = Math.min(sizeRatio, dimRatio);
+
         const canvas = document.createElement('canvas');
         canvas.width  = Math.round(img.width  * ratio);
         canvas.height = Math.round(img.height * ratio);
@@ -40,21 +47,20 @@ async function compressImage(file) {
   }
 }
 
+async function uploadToSupabase(file, folder) {
+  const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2)}_${file.name}`;
+  const { error } = await supabase.storage.from(MEDIA_BUCKET).upload(path, file, { contentType: file.type });
+  if (error) throw new Error(error.message ?? '업로드 실패');
+  const { data } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
 async function uploadToCloudinary(file) {
   if (!file.type.startsWith('image/')) throw new Error('이미지 파일만 업로드할 수 있습니다');
   if (file.size > 50 * 1024 * 1024) throw new Error('파일 크기는 50MB 이하여야 합니다');
 
   const uploadFile = await compressImage(file);
-
-  const formData = new FormData();
-  formData.append('file', uploadFile);
-  formData.append('upload_preset', CLOUDINARY_PRESET);
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
-    method: 'POST', body: formData
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message ?? '업로드 실패');
-  return data.secure_url;
+  return uploadToSupabase(uploadFile, 'images');
 }
 
 async function uploadAudioToCloudinary(file) {
@@ -63,15 +69,7 @@ async function uploadAudioToCloudinary(file) {
   }
   if (file.size > 50 * 1024 * 1024) throw new Error('파일 크기는 50MB 이하여야 합니다');
 
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', CLOUDINARY_PRESET);
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/video/upload`, {
-    method: 'POST', body: formData
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message ?? '업로드 실패');
-  return data.secure_url;
+  return uploadToSupabase(file, 'audio');
 }
 
 // ── 로그인/로그아웃 ────────────────────────────────────────────────
