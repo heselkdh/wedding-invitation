@@ -538,6 +538,7 @@ section { padding: 96px 32px; position: relative; }
   padding: 8px 20px;
   margin: 16px auto 12px;
   width: fit-content;
+  cursor: pointer;
 }
 
 .notice-card-text {

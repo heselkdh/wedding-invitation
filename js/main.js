@@ -598,6 +598,7 @@ function makeNoticeCard({ title, text, imageUrl }) {
   `;
   if (imageUrl) {
     el.querySelector('.notice-card-img').addEventListener('click', () => openLightboxSingle(imageUrl));
+    el.querySelector('.notice-card-title').addEventListener('click', () => openLightboxSingle(imageUrl));
   }
   return el;
 }
